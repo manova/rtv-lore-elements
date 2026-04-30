@@ -1,0 +1,32 @@
+# Godot 4 ignores
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# Build artifacts
+*.import
+*.translation
+build/
+dist/
+
+# Mod packaging
+*.vmz
+!fixtures/*.vmz
+modloader_hooks/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Local configs
+mod_config.cfg
+modloader_conflicts.txt
+
+# Codex / agent scratch
+.codex/
+*.scratch.md
