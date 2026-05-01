@@ -17,6 +17,8 @@ WSL now has `unzip`, `7z`, `bsdtar`, `godotpcktool`, and GDRETools available. `g
 
 Loader note: the public Metro Mod Loader docs and release assets for `v3.1.1` confirm the hook/registry API exists in current Metro: the release `modloader.gd` exposes `Engine.meta("RTVModLib")`, `frameworks_ready`, `.hook(...)`, `skip_super()`, and `Registry`, and the release `override.cfg` uses `[autoload_prepend] ModLoader="*res://modloader.gd"`. An older local loader install initially pointed `/mnt/c/Program Files (x86)/Steam/steamapps/common/Road to Vostok/override.cfg` at `ModLoader="user://modloader.gd"`, whose AppData bootstrap had no `RTVModLib`, hook, or registry symbols. That mismatch was resolved by installing Metro `v3.1.1` into the game folder and smoke-testing in game: `logs/godot.log` now shows `RTVModLib` registration, `frameworks_ready` emission, hook-pack generation, and a successful cabin load with the current mod list.
 
+Developer Mode was then enabled and refreshed `modloader_conflicts.txt`. The current report shows 14 mods loaded, 0 conflicting resource paths, and only Metro/core hook registrations. Metro logs `No user opt-in declarations ([hooks] / .hook() / [registry])` for the current mod list, so existing mods run in `v2.1.0`-equivalent mode. The report also shows a `RegistryProbe` warning because no currently enabled mod declares `[registry]`; this is expected for the existing mod list and confirms this mod's manifest must keep its `[registry]` section.
+
 ## Inventory and context-menu surface
 
 There is no separate `Inventory.gd` in the extracted script set. Inventory behavior is owned by `Interface.gd`.
@@ -115,7 +117,7 @@ Recovered loot resources confirm vanilla lore precedent: `Loot/Custom/LT_Patient
 
 ## Existing-mod precedent
 
-Current enabled mods from the conflict log include Better Enemy Loot, Item Clarity, Loot Modifier, Quick Stack & Sort, and others. The log reports no resource path conflicts, but does report broken dynamic override chains around `HUD.gd` for Show Enemies Killed and Show Time of The Day.
+Current enabled mods from the conflict log include Better Enemy Loot, Item Clarity, Loot Modifier, Quick Stack & Sort, and others. With Metro `v3.1.1` Developer Mode enabled, the report shows no resource path conflicts.
 
 Reviewed mods:
 
@@ -126,6 +128,5 @@ Reviewed mods:
 ## Open blockers / follow-ups
 
 - Add `/home/okoh/.local/bin` to the active zsh PATH if tools need to be callable without absolute paths; the user added it to bash.
-- Enable Developer Mode in the Metro launcher when a fresh `modloader_conflicts.txt` is needed. Current `mod_config.cfg` has `developer_mode=false`, so the file did not refresh after the Metro `v3.1.1` smoke test; the fresh compatibility details are in `logs/godot.log`.
 - Verify the exact Metro hook names for `Interface.ContextUse`, `Interface.Use`, and optionally `Context.Update`.
 - Confirm the Metro mechanism for cancelling/skipping the vanilla `Use()` method from a pre-hook or replacement hook.
