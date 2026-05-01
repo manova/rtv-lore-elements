@@ -15,7 +15,7 @@ Linear: RTV-5
 
 WSL now has `unzip`, `7z`, `bsdtar`, `godotpcktool`, and GDRETools available. `godotpcktool` extracted the PCK into remap files and binary exported resources, which was useful for inventorying the PCK but not enough for readable item resources. GDRETools `v2.5.0-beta.5` recovered the full project from `RTV.pck` into `/home/okoh/rtv-gdre-full`: 175 scripts decompiled, 0 failed scripts, 8726 imported resources converted, 0 failed conversions. The recovery log reports Road to Vostok's editor version as Godot 4.6.2 and bytecode revision as 4.5.0-stable.
 
-Loader note: the public Metro Mod Loader docs and release assets for `v3.1.1` confirm the hook/registry API exists in current Metro: the release `modloader.gd` exposes `Engine.meta("RTVModLib")`, `frameworks_ready`, `.hook(...)`, `skip_super()`, and `Registry`, and the release `override.cfg` uses `[autoload_prepend] ModLoader="*res://modloader.gd"`. The local install currently checked from WSL does not match that shape: `/mnt/c/Program Files (x86)/Steam/steamapps/common/Road to Vostok/override.cfg` points to `ModLoader="user://modloader.gd"`, and `/mnt/c/Users/erons/AppData/Roaming/Road to Vostok/modloader.gd` is a resource-pack/autoload bootstrap with no `RTVModLib`, hook, or registry symbols. Treat this as a local loader-version/install mismatch to resolve before Phase 1, not as a problem with the planned Metro API itself.
+Loader note: the public Metro Mod Loader docs and release assets for `v3.1.1` confirm the hook/registry API exists in current Metro: the release `modloader.gd` exposes `Engine.meta("RTVModLib")`, `frameworks_ready`, `.hook(...)`, `skip_super()`, and `Registry`, and the release `override.cfg` uses `[autoload_prepend] ModLoader="*res://modloader.gd"`. An older local loader install initially pointed `/mnt/c/Program Files (x86)/Steam/steamapps/common/Road to Vostok/override.cfg` at `ModLoader="user://modloader.gd"`, whose AppData bootstrap had no `RTVModLib`, hook, or registry symbols. That mismatch was resolved by installing Metro `v3.1.1` into the game folder and smoke-testing in game: `logs/godot.log` now shows `RTVModLib` registration, `frameworks_ready` emission, hook-pack generation, and a successful cabin load with the current mod list.
 
 ## Inventory and context-menu surface
 
@@ -126,6 +126,6 @@ Reviewed mods:
 ## Open blockers / follow-ups
 
 - Add `/home/okoh/.local/bin` to the active zsh PATH if tools need to be callable without absolute paths; the user added it to bash.
-- Install/verify current Metro Mod Loader before Phase 1. Local files currently look older than Metro `v3.1.1`: the game-folder `override.cfg` points to `user://modloader.gd`, while `v3.1.1` expects `*res://modloader.gd` and exposes `RTVModLib` from the loader file.
+- Enable Developer Mode in the Metro launcher when a fresh `modloader_conflicts.txt` is needed. Current `mod_config.cfg` has `developer_mode=false`, so the file did not refresh after the Metro `v3.1.1` smoke test; the fresh compatibility details are in `logs/godot.log`.
 - Verify the exact Metro hook names for `Interface.ContextUse`, `Interface.Use`, and optionally `Context.Update`.
 - Confirm the Metro mechanism for cancelling/skipping the vanilla `Use()` method from a pre-hook or replacement hook.
