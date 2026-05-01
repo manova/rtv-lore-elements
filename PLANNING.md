@@ -117,10 +117,10 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 
 ### Phase 1 — Hello note (4–6 hours)
 
-- [ ] One hardcoded `Note_HelloWorld.tres` registered into `LT_Master`.
+- [x] One hardcoded `Note_HelloWorld.tres` registered into `LT_Master`.
 - [ ] Pick up the note in-game, see it in inventory.
-- [ ] Right-click → "Read" → modal dialog showing fixed text.
-- [ ] Confirm `_lib.skip_super()` semantics if hooking a replace surface.
+- [x] Right-click → "Read" → modal dialog showing fixed text.
+- [x] Confirm `_lib.skip_super()` semantics if hooking a replace surface.
 
 **Acceptance**: Pick up note, click read, see text, close, gameplay resumes.
 

@@ -19,17 +19,25 @@ Metro Mod Loader v3.0+, Mod Configuration Menu (recommended)
 ### Local install (Windows)
 
 ```powershell
-# From the repo root, after editing
-Compress-Archive -Path mod.txt, Main.gd, * -DestinationPath rtv_lore_elements.zip
+# From the repo root, after editing.
+# mod.txt must remain at archive root; source files live under rtv-lore-elements/
+# because mod.txt autoloads res://rtv-lore-elements/Main.gd.
+$GameDir = "C:\Program Files (x86)\Steam\steamapps\common\Road to Vostok"
+New-Item -ItemType Directory -Force -Path .build\rtv-lore-elements | Out-Null
+Copy-Item mod.txt .build\mod.txt -Force
+Copy-Item Main.gd, README.md, PLANNING.md, LICENSE, AGENTS.md, SHARED_CONTEXT.md .build\rtv-lore-elements\ -Force
+Copy-Item Items, notes .build\rtv-lore-elements\ -Recurse -Force
+Compress-Archive -Path .build\mod.txt, .build\rtv-lore-elements -DestinationPath rtv_lore_elements.zip -Force
 Rename-Item rtv_lore_elements.zip rtv_lore_elements.vmz -Force
-Copy-Item rtv_lore_elements.vmz "$env:APPDATA\Road to Vostok\mods\" -Force
+New-Item -ItemType Directory -Force -Path "$GameDir\mods" | Out-Null
+Copy-Item rtv_lore_elements.vmz "$GameDir\mods\" -Force
 ```
 
-Or simply place the unzipped repo directory at `%APPDATA%\Road to Vostok\mods\rtv-lore-elements\` — the loader accepts both.
+In Developer Mode the loader also accepts loose folders in the game's `mods\` directory, but the folder contents still need the same package shape: `mod.txt` at root and source files under `rtv-lore-elements\`.
 
 ### Logs
 
-- Loader log: `%APPDATA%\Road to Vostok\modloader.log`
+- Loader log: `%APPDATA%\Road to Vostok\logs\godot.log`
 - Conflicts (Developer Mode only): `%APPDATA%\Road to Vostok\modloader_conflicts.txt`
 
 ## License
