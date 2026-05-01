@@ -106,12 +106,12 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 
 - [ ] Install Metro Mod Loader on dev machine; verify clean game launch with empty mod.
 - [ ] Enable Developer Mode in the launcher UI to dump rewritten scripts.
-- [ ] Inspect `Interface.gd`, `Inventory.gd`, and `Database.gd` to confirm:
+- [x] Inspect `Interface.gd`, `Inventory.gd`, and `Database.gd` to confirm:
   - ItemData shape (custom field support)
   - Inventory context-menu / right-click hook surface
   - Item category enum
   - Existing UI scene patterns (look for `Core/UI/Interface` access)
-- [ ] Inspect a vanilla item .tres (`Potato.tres`, `Bandage.tres`) to confirm the resource shape.
+- [x] Inspect a vanilla item .tres (`Potato.tres`, `Bandage.tres`) to confirm the resource shape.
 
 **Output**: `notes/script-discovery.md` documenting exact method names and data shapes.
 
