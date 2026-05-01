@@ -29,8 +29,9 @@ func _ready() -> void:
 	else:
 		push_warning("[rtv_lore_elements] RTVModLib meta not present - Metro Mod Loader required.")
 
-func _process(_delta: float) -> void:
-	if _reader && is_instance_valid(_reader) && Input.is_action_just_pressed("ui_cancel"):
+func _unhandled_input(event: InputEvent) -> void:
+	if _reader && is_instance_valid(_reader) && event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
 		_close_reader()
 
 func _on_lib_ready() -> void:
