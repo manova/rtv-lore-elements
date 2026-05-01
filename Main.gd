@@ -17,6 +17,7 @@ const NOTE_TEXT := {
 var _lib = null
 var _use_hook_id := -1
 var _context_use_hook_id := -1
+var _ui_manager_input_hook_id := -1
 var _reader: CanvasLayer = null
 
 func _ready() -> void:
@@ -29,8 +30,8 @@ func _ready() -> void:
 	else:
 		push_warning("[rtv_lore_elements] RTVModLib meta not present - Metro Mod Loader required.")
 
-func _unhandled_input(event: InputEvent) -> void:
-	if _reader && is_instance_valid(_reader) && event.is_action_pressed("ui_cancel"):
+func _input(event: InputEvent) -> void:
+	if _reader && is_instance_valid(_reader) && _is_reader_cancel_event(event):
 		get_viewport().set_input_as_handled()
 		_close_reader()
 
@@ -38,6 +39,7 @@ func _on_lib_ready() -> void:
 	_lib = Engine.get_meta("RTVModLib")
 	print("[rtv_lore_elements] frameworks ready, registering...")
 	_register_read_hooks()
+	_register_ui_manager_input_hook()
 	_register_lore_content()
 
 func _register_read_hooks() -> void:
@@ -54,6 +56,13 @@ func _register_read_hooks() -> void:
 
 	HELLO_NOTE_ITEM.usable = false
 	push_warning("[rtv_lore_elements] no reader replace hook available; hello note will spawn without a Read action.")
+
+func _register_ui_manager_input_hook() -> void:
+	_ui_manager_input_hook_id = _lib.hook("uimanager-_input", _on_ui_manager_input, 40)
+	if _ui_manager_input_hook_id != -1:
+		print("[rtv_lore_elements] registered uimanager-_input reader cancel hook.")
+	else:
+		push_warning("[rtv_lore_elements] uimanager-_input hook unavailable; reader cancel relies on autoload input fallback.")
 
 func _register_lore_content() -> void:
 	if !_lib.register(_lib.Registry.ITEMS, HELLO_NOTE_ID, HELLO_NOTE_ITEM):
@@ -87,6 +96,14 @@ func _on_interface_context_use():
 	_open_note_reader(HELLO_NOTE_ID, interface_node)
 	return null
 
+func _on_ui_manager_input(event: InputEvent):
+	if _reader && is_instance_valid(_reader) && _is_reader_cancel_event(event):
+		get_viewport().set_input_as_handled()
+		_close_reader()
+		_lib.skip_super()
+
+	return null
+
 func _is_hello_note_item(item_node) -> bool:
 	if item_node == null:
 		return false
@@ -96,6 +113,9 @@ func _is_hello_note_item(item_node) -> bool:
 		return false
 
 	return slot_data.itemData.file == HELLO_NOTE_ID
+
+func _is_reader_cancel_event(event: InputEvent) -> bool:
+	return event.is_action_pressed("ui_cancel") || event.is_action_pressed("settings")
 
 func _open_note_reader(note_id: String, interface_node: Node) -> void:
 	if !NOTE_TEXT.has(note_id):
