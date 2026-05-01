@@ -4,18 +4,18 @@ Linear: RTV-5
 
 ## Environment found
 
-- Game folder: `/mnt/c/Program Files (x86)/Steam/steamapps/common/Road to Vostok`
-- User data: `/mnt/c/Users/erons/AppData/Roaming/Road to Vostok`
-- Current loader config: `/mnt/c/Users/erons/AppData/Roaming/Road to Vostok/mod_config.cfg`
-- Current conflict log: `/mnt/c/Users/erons/AppData/Roaming/Road to Vostok/modloader_conflicts.txt`
-- Prior extracted scripts: `/mnt/c/Users/erons/Documents/Codex/2026-04-20-i-m-trying-to-back-up/rtv-extracted-scripts/Scripts`
-- PCK extraction: `/home/okoh/rtv-extracted-pck`
-- Focused GDRE recovery: `/home/okoh/rtv-gdre-recovered`
-- Full GDRE recovery: `/home/okoh/rtv-gdre-full`
+- Game folder: `<RtV install>`
+- User data: `<RtV user data>`
+- Current loader config: `<RtV user data>/mod_config.cfg`
+- Current conflict log: `<RtV user data>/modloader_conflicts.txt`
+- Prior extracted scripts: `<prior extracted scripts>/Scripts`
+- PCK extraction: `<WSL recovery>/rtv-extracted-pck`
+- Focused GDRE recovery: `<WSL recovery>/rtv-gdre-recovered`
+- Full GDRE recovery: `<WSL recovery>/rtv-gdre-full`
 
-WSL now has `unzip`, `7z`, `bsdtar`, `godotpcktool`, and GDRETools available. `godotpcktool` extracted the PCK into remap files and binary exported resources, which was useful for inventorying the PCK but not enough for readable item resources. GDRETools `v2.5.0-beta.5` recovered the full project from `RTV.pck` into `/home/okoh/rtv-gdre-full`: 175 scripts decompiled, 0 failed scripts, 8726 imported resources converted, 0 failed conversions. The recovery log reports Road to Vostok's editor version as Godot 4.6.2 and bytecode revision as 4.5.0-stable.
+WSL now has `unzip`, `7z`, `bsdtar`, `godotpcktool`, and GDRETools available. `godotpcktool` extracted the PCK into remap files and binary exported resources, which was useful for inventorying the PCK but not enough for readable item resources. GDRETools `v2.5.0-beta.5` recovered the full project from `RTV.pck` into `<WSL recovery>/rtv-gdre-full`: 175 scripts decompiled, 0 failed scripts, 8726 imported resources converted, 0 failed conversions. The recovery log reports Road to Vostok's editor version as Godot 4.6.2 and bytecode revision as 4.5.0-stable.
 
-Loader note: the public Metro Mod Loader docs and release assets for `v3.1.1` confirm the hook/registry API exists in current Metro: the release `modloader.gd` exposes `Engine.meta("RTVModLib")`, `frameworks_ready`, `.hook(...)`, `skip_super()`, and `Registry`, and the release `override.cfg` uses `[autoload_prepend] ModLoader="*res://modloader.gd"`. An older local loader install initially pointed `/mnt/c/Program Files (x86)/Steam/steamapps/common/Road to Vostok/override.cfg` at `ModLoader="user://modloader.gd"`, whose AppData bootstrap had no `RTVModLib`, hook, or registry symbols. That mismatch was resolved by installing Metro `v3.1.1` into the game folder and smoke-testing in game: `logs/godot.log` now shows `RTVModLib` registration, `frameworks_ready` emission, hook-pack generation, and a successful cabin load with the current mod list.
+Loader note: the public Metro Mod Loader docs and release assets for `v3.1.1` confirm the hook/registry API exists in current Metro: the release `modloader.gd` exposes `Engine.meta("RTVModLib")`, `frameworks_ready`, `.hook(...)`, `skip_super()`, and `Registry`, and the release `override.cfg` uses `[autoload_prepend] ModLoader="*res://modloader.gd"`. An older local loader install initially pointed `<RtV install>/override.cfg` at `ModLoader="user://modloader.gd"`, whose user-data bootstrap had no `RTVModLib`, hook, or registry symbols. That mismatch was resolved by installing Metro `v3.1.1` into the game folder and smoke-testing in game: `logs/godot.log` now shows `RTVModLib` registration, `frameworks_ready` emission, hook-pack generation, and a successful cabin load with the current mod list.
 
 Developer Mode was then enabled and refreshed `modloader_conflicts.txt`. The current report shows 14 mods loaded, 0 conflicting resource paths, and only Metro/core hook registrations. Metro logs `No user opt-in declarations ([hooks] / .hook() / [registry])` for the current mod list, so existing mods run in `v2.1.0`-equivalent mode. The report also shows a `RegistryProbe` warning because no currently enabled mod declares `[registry]`; this is expected for the existing mod list and confirms this mod's manifest must keep its `[registry]` section.
 
@@ -25,7 +25,7 @@ There is no separate `Inventory.gd` in the extracted script set. Inventory behav
 
 Relevant vanilla file:
 
-- `/home/okoh/rtv-gdre-full/Scripts/Interface.gd`
+- `<WSL recovery>/rtv-gdre-full/Scripts/Interface.gd`
 
 Key points:
 
@@ -37,8 +37,8 @@ Key points:
 
 Context menu rendering lives in:
 
-- `/mnt/c/Users/erons/Documents/Codex/2026-04-20-i-m-trying-to-back-up/rtv-extracted-scripts/Scripts/Context.gd`
-- `/home/okoh/rtv-gdre-full/Scripts/Context.gd`
+- `<prior extracted scripts>/Scripts/Context.gd`
+- `<WSL recovery>/rtv-gdre-full/Scripts/Context.gd`
 
 Key points:
 
@@ -59,9 +59,9 @@ Vanilla UI path references:
 
 - `LootContainer.Interact()` opens containers through `/root/Map/Core/UI`, then `UIManager.OpenContainer(self)`. See `LootContainer.gd` lines 143-147.
 - Existing mods also locate the UI through the map scene:
-  - Quick Stack & Sort scans `current_scene.get_node_or_null("Core/UI")`, then looks for a child with `containerGrid` to identify `Interface`. See `/tmp/rtv-mods-review/Quick-Stack-Sort-v2/mods/QuickStack/Main.gd` lines 60-81.
+  - Quick Stack & Sort scans `current_scene.get_node_or_null("Core/UI")`, then looks for a child with `containerGrid` to identify `Interface`. See `<mod review scratch>/Quick-Stack-Sort-v2/mods/QuickStack/Main.gd` lines 60-81.
   - Quick Stack & Sort injects lightweight buttons into vanilla `Container` and `Inventory` UI nodes without replacing scripts. See lines 148-192.
-  - Item Clarity uses `/root/Map/Core/UI/Interface` in its refresh path and reacts to `node_added` for item UI nodes. See `/tmp/rtv-mods-review/ItemClarity/ItemClarity/Scripts/Main.gd` lines 171-183 and 220-228.
+  - Item Clarity uses `/root/Map/Core/UI/Interface` in its refresh path and reacts to `node_added` for item UI nodes. See `<mod review scratch>/ItemClarity/ItemClarity/Scripts/Main.gd` lines 171-183 and 220-228.
 
 For our reader UI, the safest runtime attach point is likely `/root/Map/Core/UI/Interface` or a sibling under `/root/Map/Core/UI`, matching the existing mod precedent.
 
@@ -69,7 +69,7 @@ For our reader UI, the safest runtime attach point is likely `/root/Map/Core/UI/
 
 Source:
 
-- `/home/okoh/rtv-gdre-full/Scripts/ItemData.gd`
+- `<WSL recovery>/rtv-gdre-full/Scripts/ItemData.gd`
 
 Confirmed exported fields:
 
@@ -85,8 +85,8 @@ No custom/exported `loreText` or general metadata field exists in `ItemData.gd`,
 
 Recovered resource examples:
 
-- `/home/okoh/rtv-gdre-full/Items/Lore/Patient_Report/Patient_Report.tres` uses `type = "Lore"`, `size = Vector2(2, 2)`, `rarity = 3`, `weight = 0.1`, and has no `usable` or `phrase` fields set.
-- `/home/okoh/rtv-gdre-full/Items/Medical/Bandage/Bandage.tres` uses `type = "Medical"`, `usable = true`, `phrase = "Heal"`, `health = 25.0`, and loot/trader flags such as `civilian = true`, `military = true`, `generalist = true`, `doctor = true`.
+- `<WSL recovery>/rtv-gdre-full/Items/Lore/Patient_Report/Patient_Report.tres` uses `type = "Lore"`, `size = Vector2(2, 2)`, `rarity = 3`, `weight = 0.1`, and has no `usable` or `phrase` fields set.
+- `<WSL recovery>/rtv-gdre-full/Items/Medical/Bandage/Bandage.tres` uses `type = "Medical"`, `usable = true`, `phrase = "Heal"`, `health = 25.0`, and loot/trader flags such as `civilian = true`, `military = true`, `generalist = true`, `doctor = true`.
 
 Category decision:
 
@@ -103,8 +103,8 @@ Relevant vanilla files:
 - `Database.gd`
 - `LootContainer.gd`
 - `LootSimulation.gd`
-- `/home/okoh/rtv-gdre-full/Loot/LT_Master.tres`
-- `/home/okoh/rtv-gdre-full/Loot/Custom/LT_Patient_Report.tres`
+- `<WSL recovery>/rtv-gdre-full/Loot/LT_Master.tres`
+- `<WSL recovery>/rtv-gdre-full/Loot/Custom/LT_Patient_Report.tres`
 
 Key points:
 
@@ -127,6 +127,6 @@ Reviewed mods:
 
 ## Open blockers / follow-ups
 
-- Add `/home/okoh/.local/bin` to the active zsh PATH if tools need to be callable without absolute paths; the user added it to bash.
+- Keep local tool paths on the active shell `PATH` if `godotpcktool` or `gdre_tools` need to be callable without absolute paths.
 - Verify the exact Metro hook names for `Interface.ContextUse`, `Interface.Use`, and optionally `Context.Update`.
 - Confirm the Metro mechanism for cancelling/skipping the vanilla `Use()` method from a pre-hook or replacement hook.
