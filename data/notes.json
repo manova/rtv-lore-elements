@@ -1,0 +1,172 @@
+[
+  {
+    "id": "rtv_lore_border_shift_log",
+    "name": "Border Shift Log",
+    "inventory": "Shift Log",
+    "rotated": "Shift Log",
+    "equipment": "Shift Log",
+    "display": "Shift Log",
+    "rarity": 0,
+    "value": 25,
+    "civilian": false,
+    "industrial": false,
+    "military": true,
+    "pages": [
+      "Border post 14, night shift.\n\nLights failed on the eastern fence at 02:10. Patrol heard movement past the old logging road but found only torn survey tape and fresh tracks in the ditch. Snowfall covered the prints before dawn.",
+      "Command says the line is closed until further notice. The men keep asking who is on the other side now. I told them to count batteries, not rumors.\n\nSigned: Sgt. A. Koivu"
+    ]
+  },
+  {
+    "id": "rtv_lore_evacuation_notice",
+    "name": "Evacuation Notice",
+    "inventory": "Evac Notice",
+    "rotated": "Evac Notice",
+    "equipment": "Evac",
+    "display": "Notice",
+    "rarity": 0,
+    "value": 15,
+    "civilian": true,
+    "industrial": true,
+    "military": false,
+    "pages": [
+      "Municipal notice, copied by hand.\n\nAll residents east of the clinic road must report to the school gymnasium with identification, medicine, warm clothing, and food for two days. Pets are permitted only if contained.",
+      "Do not return for property after registration. The buses will not wait for missing persons. If your household is already empty, mark the front door with chalk so rescue teams do not force entry."
+    ]
+  },
+  {
+    "id": "rtv_lore_clinic_triage_card",
+    "name": "Clinic Triage Card",
+    "inventory": "Triage Card",
+    "rotated": "Triage Card",
+    "equipment": "Triage",
+    "display": "Card",
+    "rarity": 0,
+    "value": 20,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "Name unreadable. Male, approx. 40.\n\nExposure, lacerations on both hands, possible concussion. Patient repeats that the checkpoint siren sounded after the bridge was already gone.",
+      "No transport available. Gave iodine, blanket, and half dose of pain medicine. Told him to stay awake until morning.\n\nMorning note: bed empty, blanket folded."
+    ]
+  },
+  {
+    "id": "rtv_lore_forest_cache_note",
+    "name": "Forest Cache Note",
+    "inventory": "Cache Note",
+    "rotated": "Cache Note",
+    "equipment": "Cache",
+    "display": "Cache",
+    "rarity": 0,
+    "value": 30,
+    "civilian": true,
+    "industrial": false,
+    "military": true,
+    "pages": [
+      "If you are reading this, you found the wrong stump.\n\nThe real cache is not under the mossy one by the creek. That is where I put empty tins for thieves with more hunger than patience.",
+      "Look uphill for three birches grown from one root. Dig on the side facing the old tower. Take only what you need and put the stones back exactly as they were."
+    ]
+  },
+  {
+    "id": "rtv_lore_rail_manifest",
+    "name": "Rail Manifest Fragment",
+    "inventory": "Rail Manifest",
+    "rotated": "Rail Manifest",
+    "equipment": "Manifest",
+    "display": "Manifest",
+    "rarity": 0,
+    "value": 35,
+    "civilian": false,
+    "industrial": true,
+    "military": false,
+    "pages": [
+      "Freight yard transfer sheet, torn at bottom.\n\nWagon 03: tools, dry batteries, water filters.\nWagon 04: medical cartons, winter blankets.\nWagon 05: sealed crates, no civilian inventory.",
+      "The dispatcher stamped the convoy as delayed, but we heard it leave before sunrise with no lights. Someone scraped the destination code off every crate in wagon 05."
+    ]
+  },
+  {
+    "id": "rtv_lore_last_letter_leena",
+    "name": "Letter to Leena",
+    "inventory": "Leena Letter",
+    "rotated": "Leena Letter",
+    "equipment": "Letter",
+    "display": "Letter",
+    "rarity": 0,
+    "value": 10,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "Leena,\n\nI left the compass in the blue cup, not because I think you need it, but because you always said the cabin turned people around. North is still north, even here.",
+      "Do not wait for me after Thursday. If the boats are running, go with your sister. I will follow when the road opens, and if it does not, remember me before the sirens."
+    ]
+  },
+  {
+    "id": "rtv_lore_patrol_warning",
+    "name": "Patrol Warning",
+    "inventory": "Patrol Warning",
+    "rotated": "Patrol Warning",
+    "equipment": "Warning",
+    "display": "Warning",
+    "rarity": 0,
+    "value": 25,
+    "civilian": false,
+    "industrial": false,
+    "military": true,
+    "pages": [
+      "Tape this inside every patrol locker.\n\nDo not pursue signal flares beyond the quarry road. Do not answer single knocks on checkpoint doors after curfew. Do not split pairs to investigate crying.",
+      "If you find white cloth tied to a gate, mark the location and withdraw. The last team treated it as a surrender marker. We recovered one rifle and no bodies."
+    ]
+  },
+  {
+    "id": "rtv_lore_schoolroom_list",
+    "name": "Schoolroom List",
+    "inventory": "School List",
+    "rotated": "School List",
+    "equipment": "List",
+    "display": "List",
+    "rarity": 0,
+    "value": 10,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "Classroom supplies for shelter use:\n\nChalk, tape, scissors, old maps, sports mats, blankets from storage, batteries from science room, radio from headmaster office.",
+      "Names checked in: 47.\nNames reunited: 31.\nNames moved north: 12.\nNames still listening for parents at the windows: 4."
+    ]
+  },
+  {
+    "id": "rtv_lore_radio_transcript",
+    "name": "Radio Transcript",
+    "inventory": "Transcript",
+    "rotated": "Transcript",
+    "equipment": "Radio",
+    "display": "Radio",
+    "rarity": 0,
+    "value": 35,
+    "civilian": false,
+    "industrial": true,
+    "military": true,
+    "pages": [
+      "Recorded on emergency channel 6.\n\n03:42: Unknown station requests road status.\n03:44: Border command orders silence.\n03:47: Unknown station repeats the names of three missing patrolmen.",
+      "03:51: Carrier wave, then music from an old children's broadcast.\n03:53: Transmission ends with two words in Finnish: do not open."
+    ]
+  },
+  {
+    "id": "rtv_lore_weathered_recipe",
+    "name": "Weathered Recipe",
+    "inventory": "Recipe",
+    "rotated": "Recipe",
+    "equipment": "Recipe",
+    "display": "Recipe",
+    "rarity": 0,
+    "value": 10,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "Pea soup for when everyone arrives late.\n\nSoak peas before sunrise. Add onion if there is onion. Add pork if somebody is proud. Add water when the pot starts sounding angry.",
+      "Serves six on a good day and twelve during bad news. Keep stirring after the first siren. Food burns quickly when people stop watching it."
+    ]
+  }
+]
