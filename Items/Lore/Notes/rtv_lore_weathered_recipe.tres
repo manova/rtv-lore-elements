@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Texture2D" path="res://Items/Lore/Patient_Report/Files/Icon_Patient_Report.png" id="1"]
+[ext_resource type="Script" path="res://Scripts/ItemData.gd" id="2"]
+[ext_resource type="PackedScene" path="res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld_2x2.tscn" id="3"]
+
+[resource]
+script = ExtResource("2")
+file = "rtv_lore_weathered_recipe"
+name = "Weathered Recipe"
+inventory = "Recipe"
+rotated = "Recipe"
+equipment = "Recipe"
+display = "Recipe"
+type = "Lore"
+weight = 0.05
+value = 10
+rarity = 0
+icon = ExtResource("1")
+tetris = ExtResource("3")
+size = Vector2(2, 2)
+usable = true
+phrase = "Read"
+audio = null
+material = null
+civilian = true
+industrial = false
+military = false
