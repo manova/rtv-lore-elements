@@ -46,6 +46,9 @@ var _journal: CanvasLayer = null
 var _journal_interface_node: Node = null
 var _journal_list: VBoxContainer = null
 var _journal_input_repaired := false
+var _modal_controls_active := false
+var _modal_previous_mouse_mode := Input.MOUSE_MODE_CAPTURED
+var _modal_previous_freeze := false
 
 var _reader: CanvasLayer = null
 var _reader_interface_node: Node = null
@@ -423,6 +426,7 @@ func _open_note_reader(note_id: String, interface_node: Node) -> void:
 
 	_record_note_read(note_id, true)
 	_close_reader()
+	_acquire_modal_controls()
 	_reader_interface_node = interface_node
 	_reader_note_id = note_id
 	_reader_page_index = 0
@@ -586,6 +590,7 @@ func _record_note_read(note_id: String, should_save: bool) -> bool:
 
 func _open_journal(interface_node: Node) -> void:
 	_close_journal()
+	_acquire_modal_controls()
 	_journal_interface_node = interface_node
 
 	_journal = CanvasLayer.new()
@@ -715,9 +720,12 @@ func _open_note_from_journal(note_id: String) -> void:
 	_open_note_reader(note_id, interface_node)
 
 func _close_journal() -> void:
+	var had_journal := _journal && is_instance_valid(_journal)
 	if _journal && is_instance_valid(_journal):
 		_journal.queue_free()
 	_reset_reader_interface_state(_journal_interface_node)
+	if had_journal:
+		_release_modal_controls()
 	_save_journal()
 	_journal = null
 	_journal_interface_node = null
@@ -779,9 +787,12 @@ func _get_reader_pages() -> Array:
 	return pages
 
 func _close_reader() -> void:
+	var had_reader := _reader && is_instance_valid(_reader)
 	if _reader && is_instance_valid(_reader):
 		_reader.queue_free()
 	_reset_reader_interface_state(_reader_interface_node)
+	if had_reader:
+		_release_modal_controls()
 	_save_journal()
 	_reader = null
 	_reader_interface_node = null
@@ -807,3 +818,23 @@ func _reset_reader_interface_state(interface_node: Node) -> void:
 		interface_node.Reset()
 	if interface_node.has_method("ResetInput"):
 		interface_node.ResetInput()
+
+func _acquire_modal_controls() -> void:
+	if _modal_controls_active:
+		return
+
+	_modal_previous_mouse_mode = Input.get_mouse_mode()
+	_modal_previous_freeze = GAME_DATA.freeze
+	GAME_DATA.freeze = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	_modal_controls_active = true
+
+func _release_modal_controls() -> void:
+	if !_modal_controls_active:
+		return
+
+	GAME_DATA.freeze = _modal_previous_freeze
+	Input.set_mouse_mode(_modal_previous_mouse_mode)
+	_modal_controls_active = false
+	_modal_previous_mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_modal_previous_freeze = false
