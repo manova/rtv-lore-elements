@@ -8,6 +8,8 @@ const LEGACY_NOTE_ITEM_PATH := "res://rtv-lore-elements/Items/Lore/Note_HelloWor
 const JOURNAL_DATA_PATH := "user://lore-elements-journal.cfg"
 const JOURNAL_INPUT_ACTION := "rtv_lore_open_journal"
 const READER_FONT_PATH := "res://rtv-lore-elements/assets/fonts/Caveat-Regular.ttf"
+const VOICEOVER_AUDIO_PATH_PREFIX := "res://rtv-lore-elements/assets/audio/voiceover/"
+const VOICEOVER_AUDIO_BUS := "SFX"
 const NOTE_LOOT_TABLE := "LT_Master"
 const MCM_HELPERS_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
 const MCM_MOD_ID := "rtv_lore_elements"
@@ -40,6 +42,7 @@ const LEGACY_HELLO_NOTE := {
 
 var GAME_DATA = preload("res://Resources/GameData.tres")
 var NOTE_SCENE_TEMPLATE = preload("res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tscn")
+var AUDIO_INSTANCE_2D_SCENE = preload("res://Resources/AudioInstance2D.tscn")
 
 var _lib = null
 var _use_hook_id := -1
@@ -52,6 +55,8 @@ var _lootsimulation_fill_buckets_hook_id := -1
 var _notes := {}
 var _reader_font = null
 var _mcm_helpers = null
+var _registered_voiceover_ids := {}
+var _voiceover_warning_ids := {}
 var _lore_note_spawn_multiplier := DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER
 var _journal_hotkey_value := DEFAULT_JOURNAL_HOTKEY
 var _journal_hotkey_type := DEFAULT_JOURNAL_HOTKEY_TYPE
@@ -76,6 +81,7 @@ var _reader_page_counter: Label = null
 var _reader_prev_button: Button = null
 var _reader_next_button: Button = null
 var _reader_from_journal := false
+var _active_voiceover_player: Node = null
 
 func _ready() -> void:
 	if Engine.has_meta("RTVModLib"):
@@ -364,6 +370,8 @@ func _register_lore_content() -> void:
 			}):
 				push_warning("[rtv_lore_elements] failed to register lore note in LT_Master: " + note_id)
 
+			_register_note_voiceover(note_id, definition)
+
 	_register_legacy_hello_note()
 	print("[rtv_lore_elements] loaded " + str(_notes.size()) + " lore notes.")
 
@@ -384,6 +392,49 @@ func _register_legacy_hello_note() -> void:
 
 	if scene != null && !_lib.register(_lib.Registry.SCENES, LEGACY_HELLO_NOTE_ID, scene):
 		push_warning("[rtv_lore_elements] failed to register legacy hello note pickup scene.")
+
+	_register_note_voiceover(LEGACY_HELLO_NOTE_ID, LEGACY_HELLO_NOTE)
+
+func _register_note_voiceover(note_id: String, definition: Dictionary) -> void:
+	var voiceover_id := _get_note_voiceover_id(note_id, definition)
+	if voiceover_id.is_empty():
+		return
+	if _registered_voiceover_ids.has(voiceover_id):
+		return
+
+	var audio_path := VOICEOVER_AUDIO_PATH_PREFIX + voiceover_id + ".wav"
+	if !FileAccess.file_exists(audio_path):
+		_warn_voiceover_once(voiceover_id, "missing voiceover audio for " + note_id + ": " + audio_path)
+		return
+
+	var audio_stream := AudioStreamWAV.load_from_file(audio_path)
+	if audio_stream == null:
+		_warn_voiceover_once(voiceover_id, "failed to load voiceover WAV for " + note_id + ": " + audio_path)
+		return
+
+	if !_lib.register(_lib.Registry.SOUNDS, voiceover_id, {
+		"audioClips": [audio_stream],
+		"volume": 0.0,
+		"randomPitch": false,
+	}):
+		_warn_voiceover_once(voiceover_id, "failed to register voiceover sound: " + voiceover_id)
+		return
+
+	_registered_voiceover_ids[voiceover_id] = true
+
+func _get_note_voiceover_id(note_id: String, definition: Dictionary) -> String:
+	if !definition.has("voiceover_id") || definition["voiceover_id"] == null:
+		return ""
+	if typeof(definition["voiceover_id"]) != TYPE_STRING:
+		_warn_voiceover_once(note_id + ":invalid_voiceover_id", "voiceover_id must be a string or null for " + note_id)
+		return ""
+	return str(definition["voiceover_id"]).strip_edges()
+
+func _warn_voiceover_once(warning_id: String, message: String) -> void:
+	if _voiceover_warning_ids.has(warning_id):
+		return
+	_voiceover_warning_ids[warning_id] = true
+	push_warning("[rtv_lore_elements] " + message)
 
 func _load_note_definitions() -> Array:
 	if !FileAccess.file_exists(NOTE_DATA_PATH):
@@ -733,6 +784,7 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	var attach_parent := _get_overlay_attach_parent(interface_node)
 	attach_parent.add_child(_reader)
 	_refresh_reader_page()
+	_play_reader_voiceover()
 
 func _load_journal() -> void:
 	_journal_discovered_ids = []
@@ -966,6 +1018,7 @@ func _build_paper_style() -> StyleBoxFlat:
 func _show_previous_page() -> void:
 	if _reader_page_index <= 0:
 		return
+	_stop_reader_voiceover()
 	_reader_page_index -= 1
 	_refresh_reader_page()
 
@@ -973,6 +1026,7 @@ func _show_next_page() -> void:
 	var pages := _get_reader_pages()
 	if _reader_page_index >= pages.size() - 1:
 		return
+	_stop_reader_voiceover()
 	_reader_page_index += 1
 	_refresh_reader_page()
 
@@ -1001,8 +1055,37 @@ func _get_reader_pages() -> Array:
 		return []
 	return pages
 
+func _play_reader_voiceover() -> void:
+	_stop_reader_voiceover()
+	if _reader == null || !is_instance_valid(_reader) || !_notes.has(_reader_note_id):
+		return
+
+	var voiceover_id := _get_note_voiceover_id(_reader_note_id, _notes[_reader_note_id])
+	if voiceover_id.is_empty():
+		return
+
+	var audio_event = _lib.get_entry(_lib.Registry.SOUNDS, voiceover_id)
+	if audio_event == null:
+		_warn_voiceover_once(voiceover_id + ":missing_registry", "voiceover sound not registered: " + voiceover_id)
+		return
+
+	var player = AUDIO_INSTANCE_2D_SCENE.instantiate()
+	player.name = "RtvLoreVoiceover"
+	player.bus = VOICEOVER_AUDIO_BUS
+	_reader.add_child(player)
+	player.PlayInstance(audio_event)
+	_active_voiceover_player = player
+
+func _stop_reader_voiceover() -> void:
+	if _active_voiceover_player != null && is_instance_valid(_active_voiceover_player):
+		if _active_voiceover_player.has_method("stop"):
+			_active_voiceover_player.stop()
+		_active_voiceover_player.queue_free()
+	_active_voiceover_player = null
+
 func _close_reader() -> void:
 	var had_reader := _reader && is_instance_valid(_reader)
+	_stop_reader_voiceover()
 	if _reader && is_instance_valid(_reader):
 		_reader.queue_free()
 	if !_reader_from_journal:
