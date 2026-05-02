@@ -133,9 +133,9 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 
 ### Phase 3 — Persistent journal (3–4 hours)
 
-- [ ] ConfigFile-backed journal save/load.
-- [ ] Journal UI showing discovered notes, search/filter, re-read capability.
-- [ ] Keybind to open journal from anywhere.
+- [x] ConfigFile-backed journal save/load.
+- [x] Journal UI showing discovered notes and re-read capability.
+- [x] Keybind to open journal from gameplay/inventory.
 
 ### Phase 4 — Polish (variable)
 

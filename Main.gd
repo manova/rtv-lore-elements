@@ -5,6 +5,8 @@ extends Node
 const NOTE_DATA_PATH := "res://rtv-lore-elements/data/notes.json"
 const NOTE_ITEM_PATH_PREFIX := "res://rtv-lore-elements/Items/Lore/Notes/"
 const LEGACY_NOTE_ITEM_PATH := "res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tres"
+const JOURNAL_DATA_PATH := "user://lore-elements-journal.cfg"
+const JOURNAL_INPUT_ACTION := "rtv_lore_open_journal"
 const READER_FONT_PATH := "res://rtv-lore-elements/assets/fonts/Caveat-Regular.ttf"
 const NOTE_LOOT_TABLE := "LT_Master"
 const LEGACY_HELLO_NOTE_ID := "rtv_lore_hello_note"
@@ -26,15 +28,23 @@ const LEGACY_HELLO_NOTE := {
 	]
 }
 
+var GAME_DATA = preload("res://Resources/GameData.tres")
 var NOTE_SCENE_TEMPLATE = preload("res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tscn")
 
 var _lib = null
 var _use_hook_id := -1
 var _context_use_hook_id := -1
 var _ui_manager_input_hook_id := -1
+var _auto_place_hook_id := -1
 
 var _notes := {}
 var _reader_font = null
+
+var _journal_discovered_ids: Array = []
+var _journal_read_ids: Array = []
+var _journal: CanvasLayer = null
+var _journal_interface_node: Node = null
+var _journal_list: VBoxContainer = null
 
 var _reader: CanvasLayer = null
 var _reader_interface_node: Node = null
@@ -57,6 +67,17 @@ func _ready() -> void:
 		push_warning("[rtv_lore_elements] RTVModLib meta not present - Metro Mod Loader required.")
 
 func _input(event: InputEvent) -> void:
+	if _journal && is_instance_valid(_journal):
+		if _is_journal_toggle_event(event) || _is_reader_cancel_event(event):
+			get_viewport().set_input_as_handled()
+			_close_journal()
+		return
+
+	if _is_journal_toggle_event(event) && _can_toggle_journal():
+		get_viewport().set_input_as_handled()
+		_open_journal(_get_active_interface_node())
+		return
+
 	if _reader && is_instance_valid(_reader) && _is_reader_cancel_event(event):
 		get_viewport().set_input_as_handled()
 		_close_reader()
@@ -69,7 +90,10 @@ func _on_lib_ready() -> void:
 		push_warning("[rtv_lore_elements] Caveat font unavailable; reader will use the default UI font.")
 	_register_read_hooks()
 	_register_ui_manager_input_hook()
+	_register_discovery_hooks()
+	_register_journal_input()
 	_register_lore_content()
+	_load_journal()
 
 func _load_reader_font() -> void:
 	var font := FontFile.new()
@@ -99,6 +123,26 @@ func _register_ui_manager_input_hook() -> void:
 		print("[rtv_lore_elements] registered uimanager-_input reader cancel hook.")
 	else:
 		push_warning("[rtv_lore_elements] uimanager-_input hook unavailable; reader cancel relies on autoload input fallback.")
+
+func _register_discovery_hooks() -> void:
+	_auto_place_hook_id = _lib.hook("interface-autoplace-post", _on_interface_auto_place_post, 40)
+	if _auto_place_hook_id != -1:
+		print("[rtv_lore_elements] registered interface-autoplace-post journal discovery hook.")
+	else:
+		push_warning("[rtv_lore_elements] interface-autoplace-post hook unavailable; journal discovery relies on reader-open fallback.")
+
+func _register_journal_input() -> void:
+	var key_j := InputEventKey.new()
+	key_j.keycode = KEY_J
+	if _lib.register(_lib.Registry.INPUTS, JOURNAL_INPUT_ACTION, {
+		"display_label": "Open Lore Journal",
+		"default_event": key_j,
+	}):
+		print("[rtv_lore_elements] registered journal input: " + JOURNAL_INPUT_ACTION)
+	elif InputMap.has_action(JOURNAL_INPUT_ACTION):
+		print("[rtv_lore_elements] journal input already registered: " + JOURNAL_INPUT_ACTION)
+	else:
+		push_warning("[rtv_lore_elements] failed to register journal input: " + JOURNAL_INPUT_ACTION)
 
 func _register_lore_content() -> void:
 	var definitions := _load_note_definitions()
@@ -275,10 +319,38 @@ func _on_interface_context_use():
 	return null
 
 func _on_ui_manager_input(event: InputEvent):
+	if _journal && is_instance_valid(_journal):
+		if _is_journal_toggle_event(event) || _is_reader_cancel_event(event):
+			get_viewport().set_input_as_handled()
+			_close_journal()
+		_lib.skip_super()
+		return null
+
+	if _is_journal_toggle_event(event) && _can_toggle_journal():
+		get_viewport().set_input_as_handled()
+		_open_journal(_get_active_interface_node())
+		_lib.skip_super()
+		return null
+
 	if _reader && is_instance_valid(_reader) && _is_reader_cancel_event(event):
 		get_viewport().set_input_as_handled()
 		_close_reader()
 		_lib.skip_super()
+
+	return null
+
+func _on_interface_auto_place_post(target_item, target_grid, _source_grid, _usedrop):
+	var interface_node = _lib._caller
+	if interface_node == null || target_grid == null:
+		return null
+
+	var inventory_grid = interface_node.get("inventoryGrid")
+	if inventory_grid == null || target_grid != inventory_grid:
+		return null
+
+	var note_id := _get_note_id_from_item_node(target_item)
+	if !note_id.is_empty():
+		_record_note_discovered(note_id, true)
 
 	return null
 
@@ -296,14 +368,36 @@ func _get_note_id_from_item_node(item_node) -> String:
 
 	return note_id
 
+func _is_journal_toggle_event(event: InputEvent) -> bool:
+	return event.is_action_pressed(JOURNAL_INPUT_ACTION)
+
 func _is_reader_cancel_event(event: InputEvent) -> bool:
 	return event.is_action_pressed("ui_cancel") || event.is_action_pressed("settings")
+
+func _can_toggle_journal() -> bool:
+	if _reader && is_instance_valid(_reader):
+		return false
+	if get_node_or_null("/root/Map") == null:
+		return false
+	if GAME_DATA.isDead || GAME_DATA.isCaching || GAME_DATA.isTransitioning:
+		return false
+	if GAME_DATA.isReloading || GAME_DATA.isInserting || GAME_DATA.isChecking:
+		return false
+	if GAME_DATA.isPlacing || GAME_DATA.isSleeping || GAME_DATA.isInspecting:
+		return false
+	if GAME_DATA.settings:
+		return false
+	return true
+
+func _get_active_interface_node() -> Node:
+	return get_node_or_null("/root/Map/Core/UI/Interface")
 
 func _open_note_reader(note_id: String, interface_node: Node) -> void:
 	if !_notes.has(note_id):
 		push_warning("[rtv_lore_elements] no note text registered for " + note_id)
 		return
 
+	_record_note_read(note_id, true)
 	_close_reader()
 	_reader_interface_node = interface_node
 	_reader_note_id = note_id
@@ -392,11 +486,218 @@ func _open_note_reader(note_id: String, interface_node: Node) -> void:
 	close_button.pressed.connect(_close_reader)
 	layout.add_child(close_button)
 
-	var attach_parent := interface_node
-	if attach_parent == null:
-		attach_parent = get_tree().current_scene
+	var attach_parent := _get_overlay_attach_parent(interface_node)
 	attach_parent.add_child(_reader)
 	_refresh_reader_page()
+
+func _load_journal() -> void:
+	_journal_discovered_ids = []
+	_journal_read_ids = []
+
+	var config := ConfigFile.new()
+	var error := config.load(JOURNAL_DATA_PATH)
+	if error == ERR_FILE_NOT_FOUND:
+		return
+	if error != OK:
+		push_warning("[rtv_lore_elements] journal config failed to load; starting empty: " + str(error))
+		return
+
+	_journal_discovered_ids = _sanitize_journal_ids(config.get_value("journal", "discovered_ids", []))
+	_journal_read_ids = _sanitize_journal_ids(config.get_value("journal", "read_ids", []))
+	_prune_read_ids_to_discovered()
+
+func _sanitize_journal_ids(raw_ids) -> Array:
+	var clean_ids: Array = []
+	if typeof(raw_ids) != TYPE_ARRAY && typeof(raw_ids) != TYPE_PACKED_STRING_ARRAY:
+		return clean_ids
+
+	for raw_id in raw_ids:
+		var note_id := str(raw_id)
+		if note_id.is_empty() || clean_ids.has(note_id):
+			continue
+		clean_ids.append(note_id)
+	return clean_ids
+
+func _prune_read_ids_to_discovered() -> void:
+	var pruned: Array = []
+	for note_id in _journal_read_ids:
+		if _journal_discovered_ids.has(note_id) && !pruned.has(note_id):
+			pruned.append(note_id)
+	_journal_read_ids = pruned
+
+func _save_journal() -> void:
+	_prune_read_ids_to_discovered()
+	var config := ConfigFile.new()
+	config.set_value("journal", "discovered_ids", _journal_discovered_ids)
+	config.set_value("journal", "read_ids", _journal_read_ids)
+	var error := config.save(JOURNAL_DATA_PATH)
+	if error != OK:
+		push_warning("[rtv_lore_elements] journal config failed to save: " + str(error))
+
+func _record_note_discovered(note_id: String, should_save: bool) -> bool:
+	if note_id.is_empty() || !_notes.has(note_id):
+		return false
+
+	var changed := false
+	if !_journal_discovered_ids.has(note_id):
+		_journal_discovered_ids.append(note_id)
+		changed = true
+
+	if should_save && changed:
+		_save_journal()
+	return changed
+
+func _record_note_read(note_id: String, should_save: bool) -> bool:
+	if note_id.is_empty() || !_notes.has(note_id):
+		return false
+
+	var changed := _record_note_discovered(note_id, false)
+	if !_journal_read_ids.has(note_id):
+		_journal_read_ids.append(note_id)
+		changed = true
+
+	if should_save:
+		_save_journal()
+	return changed
+
+func _open_journal(interface_node: Node) -> void:
+	_close_journal()
+	_journal_interface_node = interface_node
+
+	_journal = CanvasLayer.new()
+	_journal.name = "RtvLoreJournal"
+	_journal.layer = 120
+
+	var overlay := ColorRect.new()
+	overlay.name = "Overlay"
+	overlay.color = Color(0.02, 0.02, 0.018, 0.76)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_journal.add_child(overlay)
+
+	var center := CenterContainer.new()
+	center.name = "Center"
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_journal.add_child(center)
+
+	var panel := PanelContainer.new()
+	panel.name = "JournalPanel"
+	panel.custom_minimum_size = Vector2(560, 500)
+	panel.add_theme_stylebox_override("panel", _build_journal_style())
+	center.add_child(panel)
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 28)
+	margin.add_theme_constant_override("margin_top", 24)
+	margin.add_theme_constant_override("margin_right", 28)
+	margin.add_theme_constant_override("margin_bottom", 24)
+	panel.add_child(margin)
+
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 12)
+	margin.add_child(layout)
+
+	var title := Label.new()
+	title.text = "Journal"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_color_override("font_color", Color(0.86, 0.82, 0.72))
+	title.add_theme_font_size_override("font_size", 26)
+	layout.add_child(title)
+
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 360)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(scroll)
+
+	_journal_list = VBoxContainer.new()
+	_journal_list.add_theme_constant_override("separation", 8)
+	_journal_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(_journal_list)
+
+	_populate_journal_entries()
+
+	var close_button := Button.new()
+	close_button.text = "Close"
+	close_button.custom_minimum_size = Vector2(120, 36)
+	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	close_button.pressed.connect(_close_journal)
+	layout.add_child(close_button)
+
+	var attach_parent := _get_overlay_attach_parent(interface_node)
+	attach_parent.add_child(_journal)
+
+func _get_overlay_attach_parent(interface_node: Node) -> Node:
+	if interface_node != null && is_instance_valid(interface_node) && interface_node.is_visible_in_tree():
+		return interface_node
+	if get_tree().current_scene != null:
+		return get_tree().current_scene
+	return self
+
+func _build_journal_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.13, 0.12, 0.1)
+	style.border_color = Color(0.48, 0.39, 0.25)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_right = 4
+	style.corner_radius_bottom_left = 4
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.42)
+	style.shadow_size = 16
+	style.shadow_offset = Vector2(0, 4)
+	return style
+
+func _populate_journal_entries() -> void:
+	if _journal_list == null:
+		return
+
+	for child in _journal_list.get_children():
+		child.queue_free()
+
+	var rendered_count := 0
+	for index in range(_journal_discovered_ids.size() - 1, -1, -1):
+		var note_id := str(_journal_discovered_ids[index])
+		if !_notes.has(note_id):
+			continue
+
+		var note = _notes[note_id]
+		var entry := Button.new()
+		entry.text = _format_journal_entry_label(note_id, str(note.get("name", note_id)))
+		entry.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		entry.custom_minimum_size = Vector2(0, 38)
+		entry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		entry.pressed.connect(_open_note_from_journal.bind(note_id))
+		_journal_list.add_child(entry)
+		rendered_count += 1
+
+	if rendered_count == 0:
+		var empty := Label.new()
+		empty.text = "No notes discovered yet."
+		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		empty.add_theme_color_override("font_color", Color(0.68, 0.64, 0.55))
+		empty.add_theme_font_size_override("font_size", 18)
+		_journal_list.add_child(empty)
+
+func _format_journal_entry_label(note_id: String, note_name: String) -> String:
+	if _journal_read_ids.has(note_id):
+		return "  " + note_name
+	return "* " + note_name
+
+func _open_note_from_journal(note_id: String) -> void:
+	var interface_node = _journal_interface_node
+	_close_journal()
+	_open_note_reader(note_id, interface_node)
+
+func _close_journal() -> void:
+	if _journal && is_instance_valid(_journal):
+		_journal.queue_free()
+	_reset_reader_interface_state(_journal_interface_node)
+	_save_journal()
+	_journal = null
+	_journal_interface_node = null
+	_journal_list = null
 
 func _build_paper_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -457,6 +758,7 @@ func _close_reader() -> void:
 	if _reader && is_instance_valid(_reader):
 		_reader.queue_free()
 	_reset_reader_interface_state(_reader_interface_node)
+	_save_journal()
 	_reader = null
 	_reader_interface_node = null
 	_reader_note_id = ""
