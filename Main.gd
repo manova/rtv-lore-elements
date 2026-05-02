@@ -4,6 +4,7 @@ extends Node
 
 const NOTE_DATA_PATH := "res://rtv-lore-elements/data/notes.json"
 const NOTE_ITEM_PATH_PREFIX := "res://rtv-lore-elements/Items/Lore/Notes/"
+const LEGACY_NOTE_ITEM_PATH := "res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tres"
 const READER_FONT_PATH := "res://rtv-lore-elements/assets/fonts/Caveat-Regular.ttf"
 const NOTE_LOOT_TABLE := "LT_Master"
 const LEGACY_HELLO_NOTE_ID := "rtv_lore_hello_note"
@@ -25,7 +26,6 @@ const LEGACY_HELLO_NOTE := {
 	]
 }
 
-var NOTE_ITEM_TEMPLATE = preload("res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tres")
 var NOTE_SCENE_TEMPLATE = preload("res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tscn")
 
 var _lib = null
@@ -184,13 +184,14 @@ func _load_note_definitions() -> Array:
 
 func _build_note_item(definition: Dictionary):
 	var note_id := str(definition["id"])
-	var item_data = NOTE_ITEM_TEMPLATE
+	var item_path := LEGACY_NOTE_ITEM_PATH
 	if note_id != LEGACY_HELLO_NOTE_ID:
-		var item_path := NOTE_ITEM_PATH_PREFIX + note_id + ".tres"
-		item_data = load(item_path)
-		if item_data == null:
-			push_warning("[rtv_lore_elements] missing note item resource: " + item_path)
-			return null
+		item_path = NOTE_ITEM_PATH_PREFIX + note_id + ".tres"
+
+	var item_data = ResourceLoader.load(item_path, "", ResourceLoader.CACHE_MODE_IGNORE)
+	if item_data == null:
+		push_warning("[rtv_lore_elements] missing note item resource: " + item_path)
+		return null
 
 	item_data.file = note_id
 	item_data.name = str(definition.get("name", note_id))

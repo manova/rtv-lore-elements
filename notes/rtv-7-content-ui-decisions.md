@@ -6,7 +6,7 @@ RTV-7 keeps authored note text in `data/notes.json` rather than adding custom fi
 
 Each JSON entry contains the registry id, inventory labels, rarity/value, loot flags, and a page array. Authored notes have matching `ItemData` resources under `Items/Lore/Notes/`, and `Main.gd` loads those resources before syncing metadata from JSON. This keeps note item data as external resources in saves instead of inline runtime duplicates, which avoids typed-array load failures when a save contains picked-up lore notes.
 
-The legacy damaged field note still uses the original `Note_HelloWorld` template for compatibility. Authored note pickup scenes continue to be packed at runtime from the hello-note scene template, but they now point at stable external `ItemData` resources.
+The legacy damaged field note still uses the original `Note_HelloWorld` resource path for compatibility, loaded uncached so metadata sync does not mutate the shared preloaded template. Authored note pickup scenes continue to be packed at runtime from the hello-note scene template, but they now point at stable external `ItemData` resources.
 
 ## Loot placement
 
