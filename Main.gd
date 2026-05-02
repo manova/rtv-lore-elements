@@ -59,6 +59,7 @@ var _reader_body: RichTextLabel = null
 var _reader_page_counter: Label = null
 var _reader_prev_button: Button = null
 var _reader_next_button: Button = null
+var _reader_from_journal := false
 
 func _ready() -> void:
 	if Engine.has_meta("RTVModLib"):
@@ -71,6 +72,12 @@ func _ready() -> void:
 		push_warning("[rtv_lore_elements] RTVModLib meta not present - Metro Mod Loader required.")
 
 func _input(event: InputEvent) -> void:
+	if _reader && is_instance_valid(_reader):
+		if _is_journal_toggle_event(event) || _is_reader_cancel_event(event):
+			get_viewport().set_input_as_handled()
+			_close_reader()
+		return
+
 	if _journal && is_instance_valid(_journal):
 		if _is_journal_toggle_event(event) || _is_reader_cancel_event(event):
 			get_viewport().set_input_as_handled()
@@ -81,10 +88,6 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		_open_journal(_get_active_interface_node())
 		return
-
-	if _reader && is_instance_valid(_reader) && _is_reader_cancel_event(event):
-		get_viewport().set_input_as_handled()
-		_close_reader()
 
 func _on_lib_ready() -> void:
 	_lib = Engine.get_meta("RTVModLib")
@@ -338,6 +341,13 @@ func _on_interface_context_use():
 	return null
 
 func _on_ui_manager_input(event: InputEvent):
+	if _reader && is_instance_valid(_reader):
+		if _is_journal_toggle_event(event) || _is_reader_cancel_event(event):
+			get_viewport().set_input_as_handled()
+			_close_reader()
+		_lib.skip_super()
+		return null
+
 	if _journal && is_instance_valid(_journal):
 		if _is_journal_toggle_event(event) || _is_reader_cancel_event(event):
 			get_viewport().set_input_as_handled()
@@ -350,11 +360,6 @@ func _on_ui_manager_input(event: InputEvent):
 		_open_journal(_get_active_interface_node())
 		_lib.skip_super()
 		return null
-
-	if _reader && is_instance_valid(_reader) && _is_reader_cancel_event(event):
-		get_viewport().set_input_as_handled()
-		_close_reader()
-		_lib.skip_super()
 
 	return null
 
@@ -420,21 +425,24 @@ func _can_toggle_journal() -> bool:
 func _get_active_interface_node() -> Node:
 	return get_node_or_null("/root/Map/Core/UI/Interface")
 
-func _open_note_reader(note_id: String, interface_node: Node) -> void:
+func _open_note_reader(note_id: String, interface_node: Node, from_journal := false) -> void:
 	if !_notes.has(note_id):
 		push_warning("[rtv_lore_elements] no note text registered for " + note_id)
 		return
 
 	_record_note_read(note_id, true)
+	if _journal && is_instance_valid(_journal):
+		_populate_journal_entries()
 	_close_reader()
 	_acquire_modal_controls()
 	_reader_interface_node = interface_node
 	_reader_note_id = note_id
 	_reader_page_index = 0
+	_reader_from_journal = from_journal
 
 	_reader = CanvasLayer.new()
 	_reader.name = "RtvLoreNoteReader"
-	_reader.layer = 100
+	_reader.layer = 140
 
 	var overlay := ColorRect.new()
 	overlay.name = "Overlay"
@@ -717,8 +725,7 @@ func _format_journal_entry_label(note_id: String, note_name: String) -> String:
 
 func _open_note_from_journal(note_id: String) -> void:
 	var interface_node = _journal_interface_node
-	_close_journal(false, false)
-	_open_note_reader(note_id, interface_node)
+	_open_note_reader(note_id, interface_node, true)
 
 func _close_journal(should_release_controls := true, should_save := true) -> void:
 	var had_journal := _journal && is_instance_valid(_journal)
@@ -791,9 +798,13 @@ func _close_reader() -> void:
 	var had_reader := _reader && is_instance_valid(_reader)
 	if _reader && is_instance_valid(_reader):
 		_reader.queue_free()
-	_reset_reader_interface_state(_reader_interface_node)
+	if !_reader_from_journal:
+		_reset_reader_interface_state(_reader_interface_node)
 	if had_reader:
-		_release_modal_controls()
+		if _journal && is_instance_valid(_journal):
+			_populate_journal_entries()
+		else:
+			_release_modal_controls()
 		_save_journal()
 	_reader = null
 	_reader_interface_node = null
@@ -804,6 +815,7 @@ func _close_reader() -> void:
 	_reader_page_counter = null
 	_reader_prev_button = null
 	_reader_next_button = null
+	_reader_from_journal = false
 
 func _reset_reader_interface_state(interface_node: Node) -> void:
 	if interface_node == null || !is_instance_valid(interface_node):
