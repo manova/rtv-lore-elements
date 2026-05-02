@@ -202,5 +202,90 @@
       "My boy,\n\nThe candle by the window is the same candle. I light it at six and again before bed, like always, so you know which window is ours if you come back at night.\n\nThe Virtanen boy came home last Thursday. He is thinner. He sat with his mother for an hour and did not speak. The other one did not come.",
       "Do not write back if it costs you to send a letter. I would rather you keep the stamp.\n\nEat what you can. Sleep when there is sleep. The pear tree by the shed has the best year I can remember and there will be enough for both of us if you hurry.\n\n— Mama"
     ]
+  },
+  {
+    "id": "rtv_lore_hamina_last_shift",
+    "name": "Hamina Dispatch",
+    "inventory": "Dispatch",
+    "rotated": "Dispatch",
+    "equipment": "Dispatch",
+    "display": "Dispatch",
+    "rarity": 1,
+    "value": 20,
+    "civilian": false,
+    "industrial": true,
+    "military": false,
+    "pages": [
+      "Port of Hamina — Pier 4 Control, Shift Log\nJuhannusaatto. Watch: K. Lehto.\n\n20:00 — Relief on duty. Bay quiet, no traffic since 18:40.\n21:15 — Foreman walks the line. Two pallets resecured at berth.\n22:10 — Reefer on container 7 trips again. Reset, holding.\n22:34 — Wind SSW 6 m/s. Solvent smell off the water — bilge from the tug at 3?",
+      "22:38 — Wind W 9 m/s. Wrong. Recheck mast.\n22:40 — Mast reads SSW. Sleeve on the pole reads W. Both fresh. Called the office, no answer.\n22:41 — Klaxon at Pier 4 just went —"
+    ]
+  },
+  {
+    "id": "rtv_lore_guard_three_lines",
+    "name": "Guard's Notebook",
+    "inventory": "Notebook",
+    "rotated": "Notebook",
+    "equipment": "Notebook",
+    "display": "Notebook",
+    "rarity": 1,
+    "value": 25,
+    "civilian": false,
+    "industrial": false,
+    "military": true,
+    "pages": [
+      "K-9. Two more shots from K-12 last night. The new ones don't sleep.\n\nK-12 says it was a deer. Twice. With a rifle they're not supposed to have past dark.\n\nPetrov found a casing at K-11. .308. Pocketed it before I saw.",
+      "K-7 fence cut clean. Wire pliers, not chewed. Reported up. No reply.\n\nOld hands stop talking when the new ones walk in. New ones stop talking when we do.\n\nAsked for a transfer in March. Asked again in May. Stamped received. Nothing else."
+    ]
+  },
+  {
+    "id": "rtv_lore_child_kitchen_map",
+    "name": "Crayon Map",
+    "inventory": "Crayon Map",
+    "rotated": "Crayon Map",
+    "equipment": "Map",
+    "display": "Map",
+    "rarity": 1,
+    "value": 5,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "MY HOUSE\n\ndoor\nmy BED. me and TUOMAS\nMAMA WORK desk\nLIVING. tv broke\nthe BLACK ROOM\nBAFROOM. window\n\nstairs go DOWN",
+      "dont go in the kitchen\nmama said\n\nmama is sleeping in the LIVING\nshe is tired\n\nat night it sounds like the tap\nbut the tap is off\ni checked"
+    ]
+  },
+  {
+    "id": "rtv_lore_posted_orders_layered",
+    "name": "Posted Orders",
+    "inventory": "Posted Orders",
+    "rotated": "Posted Orders",
+    "equipment": "Orders",
+    "display": "Orders",
+    "rarity": 1,
+    "value": 8,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "ORDER NO. 7\nKYMENLAAKSO REGIONAL ADMINISTRATION\n[stamp: legible]\n\nTo all civilian residents of Area 05:\n\nRemain in your residence. Close all\nwindows. Await transport at your\n[obscured]\nwithin 48 hours.\n\nDo not [obscured] west.\nDo not gather at [obscured].\n\nIssued: 22.06\nSigned: District Coordinator",
+      "ORDER NO. 11\n[stamp: unfamiliar — bilingual seal]\n\nTo all civilians remaining in Area 05:\n\nEvacuate west on foot before sunset.\nDo not wait for transport.\nCarry no more than you can run with.\n\nRoutes: Highway E18 west.\nDo not use rail.\n\nIssued: 29.06\nBy authority of the [obscured] command."
+    ]
+  },
+  {
+    "id": "rtv_lore_triage_unknown_male",
+    "name": "Triage Tag",
+    "inventory": "Triage Tag",
+    "rotated": "Triage Tag",
+    "equipment": "Tag",
+    "display": "Tag",
+    "rarity": 1,
+    "value": 12,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "SCHOOL MEDICAL STN. — CHART FRAG.\nDate: [tear]/07\nPatient: UNKNOWN MALE\nAge: ~30\nAdm: 02:14\n\nGSW R-shoulder, thru-and-thru.\nFrag wound L-thigh, lodged.\nPulse 124. BP 90/60.\nConscious, non-verbal.\n\nTx: pressure dressing R-sh.\nTourniquet L-thigh, 02:18.\nMorphine 10mg IM. (Last vial.)\n\nAtt.: V. Mäkinen",
+      "03:40 — pt. stable, sleeping.\n04:55 — checked. fine.\n\n[different hand:]\n\nPatient disappeared before morning rounds.\nNo bed. No tag. No blood trail.\nDoor to staff exit was bolted from inside.\n\n— K."
+    ]
   }
 ]
