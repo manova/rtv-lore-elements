@@ -717,15 +717,16 @@ func _format_journal_entry_label(note_id: String, note_name: String) -> String:
 
 func _open_note_from_journal(note_id: String) -> void:
 	var interface_node = _journal_interface_node
-	_close_journal()
+	_close_journal(false, false)
 	_open_note_reader(note_id, interface_node)
 
-func _close_journal() -> void:
+func _close_journal(should_release_controls := true, should_save := true) -> void:
 	var had_journal := _journal && is_instance_valid(_journal)
 	if _journal && is_instance_valid(_journal):
 		_journal.queue_free()
-	if had_journal:
+	if had_journal && should_release_controls:
 		_release_modal_controls()
+	if had_journal && should_save:
 		_save_journal()
 	_journal = null
 	_journal_interface_node = null
