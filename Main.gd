@@ -33,7 +33,6 @@ var _context_use_hook_id := -1
 var _ui_manager_input_hook_id := -1
 
 var _notes := {}
-var _note_items := {}
 var _reader_font = null
 
 var _reader: CanvasLayer = null
@@ -102,48 +101,46 @@ func _register_ui_manager_input_hook() -> void:
 func _register_lore_content() -> void:
 	var definitions := _load_note_definitions()
 	if definitions.is_empty():
-		push_warning("[rtv_lore_elements] no lore notes loaded; skipping note registry.")
-		return
+		push_warning("[rtv_lore_elements] no lore notes loaded; registering legacy note only.")
+	else:
+		for raw_definition in definitions:
+			if typeof(raw_definition) != TYPE_DICTIONARY:
+				push_warning("[rtv_lore_elements] skipping malformed note definition.")
+				continue
 
-	for raw_definition in definitions:
-		if typeof(raw_definition) != TYPE_DICTIONARY:
-			push_warning("[rtv_lore_elements] skipping malformed note definition.")
-			continue
+			var definition: Dictionary = raw_definition
+			var note_id := str(definition.get("id", ""))
+			if note_id.is_empty():
+				push_warning("[rtv_lore_elements] skipping note with missing id.")
+				continue
+			if _notes.has(note_id):
+				push_warning("[rtv_lore_elements] duplicate lore note id skipped: " + note_id)
+				continue
 
-		var definition: Dictionary = raw_definition
-		var note_id := str(definition.get("id", ""))
-		if note_id.is_empty():
-			push_warning("[rtv_lore_elements] skipping note with missing id.")
-			continue
-		if _notes.has(note_id):
-			push_warning("[rtv_lore_elements] duplicate lore note id skipped: " + note_id)
-			continue
+			var pages = definition.get("pages", [])
+			if typeof(pages) != TYPE_ARRAY || pages.is_empty():
+				push_warning("[rtv_lore_elements] skipping note with no pages: " + note_id)
+				continue
 
-		var pages = definition.get("pages", [])
-		if typeof(pages) != TYPE_ARRAY || pages.is_empty():
-			push_warning("[rtv_lore_elements] skipping note with no pages: " + note_id)
-			continue
+			var item_data = _build_note_item(definition)
+			var scene = _build_note_scene(note_id, item_data)
+			if scene == null:
+				push_warning("[rtv_lore_elements] skipping note with invalid pickup scene: " + note_id)
+				continue
 
-		var item_data = _build_note_item(definition)
-		var scene = _build_note_scene(note_id, item_data)
-		if scene == null:
-			push_warning("[rtv_lore_elements] skipping note with invalid pickup scene: " + note_id)
-			continue
+			_notes[note_id] = definition
 
-		_notes[note_id] = definition
-		_note_items[note_id] = item_data
+			if !_lib.register(_lib.Registry.ITEMS, note_id, item_data):
+				push_warning("[rtv_lore_elements] failed to register lore note item: " + note_id)
 
-		if !_lib.register(_lib.Registry.ITEMS, note_id, item_data):
-			push_warning("[rtv_lore_elements] failed to register lore note item: " + note_id)
+			if !_lib.register(_lib.Registry.SCENES, note_id, scene):
+				push_warning("[rtv_lore_elements] failed to register lore note pickup scene: " + note_id)
 
-		if !_lib.register(_lib.Registry.SCENES, note_id, scene):
-			push_warning("[rtv_lore_elements] failed to register lore note pickup scene: " + note_id)
-
-		if !_lib.register(_lib.Registry.LOOT, note_id + "_in_master", {
-			"item": item_data,
-			"table": NOTE_LOOT_TABLE,
-		}):
-			push_warning("[rtv_lore_elements] failed to register lore note in LT_Master: " + note_id)
+			if !_lib.register(_lib.Registry.LOOT, note_id + "_in_master", {
+				"item": item_data,
+				"table": NOTE_LOOT_TABLE,
+			}):
+				push_warning("[rtv_lore_elements] failed to register lore note in LT_Master: " + note_id)
 
 	_register_legacy_hello_note()
 	print("[rtv_lore_elements] loaded " + str(_notes.size()) + " lore notes.")
@@ -155,7 +152,6 @@ func _register_legacy_hello_note() -> void:
 	var item_data = _build_note_item(LEGACY_HELLO_NOTE)
 	var scene = _build_note_scene(LEGACY_HELLO_NOTE_ID, item_data)
 	_notes[LEGACY_HELLO_NOTE_ID] = LEGACY_HELLO_NOTE
-	_note_items[LEGACY_HELLO_NOTE_ID] = item_data
 
 	if !_lib.register(_lib.Registry.ITEMS, LEGACY_HELLO_NOTE_ID, item_data):
 		push_warning("[rtv_lore_elements] failed to register legacy hello note item.")
