@@ -3,6 +3,7 @@
 extends Node
 
 const NOTE_DATA_PATH := "res://rtv-lore-elements/data/notes.json"
+const NOTE_ITEM_PATH_PREFIX := "res://rtv-lore-elements/Items/Lore/Notes/"
 const READER_FONT_PATH := "res://rtv-lore-elements/assets/fonts/Caveat-Regular.ttf"
 const NOTE_LOOT_TABLE := "LT_Master"
 const LEGACY_HELLO_NOTE_ID := "rtv_lore_hello_note"
@@ -36,6 +37,7 @@ var _notes := {}
 var _reader_font = null
 
 var _reader: CanvasLayer = null
+var _reader_interface_node: Node = null
 var _reader_note_id := ""
 var _reader_page_index := 0
 var _reader_title: Label = null
@@ -123,6 +125,10 @@ func _register_lore_content() -> void:
 				continue
 
 			var item_data = _build_note_item(definition)
+			if item_data == null:
+				push_warning("[rtv_lore_elements] skipping note with missing item resource: " + note_id)
+				continue
+
 			var scene = _build_note_scene(note_id, item_data)
 			if scene == null:
 				push_warning("[rtv_lore_elements] skipping note with invalid pickup scene: " + note_id)
@@ -177,8 +183,15 @@ func _load_note_definitions() -> Array:
 	return parsed
 
 func _build_note_item(definition: Dictionary):
-	var item_data = NOTE_ITEM_TEMPLATE.duplicate(true)
 	var note_id := str(definition["id"])
+	var item_data = NOTE_ITEM_TEMPLATE
+	if note_id != LEGACY_HELLO_NOTE_ID:
+		var item_path := NOTE_ITEM_PATH_PREFIX + note_id + ".tres"
+		item_data = load(item_path)
+		if item_data == null:
+			push_warning("[rtv_lore_elements] missing note item resource: " + item_path)
+			return null
+
 	item_data.file = note_id
 	item_data.name = str(definition.get("name", note_id))
 	item_data.inventory = str(definition.get("inventory", item_data.name))
@@ -234,8 +247,10 @@ func _on_interface_use(target_item, _target_grid):
 	if note_id.is_empty():
 		return null
 
+	var interface_node = _lib._caller
 	_lib.skip_super()
-	_open_note_reader(note_id, _lib._caller)
+	_reset_reader_interface_state(interface_node)
+	_open_note_reader(note_id, interface_node)
 	return null
 
 func _on_interface_context_use():
@@ -250,6 +265,7 @@ func _on_interface_context_use():
 	_lib.skip_super()
 	interface_node.HideContext()
 	interface_node.PlayClick()
+	_reset_reader_interface_state(interface_node)
 	_open_note_reader(note_id, interface_node)
 	return null
 
@@ -284,6 +300,7 @@ func _open_note_reader(note_id: String, interface_node: Node) -> void:
 		return
 
 	_close_reader()
+	_reader_interface_node = interface_node
 	_reader_note_id = note_id
 	_reader_page_index = 0
 
@@ -434,7 +451,9 @@ func _get_reader_pages() -> Array:
 func _close_reader() -> void:
 	if _reader && is_instance_valid(_reader):
 		_reader.queue_free()
+	_reset_reader_interface_state(_reader_interface_node)
 	_reader = null
+	_reader_interface_node = null
 	_reader_note_id = ""
 	_reader_page_index = 0
 	_reader_title = null
@@ -442,3 +461,18 @@ func _close_reader() -> void:
 	_reader_page_counter = null
 	_reader_prev_button = null
 	_reader_next_button = null
+
+func _reset_reader_interface_state(interface_node: Node) -> void:
+	if interface_node == null || !is_instance_valid(interface_node):
+		return
+
+	var game_data = interface_node.get("gameData")
+	if game_data != null:
+		game_data.isOccupied = false
+
+	if interface_node.has_method("HideContext"):
+		interface_node.HideContext()
+	if interface_node.has_method("Reset"):
+		interface_node.Reset()
+	if interface_node.has_method("ResetInput"):
+		interface_node.ResetInput()

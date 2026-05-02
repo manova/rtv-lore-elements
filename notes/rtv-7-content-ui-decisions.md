@@ -4,7 +4,9 @@
 
 RTV-7 keeps authored note text in `data/notes.json` rather than adding custom fields to `ItemData`. Phase 0 confirmed that vanilla `ItemData.gd` does not expose arbitrary note metadata, so the mod keeps a side-channel dictionary keyed by `itemData.file`.
 
-Each JSON entry contains the registry id, inventory labels, rarity/value, loot flags, and a page array. `Main.gd` clones the existing hello-note `ItemData` template and packs a matching pickup scene per note so `Registry.ITEMS`, `Registry.SCENES`, and save/load lookups all share the same id.
+Each JSON entry contains the registry id, inventory labels, rarity/value, loot flags, and a page array. Authored notes have matching `ItemData` resources under `Items/Lore/Notes/`, and `Main.gd` loads those resources before syncing metadata from JSON. This keeps note item data as external resources in saves instead of inline runtime duplicates, which avoids typed-array load failures when a save contains picked-up lore notes.
+
+The legacy damaged field note still uses the original `Note_HelloWorld` template for compatibility. Authored note pickup scenes continue to be packed at runtime from the hello-note scene template, but they now point at stable external `ItemData` resources.
 
 ## Loot placement
 
