@@ -45,6 +45,7 @@ var _journal_read_ids: Array = []
 var _journal: CanvasLayer = null
 var _journal_interface_node: Node = null
 var _journal_list: VBoxContainer = null
+var _journal_input_repaired := false
 
 var _reader: CanvasLayer = null
 var _reader_interface_node: Node = null
@@ -132,17 +133,31 @@ func _register_discovery_hooks() -> void:
 		push_warning("[rtv_lore_elements] interface-autoplace-post hook unavailable; journal discovery relies on reader-open fallback.")
 
 func _register_journal_input() -> void:
-	var key_j := InputEventKey.new()
-	key_j.keycode = KEY_J
 	if _lib.register(_lib.Registry.INPUTS, JOURNAL_INPUT_ACTION, {
 		"display_label": "Open Lore Journal",
-		"default_event": key_j,
+		"default_event": _create_journal_input_event(),
 	}):
 		print("[rtv_lore_elements] registered journal input: " + JOURNAL_INPUT_ACTION)
 	elif InputMap.has_action(JOURNAL_INPUT_ACTION):
 		print("[rtv_lore_elements] journal input already registered: " + JOURNAL_INPUT_ACTION)
 	else:
 		push_warning("[rtv_lore_elements] failed to register journal input: " + JOURNAL_INPUT_ACTION)
+
+func _create_journal_input_event() -> InputEventKey:
+	var key_j := InputEventKey.new()
+	key_j.keycode = KEY_J
+	key_j.physical_keycode = KEY_J
+	return key_j
+
+func _ensure_journal_input_action() -> void:
+	if InputMap.has_action(JOURNAL_INPUT_ACTION):
+		return
+
+	InputMap.add_action(JOURNAL_INPUT_ACTION)
+	InputMap.action_add_event(JOURNAL_INPUT_ACTION, _create_journal_input_event())
+	if !_journal_input_repaired:
+		push_warning("[rtv_lore_elements] journal input action was missing; repaired direct InputMap binding.")
+		_journal_input_repaired = true
 
 func _register_lore_content() -> void:
 	var definitions := _load_note_definitions()
@@ -369,7 +384,16 @@ func _get_note_id_from_item_node(item_node) -> String:
 	return note_id
 
 func _is_journal_toggle_event(event: InputEvent) -> bool:
-	return event.is_action_pressed(JOURNAL_INPUT_ACTION)
+	_ensure_journal_input_action()
+	if InputMap.has_action(JOURNAL_INPUT_ACTION) && event.is_action_pressed(JOURNAL_INPUT_ACTION):
+		return true
+
+	if event is InputEventKey:
+		var key_event := event as InputEventKey
+		if key_event.pressed && !key_event.echo:
+			return key_event.keycode == KEY_J || key_event.physical_keycode == KEY_J
+
+	return false
 
 func _is_reader_cancel_event(event: InputEvent) -> bool:
 	return event.is_action_pressed("ui_cancel") || event.is_action_pressed("settings")
