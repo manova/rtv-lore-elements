@@ -7,7 +7,7 @@ RTV-33 adds an optional Mod Configuration Menu page for Lore Elements.
 The config file lives at `user://MCM/rtv_lore_elements/config.ini`.
 
 - `Float/lore_note_spawn_multiplier`: display name `Lore note spawn rate`,
-  default `1.0`, range `0.0` to `3.0`, step `0.1`.
+  default `1.0`, range `0.0` to `20.0`, step `0.1`.
 - `Keycode/lore_journal_hotkey`: display name `Journal hotkey`, default `KEY_J`,
   default type `Key`.
 
@@ -43,8 +43,10 @@ generated or stored container contents.
   Integer portions add guaranteed copies; fractional portions add one more copy
   probabilistically.
 
-This intentionally treats bucket entry count as the available per-item weight,
-because Road to Vostok's loot buckets do not expose numeric item weights.
+The high end of the range is intentionally spammy for smoke tests where we want
+to see notes quickly in fresh loot rolls. This intentionally treats bucket entry
+count as the available per-item weight, because Road to Vostok's loot buckets do
+not expose numeric item weights.
 
 ## Compatibility caveat
 

@@ -16,6 +16,7 @@ const MCM_CONFIG_FILE := MCM_CONFIG_DIR + "/config.ini"
 const MCM_SPAWN_MULTIPLIER_KEY := "lore_note_spawn_multiplier"
 const MCM_JOURNAL_HOTKEY_KEY := "lore_journal_hotkey"
 const DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER := 1.0
+const MAX_LORE_NOTE_SPAWN_MULTIPLIER := 20.0
 const DEFAULT_JOURNAL_HOTKEY := KEY_J
 const DEFAULT_JOURNAL_HOTKEY_TYPE := "Key"
 const LEGACY_HELLO_NOTE_ID := "rtv_lore_hello_note"
@@ -221,7 +222,7 @@ func _build_default_mcm_config() -> ConfigFile:
 		"default": DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER,
 		"value": DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER,
 		"minRange": 0.0,
-		"maxRange": 3.0,
+		"maxRange": MAX_LORE_NOTE_SPAWN_MULTIPLIER,
 		"step": 0.1,
 		"menu_pos": 1,
 		"on_value_changed": "_on_mcm_value_changed"
@@ -249,12 +250,12 @@ func _on_mcm_config_updated(config: ConfigFile) -> void:
 
 func _on_mcm_value_changed(value_id: String, new_value, _menu) -> void:
 	if value_id == MCM_SPAWN_MULTIPLIER_KEY:
-		_lore_note_spawn_multiplier = clampf(float(new_value), 0.0, 3.0)
+		_lore_note_spawn_multiplier = clampf(float(new_value), 0.0, MAX_LORE_NOTE_SPAWN_MULTIPLIER)
 	elif value_id == MCM_JOURNAL_HOTKEY_KEY:
 		_apply_journal_hotkey_event(new_value)
 
 func _apply_mcm_config(config: ConfigFile) -> void:
-	_lore_note_spawn_multiplier = clampf(float(_get_mcm_entry_value(config, "Float", MCM_SPAWN_MULTIPLIER_KEY, DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER)), 0.0, 3.0)
+	_lore_note_spawn_multiplier = clampf(float(_get_mcm_entry_value(config, "Float", MCM_SPAWN_MULTIPLIER_KEY, DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER)), 0.0, MAX_LORE_NOTE_SPAWN_MULTIPLIER)
 	var hotkey_data := _get_mcm_keycode(config, MCM_JOURNAL_HOTKEY_KEY, DEFAULT_JOURNAL_HOTKEY, DEFAULT_JOURNAL_HOTKEY_TYPE)
 	_journal_hotkey_value = int(hotkey_data[0])
 	_journal_hotkey_type = str(hotkey_data[1])
@@ -562,11 +563,12 @@ func _append_lore_note_by_multiplier(bucket: Array, item_data) -> void:
 		return
 
 	bucket.append(item_data)
-	var guaranteed_extra := int(floor(_lore_note_spawn_multiplier)) - 1
+	var multiplier_floor: float = floor(_lore_note_spawn_multiplier)
+	var guaranteed_extra := int(multiplier_floor) - 1
 	for _index in guaranteed_extra:
 		bucket.append(item_data)
 
-	var fractional_extra := _lore_note_spawn_multiplier - floor(_lore_note_spawn_multiplier)
+	var fractional_extra: float = _lore_note_spawn_multiplier - multiplier_floor
 	if fractional_extra > 0.0 && randf() < fractional_extra:
 		bucket.append(item_data)
 
