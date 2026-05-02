@@ -126,10 +126,10 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 
 ### Phase 2 — Authored notes + multi-page reader (4–6 hours)
 
-- [ ] Build out 10 hand-written notes (text in `data/notes.tres` or similar — keeps content separate from code).
-- [ ] Multi-page navigation in reader UI (next/prev, page counter).
-- [ ] Visual styling (paper background, slight rotation, faux-handwriting font from a CC-licensed source).
-- [ ] Notes spawn in appropriate tables — military reports in army crates, civilian letters in residential containers (requires multiple LootTable registrations once tables are mapped).
+- [x] Build out 10 hand-written notes (text in `data/notes.json` — keeps content separate from code).
+- [x] Multi-page navigation in reader UI (next/prev, page counter).
+- [x] Visual styling (paper background, slight rotation, faux-handwriting font from a CC-licensed source).
+- [x] Notes spawn in appropriate tables — military reports in army crates, civilian letters in residential containers (requires multiple LootTable registrations once tables are mapped).
 
 ### Phase 3 — Persistent journal (3–4 hours)
 

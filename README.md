@@ -26,7 +26,7 @@ $GameDir = "C:\Program Files (x86)\Steam\steamapps\common\Road to Vostok"
 New-Item -ItemType Directory -Force -Path .build\rtv-lore-elements | Out-Null
 Copy-Item mod.txt .build\mod.txt -Force
 Copy-Item Main.gd, README.md, PLANNING.md, LICENSE, AGENTS.md, SHARED_CONTEXT.md .build\rtv-lore-elements\ -Force
-Copy-Item Items, notes .build\rtv-lore-elements\ -Recurse -Force
+Copy-Item Items, data, assets, notes .build\rtv-lore-elements\ -Recurse -Force
 Compress-Archive -Path .build\mod.txt, .build\rtv-lore-elements -DestinationPath rtv_lore_elements.zip -Force
 Rename-Item rtv_lore_elements.zip rtv_lore_elements.vmz -Force
 New-Item -ItemType Directory -Force -Path "$GameDir\mods" | Out-Null
@@ -43,3 +43,5 @@ In Developer Mode the loader also accepts loose folders in the game's `mods\` di
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+Bundled font: Caveat Regular by the Caveat Project Authors, licensed under SIL Open Font License 1.1. See [assets/fonts/OFL.txt](assets/fonts/OFL.txt).
