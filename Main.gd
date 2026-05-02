@@ -242,7 +242,7 @@ func _build_default_mcm_config() -> ConfigFile:
 func _ensure_mcm_config_dir() -> void:
 	var user_dir := DirAccess.open("user://")
 	if user_dir != null:
-		user_dir.make_dir_recursive("MCM/rtv_lore_elements")
+		user_dir.make_dir_recursive(MCM_CONFIG_DIR.trim_prefix("user://"))
 
 func _on_mcm_config_updated(config: ConfigFile) -> void:
 	_apply_mcm_config(config)
