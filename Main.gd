@@ -9,6 +9,16 @@ const JOURNAL_DATA_PATH := "user://lore-elements-journal.cfg"
 const JOURNAL_INPUT_ACTION := "rtv_lore_open_journal"
 const READER_FONT_PATH := "res://rtv-lore-elements/assets/fonts/Caveat-Regular.ttf"
 const NOTE_LOOT_TABLE := "LT_Master"
+const MCM_HELPERS_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
+const MCM_MOD_ID := "rtv_lore_elements"
+const MCM_CONFIG_DIR := "user://MCM/rtv_lore_elements"
+const MCM_CONFIG_FILE := MCM_CONFIG_DIR + "/config.ini"
+const MCM_SPAWN_MULTIPLIER_KEY := "lore_note_spawn_multiplier"
+const MCM_JOURNAL_HOTKEY_KEY := "lore_journal_hotkey"
+const DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER := 1.0
+const MAX_LORE_NOTE_SPAWN_MULTIPLIER := 20.0
+const DEFAULT_JOURNAL_HOTKEY := KEY_J
+const DEFAULT_JOURNAL_HOTKEY_TYPE := "Key"
 const LEGACY_HELLO_NOTE_ID := "rtv_lore_hello_note"
 const LEGACY_HELLO_NOTE := {
 	"id": LEGACY_HELLO_NOTE_ID,
@@ -36,9 +46,15 @@ var _use_hook_id := -1
 var _context_use_hook_id := -1
 var _ui_manager_input_hook_id := -1
 var _auto_place_hook_id := -1
+var _lootcontainer_fill_buckets_hook_id := -1
+var _lootsimulation_fill_buckets_hook_id := -1
 
 var _notes := {}
 var _reader_font = null
+var _mcm_helpers = null
+var _lore_note_spawn_multiplier := DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER
+var _journal_hotkey_value := DEFAULT_JOURNAL_HOTKEY
+var _journal_hotkey_type := DEFAULT_JOURNAL_HOTKEY_TYPE
 
 var _journal_discovered_ids: Array = []
 var _journal_read_ids: Array = []
@@ -99,6 +115,8 @@ func _on_lib_ready() -> void:
 	_register_ui_manager_input_hook()
 	_register_discovery_hooks()
 	_register_journal_input()
+	_register_mcm_config()
+	_register_loot_multiplier_hooks()
 	_register_lore_content()
 	_load_journal()
 
@@ -138,6 +156,19 @@ func _register_discovery_hooks() -> void:
 	else:
 		push_warning("[rtv_lore_elements] interface-autoplace-post hook unavailable; journal discovery relies on reader-open fallback.")
 
+func _register_loot_multiplier_hooks() -> void:
+	_lootcontainer_fill_buckets_hook_id = _lib.hook("lootcontainer-fillbuckets-post", _on_loot_fill_buckets_post, 40)
+	if _lootcontainer_fill_buckets_hook_id != -1:
+		print("[rtv_lore_elements] registered lootcontainer-fillbuckets-post spawn multiplier hook.")
+	else:
+		push_warning("[rtv_lore_elements] lootcontainer-fillbuckets-post hook unavailable; MCM spawn multiplier will not affect containers.")
+
+	_lootsimulation_fill_buckets_hook_id = _lib.hook("lootsimulation-fillbuckets-post", _on_loot_fill_buckets_post, 40)
+	if _lootsimulation_fill_buckets_hook_id != -1:
+		print("[rtv_lore_elements] registered lootsimulation-fillbuckets-post spawn multiplier hook.")
+	else:
+		push_warning("[rtv_lore_elements] lootsimulation-fillbuckets-post hook unavailable; MCM spawn multiplier will not affect loose loot.")
+
 func _register_journal_input() -> void:
 	if _lib.register(_lib.Registry.INPUTS, JOURNAL_INPUT_ACTION, {
 		"display_label": "Open Lore Journal",
@@ -149,18 +180,137 @@ func _register_journal_input() -> void:
 	else:
 		push_warning("[rtv_lore_elements] failed to register journal input: " + JOURNAL_INPUT_ACTION)
 
-func _create_journal_input_event() -> InputEventKey:
-	var key_j := InputEventKey.new()
-	key_j.keycode = KEY_J
-	key_j.physical_keycode = KEY_J
-	return key_j
+func _register_mcm_config() -> void:
+	var config := _build_default_mcm_config()
+	if FileAccess.file_exists(MCM_CONFIG_FILE):
+		config.load(MCM_CONFIG_FILE)
+
+	if ResourceLoader.exists(MCM_HELPERS_PATH):
+		_mcm_helpers = load(MCM_HELPERS_PATH)
+
+	if _mcm_helpers != null:
+		if !FileAccess.file_exists(MCM_CONFIG_FILE):
+			_ensure_mcm_config_dir()
+			var save_error := config.save(MCM_CONFIG_FILE)
+			if save_error != OK:
+				push_warning("[rtv_lore_elements] failed to create MCM config: " + str(save_error))
+		else:
+			_mcm_helpers.CheckConfigurationHasUpdated(MCM_MOD_ID, _build_default_mcm_config(), MCM_CONFIG_FILE)
+			config.load(MCM_CONFIG_FILE)
+
+		_mcm_helpers.RegisterConfiguration(
+			MCM_MOD_ID,
+			"Lore Elements",
+			MCM_CONFIG_DIR,
+			"Configure lore note spawn rate and the lore journal hotkey.",
+			{
+				"config.ini": _on_mcm_config_updated
+			},
+			self
+		)
+		print("[rtv_lore_elements] registered MCM configuration.")
+	else:
+		print("[rtv_lore_elements] MCM not installed; using default Lore Elements config.")
+
+	_apply_mcm_config(config)
+
+func _build_default_mcm_config() -> ConfigFile:
+	var config := ConfigFile.new()
+	config.set_value("Float", MCM_SPAWN_MULTIPLIER_KEY, {
+		"name": "Lore note spawn rate",
+		"tooltip": "Multiplies how often Lore Elements notes appear in newly generated loot.",
+		"default": DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER,
+		"value": DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER,
+		"minRange": 0.0,
+		"maxRange": MAX_LORE_NOTE_SPAWN_MULTIPLIER,
+		"step": 0.1,
+		"menu_pos": 1,
+		"on_value_changed": "_on_mcm_value_changed"
+	})
+	config.set_value("Keycode", MCM_JOURNAL_HOTKEY_KEY, {
+		"name": "Journal hotkey",
+		"tooltip": "Opens the Lore Elements journal.",
+		"default": DEFAULT_JOURNAL_HOTKEY,
+		"default_type": DEFAULT_JOURNAL_HOTKEY_TYPE,
+		"value": DEFAULT_JOURNAL_HOTKEY,
+		"type": DEFAULT_JOURNAL_HOTKEY_TYPE,
+		"menu_pos": 2,
+		"on_value_changed": "_on_mcm_value_changed"
+	})
+	return config
+
+func _ensure_mcm_config_dir() -> void:
+	var user_dir := DirAccess.open("user://")
+	if user_dir != null:
+		user_dir.make_dir_recursive(MCM_CONFIG_DIR.trim_prefix("user://"))
+
+func _on_mcm_config_updated(config: ConfigFile) -> void:
+	_apply_mcm_config(config)
+	print("[rtv_lore_elements] MCM configuration updated.")
+
+func _on_mcm_value_changed(value_id: String, new_value, _menu) -> void:
+	if value_id == MCM_SPAWN_MULTIPLIER_KEY:
+		_lore_note_spawn_multiplier = clampf(float(new_value), 0.0, MAX_LORE_NOTE_SPAWN_MULTIPLIER)
+	elif value_id == MCM_JOURNAL_HOTKEY_KEY:
+		_apply_journal_hotkey_event(new_value)
+
+func _apply_mcm_config(config: ConfigFile) -> void:
+	_lore_note_spawn_multiplier = clampf(float(_get_mcm_entry_value(config, "Float", MCM_SPAWN_MULTIPLIER_KEY, DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER)), 0.0, MAX_LORE_NOTE_SPAWN_MULTIPLIER)
+	var hotkey_data := _get_mcm_keycode(config, MCM_JOURNAL_HOTKEY_KEY, DEFAULT_JOURNAL_HOTKEY, DEFAULT_JOURNAL_HOTKEY_TYPE)
+	_journal_hotkey_value = int(hotkey_data[0])
+	_journal_hotkey_type = str(hotkey_data[1])
+	if _journal_hotkey_type != "Mouse":
+		_journal_hotkey_type = "Key"
+	_sync_journal_input_action()
+
+func _apply_journal_hotkey_event(event) -> void:
+	if event is InputEventMouseButton:
+		_journal_hotkey_value = event.button_index
+		_journal_hotkey_type = "Mouse"
+		_sync_journal_input_action()
+	elif event is InputEventKey:
+		_journal_hotkey_value = event.physical_keycode
+		if _journal_hotkey_value == 0:
+			_journal_hotkey_value = event.keycode
+		_journal_hotkey_type = "Key"
+		_sync_journal_input_action()
+
+func _get_mcm_entry_value(config: ConfigFile, section: String, key: String, fallback):
+	var entry = config.get_value(section, key, null)
+	if typeof(entry) != TYPE_DICTIONARY:
+		return fallback
+	return entry.get("value", fallback)
+
+func _get_mcm_keycode(config: ConfigFile, key: String, fallback_value: int, fallback_type: String) -> Array:
+	var entry = config.get_value("Keycode", key, null)
+	if typeof(entry) != TYPE_DICTIONARY:
+		return [fallback_value, fallback_type]
+	return [entry.get("value", fallback_value), entry.get("type", fallback_type)]
+
+func _create_journal_input_event(key_value := DEFAULT_JOURNAL_HOTKEY, key_type := DEFAULT_JOURNAL_HOTKEY_TYPE) -> InputEvent:
+	if key_type == "Mouse":
+		var mouse_event := InputEventMouseButton.new()
+		mouse_event.button_index = int(key_value)
+		return mouse_event
+
+	var key_event := InputEventKey.new()
+	key_event.keycode = int(key_value)
+	key_event.physical_keycode = int(key_value)
+	return key_event
+
+func _sync_journal_input_action() -> void:
+	if !InputMap.has_action(JOURNAL_INPUT_ACTION):
+		InputMap.add_action(JOURNAL_INPUT_ACTION)
+	else:
+		InputMap.action_erase_events(JOURNAL_INPUT_ACTION)
+
+	InputMap.action_add_event(JOURNAL_INPUT_ACTION, _create_journal_input_event(_journal_hotkey_value, _journal_hotkey_type))
 
 func _ensure_journal_input_action() -> bool:
-	if InputMap.has_action(JOURNAL_INPUT_ACTION):
+	if InputMap.has_action(JOURNAL_INPUT_ACTION) && !InputMap.action_get_events(JOURNAL_INPUT_ACTION).is_empty():
 		return false
 
-	InputMap.add_action(JOURNAL_INPUT_ACTION)
-	InputMap.action_add_event(JOURNAL_INPUT_ACTION, _create_journal_input_event())
+	_sync_journal_input_action()
 	if !_journal_input_repaired:
 		push_warning("[rtv_lore_elements] journal input action was missing; repaired direct InputMap binding.")
 		_journal_input_repaired = true
@@ -378,6 +528,55 @@ func _on_interface_auto_place_post(target_item, target_grid, _source_grid, _used
 
 	return null
 
+func _on_loot_fill_buckets_post():
+	_apply_lore_spawn_multiplier_to_buckets(_lib._caller)
+	return null
+
+func _apply_lore_spawn_multiplier_to_buckets(bucket_owner) -> void:
+	if bucket_owner == null || !is_instance_valid(bucket_owner):
+		return
+	if is_equal_approx(_lore_note_spawn_multiplier, 1.0):
+		return
+
+	for bucket_name in ["commonBucket", "rareBucket", "legendaryBucket"]:
+		var bucket = bucket_owner.get(bucket_name)
+		if typeof(bucket) != TYPE_ARRAY:
+			continue
+
+		var adjusted_bucket: Array[ItemData] = []
+		for item_data in bucket:
+			if !_is_lore_note_item_data(item_data):
+				adjusted_bucket.append(item_data)
+				continue
+
+			_append_lore_note_by_multiplier(adjusted_bucket, item_data)
+
+		bucket_owner.set(bucket_name, adjusted_bucket)
+
+func _append_lore_note_by_multiplier(bucket: Array, item_data) -> void:
+	if _lore_note_spawn_multiplier <= 0.0:
+		return
+
+	if _lore_note_spawn_multiplier < 1.0:
+		if randf() < _lore_note_spawn_multiplier:
+			bucket.append(item_data)
+		return
+
+	bucket.append(item_data)
+	var multiplier_floor: float = floor(_lore_note_spawn_multiplier)
+	var guaranteed_extra := int(multiplier_floor) - 1
+	for _index in guaranteed_extra:
+		bucket.append(item_data)
+
+	var fractional_extra: float = _lore_note_spawn_multiplier - multiplier_floor
+	if fractional_extra > 0.0 && randf() < fractional_extra:
+		bucket.append(item_data)
+
+func _is_lore_note_item_data(item_data) -> bool:
+	if item_data == null:
+		return false
+	return _notes.has(str(item_data.file))
+
 func _get_note_id_from_item_node(item_node) -> String:
 	if item_node == null:
 		return ""
@@ -397,10 +596,18 @@ func _is_journal_toggle_event(event: InputEvent) -> bool:
 	if InputMap.has_action(JOURNAL_INPUT_ACTION) && event.is_action_pressed(JOURNAL_INPUT_ACTION):
 		return true
 
-	if repaired_action && event is InputEventKey:
+	if repaired_action:
+		return _event_matches_journal_hotkey(event)
+
+	return false
+
+func _event_matches_journal_hotkey(event: InputEvent) -> bool:
+	if _journal_hotkey_type == "Mouse":
+		return event is InputEventMouseButton && event.pressed && event.button_index == _journal_hotkey_value
+
+	if event is InputEventKey:
 		var key_event := event as InputEventKey
-		if key_event.pressed && !key_event.echo:
-			return key_event.keycode == KEY_J || key_event.physical_keycode == KEY_J
+		return key_event.pressed && !key_event.echo && (key_event.keycode == _journal_hotkey_value || key_event.physical_keycode == _journal_hotkey_value)
 
 	return false
 

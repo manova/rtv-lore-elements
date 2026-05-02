@@ -19,6 +19,7 @@ Metro Mod Loader v3.0+, Mod Configuration Menu (recommended)
 - Find lore notes through normal loot.
 - Right-click a note and choose `Read` to open the paginated reader.
 - Press `J` in-game or while inventory is open to view discovered notes in the persistent journal.
+- If Mod Configuration Menu is installed, use the `Lore Elements` page to adjust lore note spawn rate or rebind the journal hotkey.
 
 ## Development
 

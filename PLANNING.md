@@ -141,7 +141,7 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 
 - [ ] Audio voiceover hooks (optional per note).
 - [ ] Pinned-location notes via `AI_TYPES` or scene patching (depends on map structure).
-- [ ] MCM config: spawn rate multiplier, journal hotkey customization.
+- [x] MCM config: spawn rate multiplier, journal hotkey customization.
 - [ ] Localization scaffold.
 
 ### Phase 5 — Public lore framework (v1.0)
