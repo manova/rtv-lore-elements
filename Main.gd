@@ -17,7 +17,7 @@ const LEGACY_HELLO_NOTE := {
 	"rotated": "Field Note",
 	"equipment": "F. Note",
 	"display": "F. Note",
-	"rarity": 0,
+	"rarity": 1,
 	"value": 25,
 	"civilian": true,
 	"industrial": true,
