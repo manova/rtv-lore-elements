@@ -152,15 +152,16 @@ func _create_journal_input_event() -> InputEventKey:
 	key_j.physical_keycode = KEY_J
 	return key_j
 
-func _ensure_journal_input_action() -> void:
+func _ensure_journal_input_action() -> bool:
 	if InputMap.has_action(JOURNAL_INPUT_ACTION):
-		return
+		return false
 
 	InputMap.add_action(JOURNAL_INPUT_ACTION)
 	InputMap.action_add_event(JOURNAL_INPUT_ACTION, _create_journal_input_event())
 	if !_journal_input_repaired:
 		push_warning("[rtv_lore_elements] journal input action was missing; repaired direct InputMap binding.")
 		_journal_input_repaired = true
+	return true
 
 func _register_lore_content() -> void:
 	var definitions := _load_note_definitions()
@@ -387,11 +388,11 @@ func _get_note_id_from_item_node(item_node) -> String:
 	return note_id
 
 func _is_journal_toggle_event(event: InputEvent) -> bool:
-	_ensure_journal_input_action()
+	var repaired_action := _ensure_journal_input_action()
 	if InputMap.has_action(JOURNAL_INPUT_ACTION) && event.is_action_pressed(JOURNAL_INPUT_ACTION):
 		return true
 
-	if event is InputEventKey:
+	if repaired_action && event is InputEventKey:
 		var key_event := event as InputEventKey
 		if key_event.pressed && !key_event.echo:
 			return key_event.keycode == KEY_J || key_event.physical_keycode == KEY_J
@@ -584,7 +585,7 @@ func _record_note_read(note_id: String, should_save: bool) -> bool:
 		_journal_read_ids.append(note_id)
 		changed = true
 
-	if should_save:
+	if should_save && changed:
 		_save_journal()
 	return changed
 
@@ -723,10 +724,9 @@ func _close_journal() -> void:
 	var had_journal := _journal && is_instance_valid(_journal)
 	if _journal && is_instance_valid(_journal):
 		_journal.queue_free()
-	_reset_reader_interface_state(_journal_interface_node)
 	if had_journal:
 		_release_modal_controls()
-	_save_journal()
+		_save_journal()
 	_journal = null
 	_journal_interface_node = null
 	_journal_list = null
@@ -793,7 +793,7 @@ func _close_reader() -> void:
 	_reset_reader_interface_state(_reader_interface_node)
 	if had_reader:
 		_release_modal_controls()
-	_save_journal()
+		_save_journal()
 	_reader = null
 	_reader_interface_node = null
 	_reader_note_id = ""
