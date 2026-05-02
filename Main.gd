@@ -156,6 +156,10 @@ func _register_legacy_hello_note() -> void:
 		return
 
 	var item_data = _build_note_item(LEGACY_HELLO_NOTE)
+	if item_data == null:
+		push_warning("[rtv_lore_elements] skipping legacy hello note with missing item resource.")
+		return
+
 	var scene = _build_note_scene(LEGACY_HELLO_NOTE_ID, item_data)
 	_notes[LEGACY_HELLO_NOTE_ID] = LEGACY_HELLO_NOTE
 
