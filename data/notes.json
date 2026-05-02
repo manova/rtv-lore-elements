@@ -168,5 +168,39 @@
       "Pea soup for when everyone arrives late.\n\nSoak peas before sunrise. Add onion if there is onion. Add pork if somebody is proud. Add water when the pot starts sounding angry.",
       "Serves six on a good day and twelve during bad news. Keep stirring after the first siren. Food burns quickly when people stop watching it."
     ]
+  },
+  {
+    "id": "rtv_lore_smuggler_ledger",
+    "name": "Smuggler's Ledger",
+    "inventory": "Ledger Page",
+    "rotated": "Ledger Page",
+    "equipment": "Ledger",
+    "display": "Ledger",
+    "rarity": 0,
+    "value": 30,
+    "civilian": false,
+    "industrial": true,
+    "military": false,
+    "pages": [
+      "Run 14. Border at km 7, Tuesday, moonless.\n\nRyzhiy carries the soft load. Mäkki drives. The third one — no. DO NOT bring him this time. He talks to his wife.\n\nOwed: 400 € to the cousin in Kotka, 60,000 ₽ to nobody you ask about, two cartons to the man at the gate who isn't from here.",
+      "Don't write the name of the truck.\n\nIf the lights on the eastern fence are out, that means they want us through. If the lights are on, that means they want to see us. Both mean the same thing now.\n\nBurn this if you find it before me."
+    ]
+  },
+  {
+    "id": "rtv_lore_letter_tampere",
+    "name": "Letter from Tampere",
+    "inventory": "Tampere Letter",
+    "rotated": "Tampere Letter",
+    "equipment": "Letter",
+    "display": "Letter",
+    "rarity": 0,
+    "value": 10,
+    "civilian": true,
+    "industrial": false,
+    "military": false,
+    "pages": [
+      "My boy,\n\nThe candle by the window is the same candle. I light it at six and again before bed, like always, so you know which window is ours if you come back at night.\n\nThe Virtanen boy came home last Thursday. He is thinner. He sat with his mother for an hour and did not speak. The other one did not come.",
+      "Do not write back if it costs you to send a letter. I would rather you keep the stamp.\n\nEat what you can. Sleep when there is sleep. The pear tree by the shed has the best year I can remember and there will be enough for both of us if you hurry.\n\n— Mama"
+    ]
   }
 ]
