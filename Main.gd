@@ -101,6 +101,7 @@ var _journal_input_repaired := false
 var _modal_controls_active := false
 var _modal_previous_mouse_mode := Input.MOUSE_MODE_CAPTURED
 var _modal_previous_freeze := false
+var _modal_previous_occupied := false
 
 var _reader: CanvasLayer = null
 var _reader_interface_node: Node = null
@@ -1172,16 +1173,13 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader.name = "RtvLoreNoteReader"
 	_reader.layer = 140
 
-	var overlay := ColorRect.new()
-	overlay.name = "Overlay"
-	overlay.color = Color(0.02, 0.02, 0.018, 0.82)
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_reader.add_child(overlay)
+	var modal_root := _build_modal_root("ReaderModalRoot", Color(0.02, 0.02, 0.018, 0.82))
+	_reader.add_child(modal_root)
 
 	var center := CenterContainer.new()
 	center.name = "Center"
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_reader.add_child(center)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	modal_root.add_child(center)
 
 	var panel := PanelContainer.new()
 	panel.name = "Paper"
@@ -1221,6 +1219,7 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader_body.bbcode_enabled = false
 	_reader_body.fit_content = false
 	_reader_body.scroll_active = true
+	_reader_body.mouse_filter = Control.MOUSE_FILTER_STOP
 	_reader_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_reader_body.custom_minimum_size = Vector2(0, maxf(210.0, paper_size.y - float(margins["top"]) - float(margins["bottom"]) - 118.0))
 	_reader_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -1255,7 +1254,7 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 
 	var close_button := _build_reader_button(_ui_text("common.close"), Vector2(96, 32), note_style)
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	close_button.pressed.connect(_close_reader)
+	close_button.pressed.connect(_request_close_reader)
 	layout.add_child(close_button)
 
 	var attach_parent := _get_overlay_attach_parent(interface_node)
@@ -1345,16 +1344,13 @@ func _open_journal(interface_node: Node) -> void:
 	_journal.name = "RtvLoreJournal"
 	_journal.layer = 120
 
-	var overlay := ColorRect.new()
-	overlay.name = "Overlay"
-	overlay.color = Color(0.02, 0.02, 0.018, 0.76)
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_journal.add_child(overlay)
+	var modal_root := _build_modal_root("JournalModalRoot", Color(0.02, 0.02, 0.018, 0.76))
+	_journal.add_child(modal_root)
 
 	var center := CenterContainer.new()
 	center.name = "Center"
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_journal.add_child(center)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	modal_root.add_child(center)
 
 	var panel := PanelContainer.new()
 	panel.name = "JournalPanel"
@@ -1396,7 +1392,7 @@ func _open_journal(interface_node: Node) -> void:
 	close_button.text = _ui_text("common.close")
 	close_button.custom_minimum_size = Vector2(120, 36)
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	close_button.pressed.connect(_close_journal)
+	close_button.pressed.connect(_request_close_journal)
 	layout.add_child(close_button)
 
 	var attach_parent := _get_overlay_attach_parent(interface_node)
@@ -1408,6 +1404,43 @@ func _get_overlay_attach_parent(interface_node: Node) -> Node:
 	if get_tree().current_scene != null:
 		return get_tree().current_scene
 	return self
+
+func _build_modal_root(root_name: String, overlay_color: Color) -> Control:
+	var root := Control.new()
+	root.name = root_name
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_sync_modal_root_size(root)
+	root.mouse_filter = Control.MOUSE_FILTER_STOP
+	root.gui_input.connect(_consume_modal_gui_input.bind(root))
+	root.call_deferred("set_size", _get_modal_viewport_size())
+
+	var overlay := ColorRect.new()
+	overlay.name = "Overlay"
+	overlay.color = overlay_color
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(overlay)
+	return root
+
+func _consume_modal_gui_input(_event: InputEvent, modal_root: Control) -> void:
+	if modal_root != null && is_instance_valid(modal_root):
+		modal_root.accept_event()
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.set_input_as_handled()
+
+func _sync_modal_root_size(modal_root: Control) -> void:
+	if modal_root == null || !is_instance_valid(modal_root):
+		return
+	modal_root.position = Vector2.ZERO
+	modal_root.size = _get_modal_viewport_size()
+	modal_root.custom_minimum_size = modal_root.size
+
+func _get_modal_viewport_size() -> Vector2:
+	var viewport := get_viewport()
+	if viewport == null:
+		return Vector2(1920, 1080)
+	return viewport.get_visible_rect().size
 
 func _build_journal_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -1477,6 +1510,12 @@ func _close_journal(should_release_controls := true, should_save := true) -> voi
 	_journal = null
 	_journal_interface_node = null
 	_journal_list = null
+
+func _request_close_journal() -> void:
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.set_input_as_handled()
+	call_deferred("_close_journal")
 
 func _build_paper_style(note_style: Dictionary) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -1706,13 +1745,15 @@ func _close_reader() -> void:
 	_reader_next_button = null
 	_reader_from_journal = false
 
+func _request_close_reader() -> void:
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.set_input_as_handled()
+	call_deferred("_close_reader")
+
 func _reset_reader_interface_state(interface_node: Node) -> void:
 	if interface_node == null || !is_instance_valid(interface_node):
 		return
-
-	var game_data = interface_node.get("gameData")
-	if game_data != null:
-		game_data.isOccupied = false
 
 	if interface_node.has_method("HideContext"):
 		interface_node.HideContext()
@@ -1727,7 +1768,9 @@ func _acquire_modal_controls() -> void:
 
 	_modal_previous_mouse_mode = Input.get_mouse_mode()
 	_modal_previous_freeze = GAME_DATA.freeze
+	_modal_previous_occupied = GAME_DATA.isOccupied
 	GAME_DATA.freeze = true
+	GAME_DATA.isOccupied = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	_modal_controls_active = true
 
@@ -1736,7 +1779,9 @@ func _release_modal_controls() -> void:
 		return
 
 	GAME_DATA.freeze = _modal_previous_freeze
+	GAME_DATA.isOccupied = _modal_previous_occupied
 	Input.set_mouse_mode(_modal_previous_mouse_mode)
 	_modal_controls_active = false
 	_modal_previous_mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_modal_previous_freeze = false
+	_modal_previous_occupied = false
