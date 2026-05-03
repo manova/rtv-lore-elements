@@ -84,6 +84,10 @@
     "civilian": false,
     "industrial": true,
     "military": false,
+    "pinned_location": {
+      "x": 1548,
+      "y": 1030
+    },
     "pages": [
       "Freight yard transfer sheet, torn at bottom.\n\nWagon 03: tools, dry batteries, water filters.\nWagon 04: medical cartons, winter blankets.\nWagon 05: sealed crates, no civilian inventory.",
       "The dispatcher stamped the convoy as delayed, but we heard it leave before sunrise with no lights. Someone scraped the destination code off every crate in wagon 05."
@@ -138,6 +142,10 @@
     "civilian": true,
     "industrial": false,
     "military": false,
+    "pinned_location": {
+      "x": 1376,
+      "y": 994
+    },
     "pages": [
       "Classroom supplies for shelter use:\n\nChalk, tape, scissors, old maps, sports mats, blankets from storage, batteries from science room, radio from headmaster office.",
       "Names checked in: 47.\nNames reunited: 31.\nNames moved north: 12.\nNames still listening for parents at the windows: 4."
@@ -156,6 +164,10 @@
     "civilian": false,
     "industrial": true,
     "military": true,
+    "pinned_location": {
+      "x": 2463,
+      "y": 1123
+    },
     "pages": [
       "Recorded on emergency channel 6.\n\n03:42: Unknown station requests road status.\n03:44: Border command orders silence.\n03:47: Unknown station repeats the names of three missing patrolmen.",
       "03:51: Carrier wave, then music from an old children's broadcast.\n03:53: Transmission ends with two words in Finnish: do not open."
@@ -264,6 +276,10 @@
     "civilian": true,
     "industrial": false,
     "military": false,
+    "pinned_location": {
+      "x": 1248,
+      "y": 1123
+    },
     "pages": [
       "MY HOUSE\n\ndoor\nmy BED. me and TUOMAS\nMAMA WORK desk\nLIVING. tv broke\nthe BLACK ROOM\nBAFROOM. window\n\nstairs go DOWN",
       "dont go in the kitchen\nmama said\n\nmama is sleeping in the LIVING\nshe is tired\n\nat night it sounds like the tap\nbut the tap is off\ni checked"
@@ -282,6 +298,10 @@
     "civilian": true,
     "industrial": false,
     "military": false,
+    "pinned_location": {
+      "x": 1248,
+      "y": 930
+    },
     "pages": [
       "ORDER NO. 7\nKYMENLAAKSO REGIONAL ADMINISTRATION\n[stamp: legible]\n\nTo all civilian residents of Area 05:\n\nRemain in your residence. Close all\nwindows. Await transport at your\n[obscured]\nwithin 48 hours.\n\nDo not [obscured] west.\nDo not gather at [obscured].\n\nIssued: 22.06\nSigned: District Coordinator",
       "ORDER NO. 11\n[stamp: unfamiliar — bilingual seal]\n\nTo all civilians remaining in Area 05:\n\nEvacuate west on foot before sunset.\nDo not wait for transport.\nCarry no more than you can run with.\n\nRoutes: Highway E18 west.\nDo not use rail.\n\nIssued: 29.06\nBy authority of the [obscured] command."
