@@ -1,25 +1,39 @@
 # Lore Elements
 
-> Readable notes and environmental storytelling for Road to Vostok.
+Readable notes and environmental storytelling for **Road to Vostok**.
 
-**Status**: pre-release / scaffold. See [PLANNING.md](PLANNING.md) for the full project plan.
+Lore Elements adds discoverable notes, letters, reports, lists, and map fragments to existing loot. Each note can be read in a styled multi-page reader, saved into a persistent journal, and, for selected notes, shown as a discovered pin on the in-game map.
 
-## Quick links
+## Requirements
 
-- [Planning document](PLANNING.md) — read first
-- [Shared context for the mod set](../rtv-mods-shared-context) — framework primer (or check the parent workspace)
-- [Codex agent guide](AGENTS.md) — instructions for AI dev agent
+- Road to Vostok, current public build
+- Metro Mod Loader `v3.1.1` or newer
+- Mod Configuration Menu is optional but recommended
 
-## Dependencies
+## Install
 
-Metro Mod Loader v3.0+, Mod Configuration Menu (recommended)
+1. Download `rtv_lore_elements.vmz` from GitHub Releases or ModWorkshop.
+2. Drop the `.vmz` file into the Road to Vostok `mods` folder.
+3. Launch the game through the Metro-enabled setup.
+
+In Developer Mode the loader can also read loose mod folders, but packaged releases should keep `mod.txt` at archive root and the source files under `rtv-lore-elements/`.
 
 ## Usage
 
 - Find lore notes through normal loot.
-- Right-click a note and choose `Read` to open the paginated reader.
-- Press `J` in-game or while inventory is open to view discovered notes in the persistent journal.
-- If Mod Configuration Menu is installed, use the `Lore Elements` page to adjust lore note spawn rate or rebind the journal hotkey.
+- Right-click a note and choose `Read` to open the reader.
+- Use `Prev`, `Next`, `Close`, or Escape/settings to navigate and close notes.
+- Press `J` by default to open the journal and re-read discovered notes.
+- Some discovered notes add pins to the in-game map.
+
+## Configuration
+
+With Mod Configuration Menu installed, open the `Lore Elements` page to configure:
+
+- `Lore note spawn rate`: multiplies how often lore notes appear in newly generated loot.
+- `Journal hotkey`: changes the key bound to the persistent journal.
+
+![Lore Elements MCM settings](media/mcm_settings.png)
 
 ## Media
 
@@ -27,40 +41,22 @@ Metro Mod Loader v3.0+, Mod Configuration Menu (recommended)
 
 ![ModWorkshop banner](media/modworkshop_banner.png)
 
-## Configuration
+## Links
 
-Mod Configuration Menu is optional but recommended. The `Lore Elements` page lets you adjust lore note spawn rate and rebind the journal hotkey.
+- Source: <https://github.com/manova/rtv-lore-elements>
+- Releases: <https://github.com/manova/rtv-lore-elements/releases>
+- <!-- MODWORKSHOP_LINK --> ModWorkshop link coming with v0.1.0 release — see Releases.
 
-![Lore Elements MCM settings](media/mcm_settings.png)
+## Contributing
 
-## Development
-
-### Local install (Windows)
-
-```powershell
-# From the repo root, after editing.
-# mod.txt must remain at archive root; source files live under rtv-lore-elements/
-# because mod.txt autoloads res://rtv-lore-elements/Main.gd.
-$GameDir = "C:\Program Files (x86)\Steam\steamapps\common\Road to Vostok"
-New-Item -ItemType Directory -Force -Path .build\rtv-lore-elements | Out-Null
-Copy-Item mod.txt .build\mod.txt -Force
-Copy-Item Main.gd, README.md, PLANNING.md, LICENSE, AGENTS.md, SHARED_CONTEXT.md .build\rtv-lore-elements\ -Force
-Copy-Item Items, data, assets, notes .build\rtv-lore-elements\ -Recurse -Force
-Compress-Archive -Path .build\mod.txt, .build\rtv-lore-elements -DestinationPath rtv_lore_elements.zip -Force
-Rename-Item rtv_lore_elements.zip rtv_lore_elements.vmz -Force
-New-Item -ItemType Directory -Force -Path "$GameDir\mods" | Out-Null
-Copy-Item rtv_lore_elements.vmz "$GameDir\mods\" -Force
-```
-
-In Developer Mode the loader also accepts loose folders in the game's `mods\` directory, but the folder contents still need the same package shape: `mod.txt` at root and source files under `rtv-lore-elements\`.
-
-### Logs
-
-- Loader log: `%APPDATA%\Road to Vostok\logs\godot.log`
-- Conflicts (Developer Mode only): `%APPDATA%\Road to Vostok\modloader_conflicts.txt`
+Bug reports and small fixes are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. Lore/content changes are curated for tone and should start with an issue before a PR.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Code, tooling, manifests, JSON schemas/configuration, and implementation documentation are licensed under the MIT License. See [LICENSE](LICENSE).
+
+Authored lore/content is licensed under Creative Commons Attribution 4.0 International. See [LICENSE-CONTENT](LICENSE-CONTENT). This content license covers `data/notes.json`, user-facing strings in `data/strings/en.json`, and lore note text/name content in `Items/Lore/Notes/*.tres`.
+
+Road to Vostok and original Road to Vostok assets are copyright Plumato Games. Lore Elements does not redistribute copied RtV textures, sounds, or models; it references vanilla game resources at runtime and includes screenshots captured in-game for presentation.
 
 Bundled font: Caveat Regular by the Caveat Project Authors, licensed under SIL Open Font License 1.1. See [assets/fonts/OFL.txt](assets/fonts/OFL.txt).

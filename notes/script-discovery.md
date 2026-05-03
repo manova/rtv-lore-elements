@@ -9,11 +9,11 @@ Linear: RTV-5
 - Current loader config: `<RtV user data>/mod_config.cfg`
 - Current conflict log: `<RtV user data>/modloader_conflicts.txt`
 - Prior extracted scripts: `<prior extracted scripts>/Scripts`
-- PCK extraction: `<WSL recovery>/rtv-extracted-pck`
-- Focused GDRE recovery: `<WSL recovery>/rtv-gdre-recovered`
-- Full GDRE recovery: `<WSL recovery>/rtv-gdre-full`
+- PCK extraction: local vanilla recovery workspace
+- Focused GDRE recovery: local vanilla recovery workspace
+- Full GDRE recovery: local vanilla recovery workspace
 
-WSL now has `unzip`, `7z`, `bsdtar`, `godotpcktool`, and GDRETools available. `godotpcktool` extracted the PCK into remap files and binary exported resources, which was useful for inventorying the PCK but not enough for readable item resources. GDRETools `v2.5.0-beta.5` recovered the full project from `RTV.pck` into `<WSL recovery>/rtv-gdre-full`: 175 scripts decompiled, 0 failed scripts, 8726 imported resources converted, 0 failed conversions. The recovery log reports Road to Vostok's editor version as Godot 4.6.2 and bytecode revision as 4.5.0-stable.
+WSL now has `unzip`, `7z`, `bsdtar`, `godotpcktool`, and GDRETools available. `godotpcktool` extracted the PCK into remap files and binary exported resources, which was useful for inventorying the PCK but not enough for readable item resources. GDRETools `v2.5.0-beta.5` recovered the full project from the game package into a local recovery workspace: 175 scripts recovered, 0 failed scripts, 8726 imported resources converted, 0 failed conversions. The recovery log reports Road to Vostok's editor version as Godot 4.6.2 and bytecode revision as 4.5.0-stable.
 
 Loader note: the public Metro Mod Loader docs and release assets for `v3.1.1` confirm the hook/registry API exists in current Metro: the release `modloader.gd` exposes `Engine.meta("RTVModLib")`, `frameworks_ready`, `.hook(...)`, `skip_super()`, and `Registry`, and the release `override.cfg` uses `[autoload_prepend] ModLoader="*res://modloader.gd"`. An older local loader install initially pointed `<RtV install>/override.cfg` at `ModLoader="user://modloader.gd"`, whose user-data bootstrap had no `RTVModLib`, hook, or registry symbols. That mismatch was resolved by installing Metro `v3.1.1` into the game folder and smoke-testing in game: `logs/godot.log` now shows `RTVModLib` registration, `frameworks_ready` emission, hook-pack generation, and a successful cabin load with the current mod list.
 
@@ -25,7 +25,7 @@ There is no separate `Inventory.gd` in the extracted script set. Inventory behav
 
 Relevant vanilla file:
 
-- `<WSL recovery>/rtv-gdre-full/Scripts/Interface.gd`
+- Recovered vanilla `Scripts/Interface.gd`
 
 Key points:
 
@@ -37,8 +37,7 @@ Key points:
 
 Context menu rendering lives in:
 
-- `<prior extracted scripts>/Scripts/Context.gd`
-- `<WSL recovery>/rtv-gdre-full/Scripts/Context.gd`
+- Recovered vanilla `Scripts/Context.gd`
 
 Key points:
 
@@ -69,7 +68,7 @@ For our reader UI, the safest runtime attach point is likely `/root/Map/Core/UI/
 
 Source:
 
-- `<WSL recovery>/rtv-gdre-full/Scripts/ItemData.gd`
+- Recovered vanilla `Scripts/ItemData.gd`
 
 Confirmed exported fields:
 
@@ -85,8 +84,8 @@ No custom/exported `loreText` or general metadata field exists in `ItemData.gd`,
 
 Recovered resource examples:
 
-- `<WSL recovery>/rtv-gdre-full/Items/Lore/Patient_Report/Patient_Report.tres` uses `type = "Lore"`, `size = Vector2(2, 2)`, `rarity = 3`, `weight = 0.1`, and has no `usable` or `phrase` fields set.
-- `<WSL recovery>/rtv-gdre-full/Items/Medical/Bandage/Bandage.tres` uses `type = "Medical"`, `usable = true`, `phrase = "Heal"`, `health = 25.0`, and loot/trader flags such as `civilian = true`, `military = true`, `generalist = true`, `doctor = true`.
+- Recovered vanilla `Items/Lore/Patient_Report/Patient_Report.tres` uses `type = "Lore"`, `size = Vector2(2, 2)`, `rarity = 3`, `weight = 0.1`, and has no `usable` or `phrase` fields set.
+- Recovered vanilla `Items/Medical/Bandage/Bandage.tres` uses `type = "Medical"`, `usable = true`, `phrase = "Heal"`, `health = 25.0`, and loot/trader flags such as `civilian = true`, `military = true`, `generalist = true`, `doctor = true`.
 
 Category decision:
 
@@ -103,8 +102,8 @@ Relevant vanilla files:
 - `Database.gd`
 - `LootContainer.gd`
 - `LootSimulation.gd`
-- `<WSL recovery>/rtv-gdre-full/Loot/LT_Master.tres`
-- `<WSL recovery>/rtv-gdre-full/Loot/Custom/LT_Patient_Report.tres`
+- Recovered vanilla `Loot/LT_Master.tres`
+- Recovered vanilla `Loot/Custom/LT_Patient_Report.tres`
 
 Key points:
 
