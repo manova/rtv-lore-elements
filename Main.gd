@@ -3,6 +3,8 @@
 extends Node
 
 const NOTE_DATA_PATH := "res://rtv-lore-elements/data/notes.json"
+const UI_STRINGS_PATH := "res://rtv-lore-elements/data/strings/en.json"
+const UI_STRINGS_LOCALE := "en"
 const NOTE_ITEM_PATH_PREFIX := "res://rtv-lore-elements/Items/Lore/Notes/"
 const LEGACY_NOTE_ITEM_PATH := "res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tres"
 const JOURNAL_DATA_PATH := "user://lore-elements-journal.cfg"
@@ -53,6 +55,8 @@ var _lootcontainer_fill_buckets_hook_id := -1
 var _lootsimulation_fill_buckets_hook_id := -1
 
 var _notes := {}
+var _ui_strings := {}
+var _ui_string_warning_keys := {}
 var _reader_font = null
 var _mcm_helpers = null
 var _registered_voiceover_ids := {}
@@ -114,6 +118,7 @@ func _input(event: InputEvent) -> void:
 func _on_lib_ready() -> void:
 	_lib = Engine.get_meta("RTVModLib")
 	print("[rtv_lore_elements] frameworks ready, registering...")
+	_load_ui_strings()
 	_load_reader_font()
 	if _reader_font == null:
 		push_warning("[rtv_lore_elements] Caveat font unavailable; reader will use the default UI font.")
@@ -133,6 +138,45 @@ func _load_reader_font() -> void:
 		_reader_font = font
 	else:
 		push_warning("[rtv_lore_elements] Caveat font load failed: " + str(error))
+
+func _load_ui_strings() -> void:
+	_ui_strings = {}
+	if !FileAccess.file_exists(UI_STRINGS_PATH):
+		push_warning("[rtv_lore_elements] missing UI strings file: " + UI_STRINGS_PATH)
+		return
+
+	var file := FileAccess.open(UI_STRINGS_PATH, FileAccess.READ)
+	if file == null:
+		push_warning("[rtv_lore_elements] failed to open UI strings file: " + UI_STRINGS_PATH)
+		return
+
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_warning("[rtv_lore_elements] UI strings file must contain a JSON object.")
+		return
+
+	var translation := Translation.new()
+	translation.locale = UI_STRINGS_LOCALE
+	for raw_key in parsed.keys():
+		var key := str(raw_key)
+		var value := str(parsed[raw_key])
+		_ui_strings[key] = value
+		translation.add_message(key, value)
+
+	TranslationServer.add_translation(translation)
+
+func _ui_text(key: String, fallback := "") -> String:
+	var translated := TranslationServer.translate(key)
+	if translated != key:
+		return translated
+	if _ui_strings.has(key):
+		return str(_ui_strings[key])
+	if !fallback.is_empty():
+		return fallback
+	if !_ui_string_warning_keys.has(key):
+		_ui_string_warning_keys[key] = true
+		push_warning("[rtv_lore_elements] missing UI string: " + key)
+	return key
 
 func _register_read_hooks() -> void:
 	_use_hook_id = _lib.hook("interface-use", _on_interface_use, 40)
@@ -177,7 +221,7 @@ func _register_loot_multiplier_hooks() -> void:
 
 func _register_journal_input() -> void:
 	if _lib.register(_lib.Registry.INPUTS, JOURNAL_INPUT_ACTION, {
-		"display_label": "Open Lore Journal",
+		"display_label": _ui_text("input.open_journal"),
 		"default_event": _create_journal_input_event(),
 	}):
 		print("[rtv_lore_elements] registered journal input: " + JOURNAL_INPUT_ACTION)
@@ -206,9 +250,9 @@ func _register_mcm_config() -> void:
 
 		_mcm_helpers.RegisterConfiguration(
 			MCM_MOD_ID,
-			"Lore Elements",
+			_ui_text("mcm.page.title"),
 			MCM_CONFIG_DIR,
-			"Configure lore note spawn rate and the lore journal hotkey.",
+			_ui_text("mcm.page.description"),
 			{
 				"config.ini": _on_mcm_config_updated
 			},
@@ -223,8 +267,8 @@ func _register_mcm_config() -> void:
 func _build_default_mcm_config() -> ConfigFile:
 	var config := ConfigFile.new()
 	config.set_value("Float", MCM_SPAWN_MULTIPLIER_KEY, {
-		"name": "Lore note spawn rate",
-		"tooltip": "Multiplies how often Lore Elements notes appear in newly generated loot.",
+		"name": _ui_text("mcm.spawn_multiplier.name"),
+		"tooltip": _ui_text("mcm.spawn_multiplier.tooltip"),
 		"default": DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER,
 		"value": DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER,
 		"minRange": 0.0,
@@ -234,8 +278,8 @@ func _build_default_mcm_config() -> ConfigFile:
 		"on_value_changed": "_on_mcm_value_changed"
 	})
 	config.set_value("Keycode", MCM_JOURNAL_HOTKEY_KEY, {
-		"name": "Journal hotkey",
-		"tooltip": "Opens the Lore Elements journal.",
+		"name": _ui_text("mcm.journal_hotkey.name"),
+		"tooltip": _ui_text("mcm.journal_hotkey.tooltip"),
 		"default": DEFAULT_JOURNAL_HOTKEY,
 		"default_type": DEFAULT_JOURNAL_HOTKEY_TYPE,
 		"value": DEFAULT_JOURNAL_HOTKEY,
@@ -475,7 +519,7 @@ func _build_note_item(definition: Dictionary):
 	item_data.value = int(definition.get("value", 15))
 	item_data.rarity = int(definition.get("rarity", 0))
 	item_data.usable = _has_reader_hook()
-	item_data.phrase = "Read"
+	item_data.phrase = _ui_text("item.action.read")
 	item_data.civilian = definition.get("civilian", false) == true
 	item_data.industrial = definition.get("industrial", false) == true
 	item_data.military = definition.get("military", false) == true
@@ -756,7 +800,7 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	layout.add_child(footer)
 
 	_reader_prev_button = Button.new()
-	_reader_prev_button.text = "Prev"
+	_reader_prev_button.text = _ui_text("reader.prev")
 	_reader_prev_button.custom_minimum_size = Vector2(92, 34)
 	_reader_prev_button.pressed.connect(_show_previous_page)
 	footer.add_child(_reader_prev_button)
@@ -769,13 +813,13 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	footer.add_child(_reader_page_counter)
 
 	_reader_next_button = Button.new()
-	_reader_next_button.text = "Next"
+	_reader_next_button.text = _ui_text("reader.next")
 	_reader_next_button.custom_minimum_size = Vector2(92, 34)
 	_reader_next_button.pressed.connect(_show_next_page)
 	footer.add_child(_reader_next_button)
 
 	var close_button := Button.new()
-	close_button.text = "Close"
+	close_button.text = _ui_text("common.close")
 	close_button.custom_minimum_size = Vector2(120, 36)
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	close_button.pressed.connect(_close_reader)
@@ -894,7 +938,7 @@ func _open_journal(interface_node: Node) -> void:
 	margin.add_child(layout)
 
 	var title := Label.new()
-	title.text = "Journal"
+	title.text = _ui_text("journal.title")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_color_override("font_color", Color(0.86, 0.82, 0.72))
 	title.add_theme_font_size_override("font_size", 26)
@@ -913,7 +957,7 @@ func _open_journal(interface_node: Node) -> void:
 	_populate_journal_entries()
 
 	var close_button := Button.new()
-	close_button.text = "Close"
+	close_button.text = _ui_text("common.close")
 	close_button.custom_minimum_size = Vector2(120, 36)
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	close_button.pressed.connect(_close_journal)
@@ -971,7 +1015,7 @@ func _populate_journal_entries() -> void:
 
 	if rendered_count == 0:
 		var empty := Label.new()
-		empty.text = "No notes discovered yet."
+		empty.text = _ui_text("journal.empty_state")
 		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		empty.add_theme_color_override("font_color", Color(0.68, 0.64, 0.55))
 		empty.add_theme_font_size_override("font_size", 18)
