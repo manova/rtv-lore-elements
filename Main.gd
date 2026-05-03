@@ -1537,7 +1537,7 @@ func _add_reader_decorations(parent: Control, note_style: Dictionary) -> void:
 		"letter":
 			_add_reader_line(parent, Vector2(54, 82), Vector2(paper_size.x - 108.0, 1.0), Color(border.r, border.g, border.b, 0.18))
 			_add_reader_signature_line(parent, paper_size, border)
-			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 140.0, paper_size.y - 78.0), Vector2(86, 24), -4.0)
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 146.0, 96.0), Vector2(86, 24), -4.0)
 		"ledger":
 			_add_reader_ruled_lines(parent, paper_size, Color(border.r, border.g, border.b, 0.13))
 			_add_reader_line(parent, Vector2(92, 88), Vector2(1, paper_size.y - 152.0), Color(border.r, border.g, border.b, 0.18))
