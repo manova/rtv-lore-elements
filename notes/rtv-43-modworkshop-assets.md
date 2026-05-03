@@ -7,9 +7,9 @@ The goal is simple release-ready media, not a designed marketing composition.
 
 | Asset | Source |
 | --- | --- |
-| `media/modworkshop_thumb.png` | `C:/Users/erons/OneDrive/Pictures/Screenshots/Screenshot 2026-05-03 152241.png` |
-| `media/modworkshop_banner.png` | `C:/Users/erons/OneDrive/Pictures/Screenshots/Screenshot 2026-05-03 150113.png` |
-| `media/mcm_settings.png` | `C:/Users/erons/OneDrive/Pictures/Screenshots/Screenshot 2026-05-03 153319.png` |
+| `media/modworkshop_thumb.png` | In-game screenshot `Screenshot 2026-05-03 152241.png` |
+| `media/modworkshop_banner.png` | In-game screenshot `Screenshot 2026-05-03 150113.png` |
+| `media/mcm_settings.png` | In-game screenshot `Screenshot 2026-05-03 153319.png` |
 
 ## Crop choices
 
