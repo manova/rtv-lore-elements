@@ -2,6 +2,7 @@
   {
     "id": "rtv_lore_border_shift_log",
     "name": "Border Shift Log",
+    "note_type": "dispatch",
     "inventory": "Shift Log",
     "rotated": "Shift Log",
     "equipment": "Shift Log",
@@ -19,6 +20,7 @@
   {
     "id": "rtv_lore_evacuation_notice",
     "name": "Evacuation Notice",
+    "note_type": "notice",
     "inventory": "Evac Notice",
     "rotated": "Evac Notice",
     "equipment": "Evac",
@@ -36,6 +38,7 @@
   {
     "id": "rtv_lore_clinic_triage_card",
     "name": "Clinic Triage Card",
+    "note_type": "triage_tag",
     "inventory": "Triage Card",
     "rotated": "Triage Card",
     "equipment": "Triage",
@@ -53,6 +56,7 @@
   {
     "id": "rtv_lore_forest_cache_note",
     "name": "Forest Cache Note",
+    "note_type": "notebook",
     "inventory": "Cache Note",
     "rotated": "Cache Note",
     "equipment": "Cache",
@@ -70,6 +74,7 @@
   {
     "id": "rtv_lore_rail_manifest",
     "name": "Rail Manifest Fragment",
+    "note_type": "manifest",
     "inventory": "Rail Manifest",
     "rotated": "Rail Manifest",
     "equipment": "Manifest",
@@ -87,6 +92,7 @@
   {
     "id": "rtv_lore_last_letter_leena",
     "name": "Letter to Leena",
+    "note_type": "letter",
     "inventory": "Leena Letter",
     "rotated": "Leena Letter",
     "equipment": "Letter",
@@ -104,6 +110,7 @@
   {
     "id": "rtv_lore_patrol_warning",
     "name": "Patrol Warning",
+    "note_type": "dispatch",
     "inventory": "Patrol Warning",
     "rotated": "Patrol Warning",
     "equipment": "Warning",
@@ -121,6 +128,7 @@
   {
     "id": "rtv_lore_schoolroom_list",
     "name": "Schoolroom List",
+    "note_type": "notice",
     "inventory": "School List",
     "rotated": "School List",
     "equipment": "List",
@@ -138,6 +146,7 @@
   {
     "id": "rtv_lore_radio_transcript",
     "name": "Radio Transcript",
+    "note_type": "dispatch",
     "inventory": "Transcript",
     "rotated": "Transcript",
     "equipment": "Radio",
@@ -155,6 +164,7 @@
   {
     "id": "rtv_lore_weathered_recipe",
     "name": "Weathered Recipe",
+    "note_type": "notebook",
     "inventory": "Recipe",
     "rotated": "Recipe",
     "equipment": "Recipe",
@@ -172,6 +182,7 @@
   {
     "id": "rtv_lore_smuggler_ledger",
     "name": "Smuggler's Ledger",
+    "note_type": "manifest",
     "inventory": "Ledger Page",
     "rotated": "Ledger Page",
     "equipment": "Ledger",
@@ -189,6 +200,7 @@
   {
     "id": "rtv_lore_letter_tampere",
     "name": "Letter from Tampere",
+    "note_type": "letter",
     "inventory": "Tampere Letter",
     "rotated": "Tampere Letter",
     "equipment": "Letter",
@@ -206,6 +218,7 @@
   {
     "id": "rtv_lore_hamina_last_shift",
     "name": "Hamina Dispatch",
+    "note_type": "dispatch",
     "inventory": "Dispatch",
     "rotated": "Dispatch",
     "equipment": "Dispatch",
@@ -223,6 +236,7 @@
   {
     "id": "rtv_lore_guard_three_lines",
     "name": "Guard's Notebook",
+    "note_type": "notebook",
     "inventory": "Notebook",
     "rotated": "Notebook",
     "equipment": "Notebook",
@@ -240,6 +254,7 @@
   {
     "id": "rtv_lore_child_kitchen_map",
     "name": "Crayon Map",
+    "note_type": "map",
     "inventory": "Crayon Map",
     "rotated": "Crayon Map",
     "equipment": "Map",
@@ -257,6 +272,7 @@
   {
     "id": "rtv_lore_posted_orders_layered",
     "name": "Posted Orders",
+    "note_type": "dispatch",
     "inventory": "Posted Orders",
     "rotated": "Posted Orders",
     "equipment": "Orders",
@@ -274,6 +290,7 @@
   {
     "id": "rtv_lore_triage_unknown_male",
     "name": "Triage Tag",
+    "note_type": "triage_tag",
     "inventory": "Triage Tag",
     "rotated": "Triage Tag",
     "equipment": "Tag",

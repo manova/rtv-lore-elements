@@ -3,6 +3,7 @@
 extends Node
 
 const NOTE_DATA_PATH := "res://rtv-lore-elements/data/notes.json"
+const NOTE_TYPE_DATA_PATH := "res://rtv-lore-elements/data/note_types.json"
 const UI_STRINGS_PATH := "res://rtv-lore-elements/data/strings/en.json"
 const UI_STRINGS_LOCALE := "en"
 const NOTE_ITEM_PATH_PREFIX := "res://rtv-lore-elements/Items/Lore/Notes/"
@@ -26,10 +27,28 @@ const DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER := 1.0
 const MAX_LORE_NOTE_SPAWN_MULTIPLIER := 20.0
 const DEFAULT_JOURNAL_HOTKEY := KEY_J
 const DEFAULT_JOURNAL_HOTKEY_TYPE := "Key"
+const DEFAULT_NOTE_TYPE := "notice"
+const FALLBACK_NOTE_TYPE_STYLES := {
+	"notice": {
+		"paper_color": "#d8cca7",
+		"border_color": "#5b472d",
+		"ink_color": "#2b261d",
+		"accent_color": "#b44c2a",
+		"body_font": "handwritten",
+		"body_font_size": 25,
+		"title_font_size": 24,
+		"canvas_size": [680, 500],
+		"margins": {"left": 38, "top": 30, "right": 38, "bottom": 28},
+		"rotation_degrees": -0.8,
+		"decoration": "notice",
+		"stamp_key": "reader.stamp.notice"
+	}
+}
 const LEGACY_HELLO_NOTE_ID := "rtv_lore_hello_note"
 const LEGACY_HELLO_NOTE := {
 	"id": LEGACY_HELLO_NOTE_ID,
 	"name": "Damaged Field Note",
+	"note_type": "notice",
 	"inventory": "Field Note",
 	"rotated": "Field Note",
 	"equipment": "F. Note",
@@ -59,9 +78,12 @@ var _lootsimulation_fill_buckets_hook_id := -1
 var _interface_map_hook_id := -1
 
 var _notes := {}
+var _note_type_styles := {}
+var _note_type_warning_ids := {}
 var _ui_strings := {}
 var _ui_string_warning_keys := {}
 var _reader_font = null
+var _reader_mono_font = null
 var _mcm_helpers = null
 var _registered_voiceover_ids := {}
 var _voiceover_warning_ids := {}
@@ -128,6 +150,7 @@ func _on_lib_ready() -> void:
 	_lib = Engine.get_meta("RTVModLib")
 	print("[rtv_lore_elements] frameworks ready, registering...")
 	_load_ui_strings()
+	_load_note_type_styles()
 	_load_reader_font()
 	if _reader_font == null:
 		push_warning("[rtv_lore_elements] Caveat font unavailable; reader will use the default UI font.")
@@ -148,6 +171,10 @@ func _load_reader_font() -> void:
 		_reader_font = font
 	else:
 		push_warning("[rtv_lore_elements] Caveat font load failed: " + str(error))
+
+	var mono_font := SystemFont.new()
+	mono_font.font_names = PackedStringArray(["Consolas", "Courier New", "DejaVu Sans Mono", "monospace"])
+	_reader_mono_font = mono_font
 
 func _load_ui_strings() -> void:
 	_ui_strings = {}
@@ -174,6 +201,49 @@ func _load_ui_strings() -> void:
 		translation.add_message(key, value)
 
 	TranslationServer.add_translation(translation)
+
+func _load_note_type_styles() -> void:
+	_note_type_styles = FALLBACK_NOTE_TYPE_STYLES.duplicate(true)
+	if !FileAccess.file_exists(NOTE_TYPE_DATA_PATH):
+		_warn_note_type_once("missing_styles", "missing note type style file: " + NOTE_TYPE_DATA_PATH)
+		return
+
+	var file := FileAccess.open(NOTE_TYPE_DATA_PATH, FileAccess.READ)
+	if file == null:
+		_warn_note_type_once("open_styles", "failed to open note type style file: " + NOTE_TYPE_DATA_PATH)
+		return
+
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		_warn_note_type_once("style_root", "note type style file must contain a JSON object.")
+		return
+
+	for raw_type in parsed.keys():
+		var note_type := str(raw_type).strip_edges()
+		if note_type.is_empty():
+			_warn_note_type_once("empty_style_type", "skipping note type style with empty key.")
+			continue
+
+		var raw_style = parsed[raw_type]
+		if typeof(raw_style) != TYPE_DICTIONARY:
+			_warn_note_type_once(note_type + ":style_type", "skipping malformed note type style: " + note_type)
+			continue
+
+		var fallback: Dictionary = _note_type_styles.get(DEFAULT_NOTE_TYPE, {}).duplicate(true)
+		if _note_type_styles.has(note_type):
+			fallback = _note_type_styles[note_type].duplicate(true)
+		for key in raw_style.keys():
+			fallback[key] = raw_style[key]
+		_note_type_styles[note_type] = fallback
+
+	if !_note_type_styles.has(DEFAULT_NOTE_TYPE):
+		_note_type_styles[DEFAULT_NOTE_TYPE] = FALLBACK_NOTE_TYPE_STYLES[DEFAULT_NOTE_TYPE].duplicate(true)
+
+func _warn_note_type_once(warning_id: String, message: String) -> void:
+	if _note_type_warning_ids.has(warning_id):
+		return
+	_note_type_warning_ids[warning_id] = true
+	push_warning("[rtv_lore_elements] " + message)
 
 func _ui_text(key: String, fallback := "") -> String:
 	var translated := TranslationServer.translate(key)
@@ -411,6 +481,7 @@ func _register_lore_content() -> void:
 				push_warning("[rtv_lore_elements] skipping note with no pages: " + note_id)
 				continue
 
+			definition["note_type"] = _resolve_note_type(note_id, str(definition.get("note_type", DEFAULT_NOTE_TYPE)))
 			var item_data = _build_note_item(definition)
 			if item_data == null:
 				push_warning("[rtv_lore_elements] skipping note with missing item resource: " + note_id)
@@ -808,6 +879,64 @@ func _on_map_ui_visibility_changed(interface_node: Node) -> void:
 	else:
 		_sync_map_pin_processing_for_interface(interface_node)
 
+func _resolve_note_type(note_id: String, raw_note_type: String) -> String:
+	var note_type := raw_note_type.strip_edges()
+	if note_type.is_empty():
+		return DEFAULT_NOTE_TYPE
+	if _note_type_styles.has(note_type):
+		return note_type
+	_warn_note_type_once(note_id + ":unknown_type", "unknown note_type '" + note_type + "' for " + note_id + "; using " + DEFAULT_NOTE_TYPE)
+	return DEFAULT_NOTE_TYPE
+
+func _get_note_type(note_id: String) -> String:
+	if !_notes.has(note_id):
+		return DEFAULT_NOTE_TYPE
+	var note: Dictionary = _notes[note_id]
+	return _resolve_note_type(note_id, str(note.get("note_type", DEFAULT_NOTE_TYPE)))
+
+func _get_note_type_style(note_id: String) -> Dictionary:
+	var note_type := _get_note_type(note_id)
+	if _note_type_styles.has(note_type):
+		return (_note_type_styles[note_type] as Dictionary).duplicate(true)
+	return (_note_type_styles.get(DEFAULT_NOTE_TYPE, FALLBACK_NOTE_TYPE_STYLES[DEFAULT_NOTE_TYPE]) as Dictionary).duplicate(true)
+
+func _style_color(style: Dictionary, key: String, fallback: Color) -> Color:
+	var value = style.get(key, "")
+	if value is Color:
+		return value
+	if value is String:
+		var text := str(value).strip_edges()
+		if Color.html_is_valid(text):
+			return Color.html(text)
+	return fallback
+
+func _style_vector2(style: Dictionary, key: String, fallback: Vector2) -> Vector2:
+	var value = style.get(key, null)
+	if value is Vector2:
+		return value
+	if typeof(value) == TYPE_ARRAY && value.size() >= 2:
+		var x = value[0]
+		var y = value[1]
+		if (x is float || x is int) && (y is float || y is int):
+			return Vector2(float(x), float(y))
+	return fallback
+
+func _style_margins(style: Dictionary) -> Dictionary:
+	var margins := {
+		"left": 38,
+		"top": 30,
+		"right": 38,
+		"bottom": 28,
+	}
+	var raw_margins = style.get("margins", {})
+	if typeof(raw_margins) != TYPE_DICTIONARY:
+		return margins
+	for key in margins.keys():
+		var value = raw_margins.get(key, margins[key])
+		if value is float || value is int:
+			margins[key] = int(value)
+	return margins
+
 func _get_note_pin_data(note_id: String) -> Dictionary:
 	if !_notes.has(note_id):
 		return {}
@@ -838,6 +967,7 @@ func _get_note_pin_data(note_id: String) -> Dictionary:
 	return {
 		"position": Vector2(float(raw_x), float(raw_y)),
 		"label": _get_note_pin_label(note_id, note),
+		"accent_color": _style_color(_get_note_type_style(note_id), "accent_color", Color(0.78, 0.12, 0.08)),
 	}
 
 func _get_note_pin_label(note_id: String, note: Dictionary) -> String:
@@ -859,9 +989,13 @@ func _build_map_pin_marker(note_id: String, pin_data: Dictionary) -> Control:
 	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	marker.z_index = 210
 
+	var accent: Color = pin_data.get("accent_color", Color(0.78, 0.12, 0.08))
+	var accent_light := accent.lerp(Color(1.0, 0.92, 0.68), 0.42)
+	var accent_dark := accent.darkened(0.28)
+
 	var ring_style := StyleBoxFlat.new()
-	ring_style.bg_color = Color(0.78, 0.12, 0.08, 0.18)
-	ring_style.border_color = Color(0.98, 0.88, 0.58, 0.95)
+	ring_style.bg_color = Color(accent.r, accent.g, accent.b, 0.18)
+	ring_style.border_color = Color(accent_light.r, accent_light.g, accent_light.b, 0.95)
 	ring_style.set_border_width_all(2)
 
 	var ring := Panel.new()
@@ -873,8 +1007,8 @@ func _build_map_pin_marker(note_id: String, pin_data: Dictionary) -> Control:
 	marker.add_child(ring)
 
 	var dot_style := StyleBoxFlat.new()
-	dot_style.bg_color = Color(0.78, 0.12, 0.08, 0.95)
-	dot_style.border_color = Color(0.98, 0.88, 0.58, 1.0)
+	dot_style.bg_color = Color(accent.r, accent.g, accent.b, 0.95)
+	dot_style.border_color = Color(accent_light.r, accent_light.g, accent_light.b, 1.0)
 	dot_style.set_border_width_all(3)
 
 	var dot := Panel.new()
@@ -887,7 +1021,7 @@ func _build_map_pin_marker(note_id: String, pin_data: Dictionary) -> Control:
 
 	var label_style := StyleBoxFlat.new()
 	label_style.bg_color = Color(0.03, 0.025, 0.02, 0.82)
-	label_style.border_color = Color(0.78, 0.64, 0.38, 0.95)
+	label_style.border_color = Color(accent_dark.r, accent_dark.g, accent_dark.b, 0.95)
 	label_style.set_border_width_all(1)
 	label_style.set_content_margin_all(5.0)
 
@@ -1029,6 +1163,10 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader_note_id = note_id
 	_reader_page_index = 0
 	_reader_from_journal = from_journal
+	var note_style := _get_note_type_style(note_id)
+	var paper_size := _style_vector2(note_style, "canvas_size", Vector2(680, 500))
+	var margins := _style_margins(note_style)
+	var ink_color := _style_color(note_style, "ink_color", Color(0.12, 0.1, 0.07))
 
 	_reader = CanvasLayer.new()
 	_reader.name = "RtvLoreNoteReader"
@@ -1047,27 +1185,36 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 
 	var panel := PanelContainer.new()
 	panel.name = "Paper"
-	panel.custom_minimum_size = Vector2(680, 500)
-	panel.rotation_degrees = -1.1
-	panel.pivot_offset = Vector2(340, 250)
-	panel.add_theme_stylebox_override("panel", _build_paper_style())
+	panel.custom_minimum_size = paper_size
+	panel.rotation_degrees = float(note_style.get("rotation_degrees", -0.8))
+	panel.pivot_offset = paper_size * 0.5
+	panel.add_theme_stylebox_override("panel", _build_paper_style(note_style))
 	center.add_child(panel)
 
+	var paper_root := Control.new()
+	paper_root.name = "PaperRoot"
+	paper_root.custom_minimum_size = paper_size
+	paper_root.clip_contents = true
+	panel.add_child(paper_root)
+	_add_reader_decorations(paper_root, note_style)
+
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 34)
-	margin.add_theme_constant_override("margin_top", 30)
-	margin.add_theme_constant_override("margin_right", 34)
-	margin.add_theme_constant_override("margin_bottom", 28)
-	panel.add_child(margin)
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", margins["left"])
+	margin.add_theme_constant_override("margin_top", margins["top"])
+	margin.add_theme_constant_override("margin_right", margins["right"])
+	margin.add_theme_constant_override("margin_bottom", margins["bottom"])
+	paper_root.add_child(margin)
 
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 14)
+	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layout.add_theme_constant_override("separation", 10)
 	margin.add_child(layout)
 
 	_reader_title = Label.new()
 	_reader_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_reader_title.add_theme_color_override("font_color", Color(0.15, 0.12, 0.08))
-	_reader_title.add_theme_font_size_override("font_size", 25)
+	_reader_title.add_theme_color_override("font_color", ink_color)
+	_reader_title.add_theme_font_size_override("font_size", int(note_style.get("title_font_size", 24)))
 	layout.add_child(_reader_title)
 
 	_reader_body = RichTextLabel.new()
@@ -1075,21 +1222,22 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader_body.fit_content = false
 	_reader_body.scroll_active = true
 	_reader_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_reader_body.custom_minimum_size = Vector2(0, 330)
+	_reader_body.custom_minimum_size = Vector2(0, maxf(210.0, paper_size.y - float(margins["top"]) - float(margins["bottom"]) - 118.0))
 	_reader_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_reader_body.add_theme_color_override("default_color", Color(0.12, 0.1, 0.07))
-	_reader_body.add_theme_font_size_override("normal_font_size", 27)
-	if _reader_font != null:
+	_reader_body.add_theme_color_override("default_color", ink_color)
+	_reader_body.add_theme_font_size_override("normal_font_size", int(note_style.get("body_font_size", 25)))
+	var body_font := str(note_style.get("body_font", "handwritten"))
+	if body_font == "handwritten" && _reader_font != null:
 		_reader_body.add_theme_font_override("normal_font", _reader_font)
+	elif body_font == "mono" && _reader_mono_font != null:
+		_reader_body.add_theme_font_override("normal_font", _reader_mono_font)
 	layout.add_child(_reader_body)
 
 	var footer := HBoxContainer.new()
-	footer.add_theme_constant_override("separation", 12)
+	footer.add_theme_constant_override("separation", 10)
 	layout.add_child(footer)
 
-	_reader_prev_button = Button.new()
-	_reader_prev_button.text = _ui_text("reader.prev")
-	_reader_prev_button.custom_minimum_size = Vector2(92, 34)
+	_reader_prev_button = _build_reader_button(_ui_text("reader.prev"), Vector2(76, 30), note_style)
 	_reader_prev_button.pressed.connect(_show_previous_page)
 	footer.add_child(_reader_prev_button)
 
@@ -1097,18 +1245,15 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader_page_counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_reader_page_counter.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_reader_page_counter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_reader_page_counter.add_theme_color_override("font_color", Color(0.18, 0.14, 0.1))
+	_reader_page_counter.add_theme_color_override("font_color", ink_color)
+	_reader_page_counter.add_theme_font_size_override("font_size", 18)
 	footer.add_child(_reader_page_counter)
 
-	_reader_next_button = Button.new()
-	_reader_next_button.text = _ui_text("reader.next")
-	_reader_next_button.custom_minimum_size = Vector2(92, 34)
+	_reader_next_button = _build_reader_button(_ui_text("reader.next"), Vector2(76, 30), note_style)
 	_reader_next_button.pressed.connect(_show_next_page)
 	footer.add_child(_reader_next_button)
 
-	var close_button := Button.new()
-	close_button.text = _ui_text("common.close")
-	close_button.custom_minimum_size = Vector2(120, 36)
+	var close_button := _build_reader_button(_ui_text("common.close"), Vector2(96, 32), note_style)
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	close_button.pressed.connect(_close_reader)
 	layout.add_child(close_button)
@@ -1333,10 +1478,10 @@ func _close_journal(should_release_controls := true, should_save := true) -> voi
 	_journal_interface_node = null
 	_journal_list = null
 
-func _build_paper_style() -> StyleBoxFlat:
+func _build_paper_style(note_style: Dictionary) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.78, 0.72, 0.58)
-	style.border_color = Color(0.36, 0.27, 0.16)
+	style.bg_color = _style_color(note_style, "paper_color", Color(0.78, 0.72, 0.58))
+	style.border_color = _style_color(note_style, "border_color", Color(0.36, 0.27, 0.16))
 	style.border_width_left = 2
 	style.border_width_top = 2
 	style.border_width_right = 2
@@ -1349,6 +1494,121 @@ func _build_paper_style() -> StyleBoxFlat:
 	style.shadow_size = 18
 	style.shadow_offset = Vector2(0, 5)
 	return style
+
+func _build_reader_button(text: String, min_size: Vector2, note_style: Dictionary) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = min_size
+	button.add_theme_color_override("font_color", _style_color(note_style, "ink_color", Color(0.15, 0.12, 0.08)))
+	button.add_theme_color_override("font_disabled_color", Color(0.28, 0.25, 0.2, 0.45))
+	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_stylebox_override("normal", _build_reader_button_style(note_style, 0.12))
+	button.add_theme_stylebox_override("hover", _build_reader_button_style(note_style, 0.2))
+	button.add_theme_stylebox_override("pressed", _build_reader_button_style(note_style, 0.28))
+	button.add_theme_stylebox_override("disabled", _build_reader_button_style(note_style, 0.05))
+	return button
+
+func _build_reader_button_style(note_style: Dictionary, alpha: float) -> StyleBoxFlat:
+	var accent := _style_color(note_style, "accent_color", Color(0.45, 0.28, 0.16))
+	var border := _style_color(note_style, "border_color", Color(0.36, 0.27, 0.16))
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(accent.r, accent.g, accent.b, alpha)
+	style.border_color = Color(border.r, border.g, border.b, clampf(alpha + 0.28, 0.0, 0.85))
+	style.set_border_width_all(1)
+	style.set_content_margin_all(6.0)
+	style.corner_radius_top_left = 2
+	style.corner_radius_top_right = 2
+	style.corner_radius_bottom_right = 2
+	style.corner_radius_bottom_left = 2
+	return style
+
+func _add_reader_decorations(parent: Control, note_style: Dictionary) -> void:
+	var decoration := str(note_style.get("decoration", "notice"))
+	var paper_size := _style_vector2(note_style, "canvas_size", Vector2(680, 500))
+	var accent := _style_color(note_style, "accent_color", Color(0.64, 0.18, 0.12))
+	var border := _style_color(note_style, "border_color", Color(0.36, 0.27, 0.16))
+	match decoration:
+		"header_stamp":
+			_add_reader_line(parent, Vector2(44, 72), Vector2(paper_size.x - 88.0, 1.0), Color(border.r, border.g, border.b, 0.34))
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 154.0, 34.0), Vector2(104, 28), -5.0)
+		"ruled":
+			_add_reader_ruled_lines(parent, paper_size, Color(accent.r, accent.g, accent.b, 0.16))
+			_add_reader_signature_line(parent, paper_size, border)
+		"ledger":
+			_add_reader_ruled_lines(parent, paper_size, Color(border.r, border.g, border.b, 0.13))
+			_add_reader_line(parent, Vector2(92, 88), Vector2(1, paper_size.y - 152.0), Color(border.r, border.g, border.b, 0.18))
+		"map":
+			_add_reader_line(parent, Vector2(56, 74), Vector2(paper_size.x - 112.0, 1.0), Color(accent.r, accent.g, accent.b, 0.2))
+			_add_reader_line(parent, Vector2(paper_size.x * 0.5, 42), Vector2(1, paper_size.y - 84.0), Color(border.r, border.g, border.b, 0.12))
+		"triage_tag":
+			_add_reader_grommet(parent, Vector2(46, 42), border)
+			_add_reader_line(parent, Vector2(80, 70), Vector2(paper_size.x - 122.0, 1.0), Color(border.r, border.g, border.b, 0.28))
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 142.0, 34.0), Vector2(92, 26), -3.0)
+		_:
+			_add_reader_line(parent, Vector2(46, 74), Vector2(paper_size.x - 92.0, 1.0), Color(border.r, border.g, border.b, 0.22))
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 146.0, 34.0), Vector2(96, 26), -4.0)
+
+func _add_reader_line(parent: Control, position: Vector2, size: Vector2, color: Color) -> void:
+	var line := ColorRect.new()
+	line.position = position
+	line.size = size
+	line.color = color
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(line)
+
+func _add_reader_ruled_lines(parent: Control, paper_size: Vector2, color: Color) -> void:
+	var y := 112.0
+	while y < paper_size.y - 84.0:
+		_add_reader_line(parent, Vector2(44, y), Vector2(paper_size.x - 88.0, 1.0), color)
+		y += 31.0
+
+func _add_reader_signature_line(parent: Control, paper_size: Vector2, border: Color) -> void:
+	_add_reader_line(parent, Vector2(paper_size.x - 220.0, paper_size.y - 68.0), Vector2(150, 1), Color(border.r, border.g, border.b, 0.22))
+
+func _add_reader_grommet(parent: Control, position: Vector2, border: Color) -> void:
+	var ring_style := StyleBoxFlat.new()
+	ring_style.bg_color = Color(0.04, 0.035, 0.025, 0.08)
+	ring_style.border_color = Color(border.r, border.g, border.b, 0.52)
+	ring_style.set_border_width_all(2)
+	ring_style.corner_radius_top_left = 9
+	ring_style.corner_radius_top_right = 9
+	ring_style.corner_radius_bottom_right = 9
+	ring_style.corner_radius_bottom_left = 9
+
+	var ring := Panel.new()
+	ring.position = position
+	ring.size = Vector2(18, 18)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ring.add_theme_stylebox_override("panel", ring_style)
+	parent.add_child(ring)
+
+func _add_reader_stamp(parent: Control, note_style: Dictionary, position: Vector2, size: Vector2, rotation: float) -> void:
+	var stamp_key := str(note_style.get("stamp_key", "reader.stamp.notice"))
+	var accent := _style_color(note_style, "accent_color", Color(0.64, 0.18, 0.12))
+	var stamp_style := StyleBoxFlat.new()
+	stamp_style.bg_color = Color(accent.r, accent.g, accent.b, 0.04)
+	stamp_style.border_color = Color(accent.r, accent.g, accent.b, 0.42)
+	stamp_style.set_border_width_all(1)
+	stamp_style.corner_radius_top_left = 1
+	stamp_style.corner_radius_top_right = 1
+	stamp_style.corner_radius_bottom_right = 1
+	stamp_style.corner_radius_bottom_left = 1
+
+	var stamp := PanelContainer.new()
+	stamp.position = position
+	stamp.size = size
+	stamp.rotation_degrees = rotation
+	stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stamp.add_theme_stylebox_override("panel", stamp_style)
+	parent.add_child(stamp)
+
+	var label := Label.new()
+	label.text = _ui_text(stamp_key, stamp_key)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_color", Color(accent.r, accent.g, accent.b, 0.58))
+	label.add_theme_font_size_override("font_size", 13)
+	stamp.add_child(label)
 
 func _show_previous_page() -> void:
 	if _reader_page_index <= 0:
