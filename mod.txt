@@ -1,7 +1,7 @@
 [mod]
 name="Lore Elements"
 id="rtv_lore_elements"
-version="0.0.1"
+version="0.1.0"
 priority=100
 
 [autoload]

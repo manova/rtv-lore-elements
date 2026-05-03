@@ -45,6 +45,7 @@ With Mod Configuration Menu installed, open the `Lore Elements` page to configur
 
 - Source: <https://github.com/manova/rtv-lore-elements>
 - Releases: <https://github.com/manova/rtv-lore-elements/releases>
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
 - <!-- MODWORKSHOP_LINK --> ModWorkshop link coming with v0.1.0 release — see Releases.
 
 ## Contributing
