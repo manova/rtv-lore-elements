@@ -10,6 +10,14 @@ export_presets.cfg
 build/
 dist/
 
+# Vanilla game extraction / recovery output
+dumps/
+decompiled/
+rtv-extracted-pck/
+rtv-gdre-recovered/
+rtv-gdre-full/
+*.pck
+
 # Mod packaging
 *.vmz
 !fixtures/*.vmz

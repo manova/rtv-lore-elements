@@ -1,0 +1,23 @@
+Creative Commons Attribution 4.0 International Public License
+
+SPDX-License-Identifier: CC-BY-4.0
+
+The authored lore/content in this repository is licensed under the Creative
+Commons Attribution 4.0 International Public License.
+
+This content license applies to:
+
+- data/notes.json
+- user-facing strings in data/strings/en.json
+- lore note text/name content in Items/Lore/Notes/*.tres
+
+It does not apply to Road to Vostok, original Road to Vostok assets, runtime
+references to vanilla game resources, or in-game screenshots that include Road
+to Vostok visuals. Road to Vostok and original Road to Vostok assets are
+copyright Plumato Games.
+
+You are free to share and adapt this content, including commercially, as long
+as you give appropriate credit, provide a link to the license, and indicate if
+changes were made.
+
+License text: https://creativecommons.org/licenses/by/4.0/legalcode
