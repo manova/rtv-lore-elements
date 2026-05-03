@@ -1026,23 +1026,34 @@ func _build_map_pin_marker(note_id: String, pin_data: Dictionary) -> Control:
 	label_style.set_border_width_all(1)
 	label_style.set_content_margin_all(5.0)
 
-	var label_panel := PanelContainer.new()
-	label_panel.name = "Label"
-	label_panel.position = Vector2(14.0, -17.0)
-	label_panel.size = Vector2(210.0, 30.0)
-	label_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label_panel.add_theme_stylebox_override("panel", label_style)
-	marker.add_child(label_panel)
-
+	var label_text := str(pin_data["label"])
+	var label_font_size := 16
 	var label := Label.new()
-	label.text = str(pin_data["label"])
+	label.text = label_text
 	label.clip_text = true
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.add_theme_color_override("font_color", Color(0.94, 0.88, 0.72, 1.0))
-	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_font_size_override("font_size", label_font_size)
+	var label_panel_width := _get_map_pin_label_width(label, label_text, label_font_size)
+
+	var label_panel := PanelContainer.new()
+	label_panel.name = "Label"
+	label_panel.position = Vector2(14.0, -17.0)
+	label_panel.size = Vector2(label_panel_width, 30.0)
+	label_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label_panel.add_theme_stylebox_override("panel", label_style)
+	marker.add_child(label_panel)
 	label_panel.add_child(label)
+	marker.size = Vector2(label_panel.position.x + label_panel_width, 36.0)
 
 	return marker
+
+func _get_map_pin_label_width(label: Label, label_text: String, font_size: int) -> float:
+	var text_width := float(label_text.length()) * float(font_size) * 0.55
+	var font := label.get_theme_font("font")
+	if font != null:
+		text_width = font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+	return clampf(text_width + 14.0, 48.0, 210.0)
 
 func _sync_map_pin_processing_for_interface(interface_node: Node) -> void:
 	var should_process := false
