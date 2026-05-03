@@ -1125,8 +1125,6 @@ func _record_note_read(note_id: String, should_save: bool) -> bool:
 
 	if should_save && changed:
 		_save_journal()
-	if changed:
-		_refresh_map_pin_layer()
 	return changed
 
 func _open_journal(interface_node: Node) -> void:
