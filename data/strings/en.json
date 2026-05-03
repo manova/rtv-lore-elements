@@ -11,5 +11,12 @@
   "mcm.spawn_multiplier.name": "Lore note spawn rate",
   "mcm.spawn_multiplier.tooltip": "Multiplies how often Lore Elements notes appear in newly generated loot.",
   "reader.next": "Next",
-  "reader.prev": "Prev"
+  "reader.prev": "Prev",
+  "reader.stamp.dispatch": "AREA 05",
+  "reader.stamp.letter": "SAVED",
+  "reader.stamp.manifest": "RECEIVED",
+  "reader.stamp.map": "HOME",
+  "reader.stamp.notebook": "FIELD",
+  "reader.stamp.notice": "NOTICE",
+  "reader.stamp.triage": "TRIAGE"
 }

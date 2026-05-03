@@ -143,6 +143,7 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 - [x] Pinned-location notes via map pin layer (see `notes/rtv-pinned-discovery.md`).
 - [x] MCM config: spawn rate multiplier, journal hotkey customization.
 - [x] Localization scaffold.
+- [x] Reader visual refresh with per-type paper treatments.
 
 ### Phase 5 — Public lore framework (v1.0)
 
