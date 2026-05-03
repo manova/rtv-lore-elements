@@ -28,17 +28,17 @@
     "stamp_key": "reader.stamp.notice"
   },
   "letter": {
-    "paper_color": "#e2dcc8",
-    "border_color": "#5a4b34",
+    "paper_color": "#e7dfc8",
+    "border_color": "#6a5438",
     "ink_color": "#30271e",
-    "accent_color": "#5d6e82",
+    "accent_color": "#8b4f3d",
     "body_font": "handwritten",
     "body_font_size": 26,
     "title_font_size": 23,
     "canvas_size": [660, 510],
-    "margins": {"left": 46, "top": 36, "right": 46, "bottom": 32},
+    "margins": {"left": 54, "top": 44, "right": 54, "bottom": 36},
     "rotation_degrees": 0.8,
-    "decoration": "ruled",
+    "decoration": "letter",
     "stamp_key": "reader.stamp.letter"
   },
   "notebook": {

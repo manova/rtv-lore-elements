@@ -30,9 +30,10 @@ still opens.
 ## Visual choices
 
 Decorations are procedural Godot controls only: header rules, stamps, ruled
-lines, ledger lines, a map fold hint, and a triage grommet. RTV-30 deliberately
-does not add external paper textures, animated page turns, sound effects, or
-world-pickup mesh/material parity; those belong in a later asset realism pass.
+lines, clean stationery hints, ledger lines, a map fold hint, and a triage
+grommet. RTV-30 deliberately does not add external paper textures, animated
+page turns, sound effects, or world-pickup mesh/material parity; those belong
+in a later asset realism pass.
 
 Caveat remains limited to handwritten-style types. Dispatch, manifest, and
 triage styles attempt a monospaced system font at smaller sizes, which gives
