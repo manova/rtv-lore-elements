@@ -1,0 +1,15 @@
+{
+  "common.close": "Close",
+  "input.open_journal": "Open Lore Journal",
+  "item.action.read": "Read",
+  "journal.empty_state": "No notes discovered yet.",
+  "journal.title": "Journal",
+  "mcm.journal_hotkey.name": "Journal hotkey",
+  "mcm.journal_hotkey.tooltip": "Opens the Lore Elements journal.",
+  "mcm.page.description": "Configure lore note spawn rate and the lore journal hotkey.",
+  "mcm.page.title": "Lore Elements",
+  "mcm.spawn_multiplier.name": "Lore note spawn rate",
+  "mcm.spawn_multiplier.tooltip": "Multiplies how often Lore Elements notes appear in newly generated loot.",
+  "reader.next": "Next",
+  "reader.prev": "Prev"
+}
