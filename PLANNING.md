@@ -147,6 +147,7 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 - [x] 0.1 release value retune against the antiseptic VPS benchmark.
 - [x] Reader and journal modal input blocking for release QA.
 - [x] Curated v0.1 pinned-location note trail for Area 05.
+- [x] ModWorkshop v0.1 thumbnail, banner, and README configuration screenshot assets.
 
 ### Phase 5 — Public lore framework (v1.0)
 

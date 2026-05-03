@@ -21,6 +21,18 @@ Metro Mod Loader v3.0+, Mod Configuration Menu (recommended)
 - Press `J` in-game or while inventory is open to view discovered notes in the persistent journal.
 - If Mod Configuration Menu is installed, use the `Lore Elements` page to adjust lore note spawn rate or rebind the journal hotkey.
 
+## Media
+
+![ModWorkshop thumbnail](media/modworkshop_thumb.png)
+
+![ModWorkshop banner](media/modworkshop_banner.png)
+
+## Configuration
+
+Mod Configuration Menu is optional but recommended. The `Lore Elements` page lets you adjust lore note spawn rate and rebind the journal hotkey.
+
+![Lore Elements MCM settings](media/mcm_settings.png)
+
 ## Development
 
 ### Local install (Windows)
