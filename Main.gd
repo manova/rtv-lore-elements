@@ -96,6 +96,7 @@ func _process(_delta: float) -> void:
 	_update_map_pin_screen_positions()
 
 func _ready() -> void:
+	set_process(false)
 	if Engine.has_meta("RTVModLib"):
 		var lib = Engine.get_meta("RTVModLib")
 		if lib._is_ready:
@@ -139,7 +140,6 @@ func _on_lib_ready() -> void:
 	_register_map_pin_hooks()
 	_register_lore_content()
 	_load_journal()
-	_refresh_map_pin_layer()
 
 func _load_reader_font() -> void:
 	var font := FontFile.new()
@@ -721,28 +721,45 @@ func _refresh_map_pin_layer() -> void:
 
 func _refresh_map_pin_layer_for_interface(interface_node: Node) -> void:
 	if interface_node == null || !is_instance_valid(interface_node):
+		set_process(false)
 		return
 
 	var navigator = interface_node.get_node_or_null("Tools/Map/Elements/Navigator")
 	var map_scroll = interface_node.get_node_or_null("Tools/Map/Elements/Navigator/Scroll")
 	if navigator == null || !(navigator is Control):
+		set_process(false)
 		return
 	if map_scroll == null || !(map_scroll is Control):
+		set_process(false)
 		return
 
-	var pin_layer := _ensure_map_pin_layer(navigator as Control)
-	if pin_layer == null:
-		return
+	_connect_map_pin_visibility_signal(interface_node)
 
-	_clear_map_pin_layer(pin_layer)
+	var pinned_note_ids: Array = []
 	for note_id in _journal_discovered_ids:
 		var pin_data := _get_note_pin_data(str(note_id))
 		if pin_data.is_empty():
 			continue
+		pinned_note_ids.append(str(note_id))
+
+	if pinned_note_ids.is_empty():
+		_remove_map_pin_layer(navigator)
+		_sync_map_pin_processing_for_interface(interface_node)
+		return
+
+	var pin_layer := _ensure_map_pin_layer(navigator as Control)
+	if pin_layer == null:
+		set_process(false)
+		return
+
+	_clear_map_pin_layer(pin_layer)
+	for note_id in pinned_note_ids:
+		var pin_data := _get_note_pin_data(str(note_id))
 		pin_layer.add_child(_build_map_pin_marker(str(note_id), pin_data))
 
 	navigator.move_child(pin_layer, navigator.get_child_count() - 1)
 	_update_map_pin_screen_positions_for_interface(interface_node)
+	_sync_map_pin_processing_for_interface(interface_node)
 
 func _ensure_map_pin_layer(navigator: Control) -> Control:
 	var existing = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
@@ -765,6 +782,31 @@ func _clear_map_pin_layer(pin_layer: Control) -> void:
 	for child in pin_layer.get_children():
 		pin_layer.remove_child(child)
 		child.free()
+
+func _remove_map_pin_layer(navigator: Node) -> void:
+	var existing = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
+	if existing == null:
+		return
+	navigator.remove_child(existing)
+	existing.free()
+
+func _connect_map_pin_visibility_signal(interface_node: Node) -> void:
+	var map_ui = interface_node.get_node_or_null("Tools/Map")
+	if map_ui == null || !(map_ui is CanvasItem):
+		return
+
+	var callback := Callable(self, "_on_map_ui_visibility_changed").bind(interface_node)
+	if !(map_ui as CanvasItem).visibility_changed.is_connected(callback):
+		(map_ui as CanvasItem).visibility_changed.connect(callback)
+
+func _on_map_ui_visibility_changed(interface_node: Node) -> void:
+	if interface_node == null || !is_instance_valid(interface_node):
+		set_process(false)
+		return
+	if _is_map_ui_visible(interface_node):
+		_refresh_map_pin_layer_for_interface(interface_node)
+	else:
+		_sync_map_pin_processing_for_interface(interface_node)
 
 func _get_note_pin_data(note_id: String) -> Dictionary:
 	if !_notes.has(note_id):
@@ -867,20 +909,42 @@ func _build_map_pin_marker(note_id: String, pin_data: Dictionary) -> Control:
 
 	return marker
 
+func _sync_map_pin_processing_for_interface(interface_node: Node) -> void:
+	var should_process := false
+	if interface_node != null && is_instance_valid(interface_node) && _is_map_ui_visible(interface_node):
+		var navigator = interface_node.get_node_or_null("Tools/Map/Elements/Navigator")
+		if navigator != null:
+			var pin_layer = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
+			should_process = pin_layer != null && pin_layer is Control && pin_layer.get_child_count() > 0
+	set_process(should_process)
+
+func _is_map_ui_visible(interface_node: Node) -> bool:
+	var map_ui = interface_node.get_node_or_null("Tools/Map")
+	return map_ui != null && map_ui is CanvasItem && (map_ui as CanvasItem).is_visible_in_tree()
+
 func _update_map_pin_screen_positions() -> void:
 	_update_map_pin_screen_positions_for_interface(_get_active_interface_node())
 
 func _update_map_pin_screen_positions_for_interface(interface_node: Node) -> void:
 	if interface_node == null || !is_instance_valid(interface_node):
+		set_process(false)
+		return
+	if !_is_map_ui_visible(interface_node):
+		set_process(false)
 		return
 
 	var navigator = interface_node.get_node_or_null("Tools/Map/Elements/Navigator")
 	var map_scroll = interface_node.get_node_or_null("Tools/Map/Elements/Navigator/Scroll")
 	if navigator == null || map_scroll == null:
+		set_process(false)
 		return
 
 	var pin_layer = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
 	if pin_layer == null || !(pin_layer is Control):
+		set_process(false)
+		return
+	if pin_layer.get_child_count() <= 0:
+		set_process(false)
 		return
 
 	var zoom := 1.0
