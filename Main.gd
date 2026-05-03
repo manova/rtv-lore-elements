@@ -19,6 +19,9 @@ const MCM_CONFIG_DIR := "user://MCM/rtv_lore_elements"
 const MCM_CONFIG_FILE := MCM_CONFIG_DIR + "/config.ini"
 const MCM_SPAWN_MULTIPLIER_KEY := "lore_note_spawn_multiplier"
 const MCM_JOURNAL_HOTKEY_KEY := "lore_journal_hotkey"
+const MAP_PIN_LAYER_NAME := "RtvLorePinLayer"
+const MAP_PIN_MARKER_NAME_PREFIX := "RtvLorePin_"
+const MAP_PIN_BASE_ZOOM := 0.75
 const DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER := 1.0
 const MAX_LORE_NOTE_SPAWN_MULTIPLIER := 20.0
 const DEFAULT_JOURNAL_HOTKEY := KEY_J
@@ -53,6 +56,7 @@ var _ui_manager_input_hook_id := -1
 var _auto_place_hook_id := -1
 var _lootcontainer_fill_buckets_hook_id := -1
 var _lootsimulation_fill_buckets_hook_id := -1
+var _interface_map_hook_id := -1
 
 var _notes := {}
 var _ui_strings := {}
@@ -61,6 +65,7 @@ var _reader_font = null
 var _mcm_helpers = null
 var _registered_voiceover_ids := {}
 var _voiceover_warning_ids := {}
+var _pin_warning_ids := {}
 var _lore_note_spawn_multiplier := DEFAULT_LORE_NOTE_SPAWN_MULTIPLIER
 var _journal_hotkey_value := DEFAULT_JOURNAL_HOTKEY
 var _journal_hotkey_type := DEFAULT_JOURNAL_HOTKEY_TYPE
@@ -87,7 +92,11 @@ var _reader_next_button: Button = null
 var _reader_from_journal := false
 var _active_voiceover_player: Node = null
 
+func _process(_delta: float) -> void:
+	_update_map_pin_screen_positions()
+
 func _ready() -> void:
+	set_process(false)
 	if Engine.has_meta("RTVModLib"):
 		var lib = Engine.get_meta("RTVModLib")
 		if lib._is_ready:
@@ -128,6 +137,7 @@ func _on_lib_ready() -> void:
 	_register_journal_input()
 	_register_mcm_config()
 	_register_loot_multiplier_hooks()
+	_register_map_pin_hooks()
 	_register_lore_content()
 	_load_journal()
 
@@ -218,6 +228,17 @@ func _register_loot_multiplier_hooks() -> void:
 		print("[rtv_lore_elements] registered lootsimulation-fillbuckets-post spawn multiplier hook.")
 	else:
 		push_warning("[rtv_lore_elements] lootsimulation-fillbuckets-post hook unavailable; MCM spawn multiplier will not affect loose loot.")
+
+func _register_map_pin_hooks() -> void:
+	_interface_map_hook_id = _lib.hook("interface-map-post", _on_interface_map_post, 40)
+	if _interface_map_hook_id != -1:
+		print("[rtv_lore_elements] registered interface-map-post pin refresh hook.")
+	else:
+		push_warning("[rtv_lore_elements] interface-map-post hook unavailable; map pins will refresh through node discovery and journal events.")
+
+	var node_added_callback := Callable(self, "_on_tree_node_added_for_pins")
+	if !get_tree().node_added.is_connected(node_added_callback):
+		get_tree().node_added.connect(node_added_callback)
 
 func _register_journal_input() -> void:
 	if _lib.register(_lib.Registry.INPUTS, JOURNAL_INPUT_ACTION, {
@@ -623,6 +644,15 @@ func _on_interface_auto_place_post(target_item, target_grid, _source_grid, _used
 
 	return null
 
+func _on_interface_map_post():
+	_refresh_map_pin_layer_for_interface(_lib._caller)
+	return null
+
+func _on_tree_node_added_for_pins(node: Node) -> void:
+	if node == null || node.name != "Interface":
+		return
+	call_deferred("_refresh_map_pin_layer_for_interface", node)
+
 func _on_loot_fill_buckets_post():
 	_apply_lore_spawn_multiplier_to_buckets(_lib._caller)
 	return null
@@ -685,6 +715,264 @@ func _get_note_id_from_item_node(item_node) -> String:
 		return ""
 
 	return note_id
+
+func _refresh_map_pin_layer() -> void:
+	_refresh_map_pin_layer_for_interface(_get_active_interface_node())
+
+func _refresh_map_pin_layer_for_interface(interface_node: Node) -> void:
+	if interface_node == null || !is_instance_valid(interface_node):
+		set_process(false)
+		return
+
+	var navigator = interface_node.get_node_or_null("Tools/Map/Elements/Navigator")
+	var map_scroll = interface_node.get_node_or_null("Tools/Map/Elements/Navigator/Scroll")
+	if navigator == null || !(navigator is Control):
+		set_process(false)
+		return
+	if map_scroll == null || !(map_scroll is Control):
+		set_process(false)
+		return
+
+	_connect_map_pin_visibility_signal(interface_node)
+
+	var pinned_note_ids: Array = []
+	for note_id in _journal_discovered_ids:
+		var pin_data := _get_note_pin_data(str(note_id))
+		if pin_data.is_empty():
+			continue
+		pinned_note_ids.append(str(note_id))
+
+	if pinned_note_ids.is_empty():
+		_remove_map_pin_layer(navigator)
+		_sync_map_pin_processing_for_interface(interface_node)
+		return
+
+	var pin_layer := _ensure_map_pin_layer(navigator as Control)
+	if pin_layer == null:
+		set_process(false)
+		return
+
+	_clear_map_pin_layer(pin_layer)
+	for note_id in pinned_note_ids:
+		var pin_data := _get_note_pin_data(str(note_id))
+		pin_layer.add_child(_build_map_pin_marker(str(note_id), pin_data))
+
+	navigator.move_child(pin_layer, navigator.get_child_count() - 1)
+	_update_map_pin_screen_positions_for_interface(interface_node)
+	_sync_map_pin_processing_for_interface(interface_node)
+
+func _ensure_map_pin_layer(navigator: Control) -> Control:
+	var existing = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
+	if existing != null && existing is Control:
+		return existing
+	if existing != null:
+		navigator.remove_child(existing)
+		existing.free()
+
+	var pin_layer := Control.new()
+	pin_layer.name = MAP_PIN_LAYER_NAME
+	pin_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	pin_layer.clip_contents = true
+	pin_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pin_layer.z_index = 2000
+	navigator.add_child(pin_layer)
+	return pin_layer
+
+func _clear_map_pin_layer(pin_layer: Control) -> void:
+	for child in pin_layer.get_children():
+		pin_layer.remove_child(child)
+		child.free()
+
+func _remove_map_pin_layer(navigator: Node) -> void:
+	var existing = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
+	if existing == null:
+		return
+	navigator.remove_child(existing)
+	existing.free()
+
+func _connect_map_pin_visibility_signal(interface_node: Node) -> void:
+	var map_ui = interface_node.get_node_or_null("Tools/Map")
+	if map_ui == null || !(map_ui is CanvasItem):
+		return
+
+	var callback := Callable(self, "_on_map_ui_visibility_changed").bind(interface_node)
+	if !(map_ui as CanvasItem).visibility_changed.is_connected(callback):
+		(map_ui as CanvasItem).visibility_changed.connect(callback)
+
+func _on_map_ui_visibility_changed(interface_node: Node) -> void:
+	if interface_node == null || !is_instance_valid(interface_node):
+		set_process(false)
+		return
+	if _is_map_ui_visible(interface_node):
+		_refresh_map_pin_layer_for_interface(interface_node)
+	else:
+		_sync_map_pin_processing_for_interface(interface_node)
+
+func _get_note_pin_data(note_id: String) -> Dictionary:
+	if !_notes.has(note_id):
+		return {}
+
+	var note: Dictionary = _notes[note_id]
+	if !note.has("pinned_location") || note["pinned_location"] == null:
+		return {}
+
+	var raw_location = note["pinned_location"]
+	if typeof(raw_location) != TYPE_DICTIONARY:
+		_warn_pin_once(note_id + ":location_type", "pinned_location must be an object or null for " + note_id)
+		return {}
+
+	var location: Dictionary = raw_location
+	if !location.has("x") || !location.has("y"):
+		_warn_pin_once(note_id + ":location_xy", "pinned_location requires x and y map-pixel coordinates for " + note_id)
+		return {}
+
+	var raw_x = location["x"]
+	var raw_y = location["y"]
+	if !(raw_x is float) && !(raw_x is int):
+		_warn_pin_once(note_id + ":location_x", "pinned_location.x must be numeric for " + note_id)
+		return {}
+	if !(raw_y is float) && !(raw_y is int):
+		_warn_pin_once(note_id + ":location_y", "pinned_location.y must be numeric for " + note_id)
+		return {}
+
+	return {
+		"position": Vector2(float(raw_x), float(raw_y)),
+		"label": _get_note_pin_label(note_id, note),
+	}
+
+func _get_note_pin_label(note_id: String, note: Dictionary) -> String:
+	var default_label := str(note.get("name", note_id))
+	if !note.has("pin_label") || note["pin_label"] == null:
+		return default_label
+
+	var label_key := str(note["pin_label"]).strip_edges()
+	if label_key.is_empty():
+		return default_label
+	return _ui_text(label_key, label_key)
+
+func _build_map_pin_marker(note_id: String, pin_data: Dictionary) -> Control:
+	var marker := Control.new()
+	marker.name = MAP_PIN_MARKER_NAME_PREFIX + note_id
+	marker.set_meta("map_position", pin_data["position"])
+	marker.position = Vector2(-10000.0, -10000.0)
+	marker.size = Vector2(240.0, 36.0)
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marker.z_index = 210
+
+	var ring_style := StyleBoxFlat.new()
+	ring_style.bg_color = Color(0.78, 0.12, 0.08, 0.18)
+	ring_style.border_color = Color(0.98, 0.88, 0.58, 0.95)
+	ring_style.set_border_width_all(2)
+
+	var ring := Panel.new()
+	ring.name = "Ring"
+	ring.position = Vector2(-12.0, -12.0)
+	ring.size = Vector2(24.0, 24.0)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ring.add_theme_stylebox_override("panel", ring_style)
+	marker.add_child(ring)
+
+	var dot_style := StyleBoxFlat.new()
+	dot_style.bg_color = Color(0.78, 0.12, 0.08, 0.95)
+	dot_style.border_color = Color(0.98, 0.88, 0.58, 1.0)
+	dot_style.set_border_width_all(3)
+
+	var dot := Panel.new()
+	dot.name = "Dot"
+	dot.position = Vector2(-7.0, -7.0)
+	dot.size = Vector2(14.0, 14.0)
+	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dot.add_theme_stylebox_override("panel", dot_style)
+	marker.add_child(dot)
+
+	var label_style := StyleBoxFlat.new()
+	label_style.bg_color = Color(0.03, 0.025, 0.02, 0.82)
+	label_style.border_color = Color(0.78, 0.64, 0.38, 0.95)
+	label_style.set_border_width_all(1)
+	label_style.set_content_margin_all(5.0)
+
+	var label_panel := PanelContainer.new()
+	label_panel.name = "Label"
+	label_panel.position = Vector2(14.0, -17.0)
+	label_panel.size = Vector2(210.0, 30.0)
+	label_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label_panel.add_theme_stylebox_override("panel", label_style)
+	marker.add_child(label_panel)
+
+	var label := Label.new()
+	label.text = str(pin_data["label"])
+	label.clip_text = true
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.add_theme_color_override("font_color", Color(0.94, 0.88, 0.72, 1.0))
+	label.add_theme_font_size_override("font_size", 16)
+	label_panel.add_child(label)
+
+	return marker
+
+func _sync_map_pin_processing_for_interface(interface_node: Node) -> void:
+	var should_process := false
+	if interface_node != null && is_instance_valid(interface_node) && _is_map_ui_visible(interface_node):
+		var navigator = interface_node.get_node_or_null("Tools/Map/Elements/Navigator")
+		if navigator != null:
+			var pin_layer = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
+			should_process = pin_layer != null && pin_layer is Control && pin_layer.get_child_count() > 0
+	set_process(should_process)
+
+func _is_map_ui_visible(interface_node: Node) -> bool:
+	var map_ui = interface_node.get_node_or_null("Tools/Map")
+	return map_ui != null && map_ui is CanvasItem && (map_ui as CanvasItem).is_visible_in_tree()
+
+func _update_map_pin_screen_positions() -> void:
+	_update_map_pin_screen_positions_for_interface(_get_active_interface_node())
+
+func _update_map_pin_screen_positions_for_interface(interface_node: Node) -> void:
+	if interface_node == null || !is_instance_valid(interface_node):
+		set_process(false)
+		return
+	if !_is_map_ui_visible(interface_node):
+		set_process(false)
+		return
+
+	var navigator = interface_node.get_node_or_null("Tools/Map/Elements/Navigator")
+	var map_scroll = interface_node.get_node_or_null("Tools/Map/Elements/Navigator/Scroll")
+	if navigator == null || map_scroll == null:
+		set_process(false)
+		return
+
+	var pin_layer = navigator.get_node_or_null(MAP_PIN_LAYER_NAME)
+	if pin_layer == null || !(pin_layer is Control):
+		set_process(false)
+		return
+	if pin_layer.get_child_count() <= 0:
+		set_process(false)
+		return
+
+	var zoom := 1.0
+	var zoom_value = map_scroll.get("zoomLevel")
+	if zoom_value is float || zoom_value is int:
+		zoom = float(zoom_value)
+
+	var scroll_offset := Vector2(float(map_scroll.get("scroll_horizontal")), float(map_scroll.get("scroll_vertical")))
+	var scroll_origin := Vector2.ZERO
+	if map_scroll is Control && pin_layer is Control:
+		scroll_origin = (map_scroll as Control).global_position - (pin_layer as Control).global_position
+
+	for child in pin_layer.get_children():
+		if !child.has_meta("map_position") || !(child is Control):
+			continue
+		var map_position = child.get_meta("map_position")
+		if !(map_position is Vector2):
+			continue
+		var screen_position := scroll_origin + (map_position as Vector2) * zoom - scroll_offset
+		var pin_scale := clampf(zoom / MAP_PIN_BASE_ZOOM, 0.58, 1.0)
+		(child as Control).position = screen_position
+		(child as Control).scale = Vector2(pin_scale, pin_scale)
+
+func _warn_pin_once(warning_id: String, message: String) -> void:
+	if _pin_warning_ids.has(warning_id):
+		return
+	_pin_warning_ids[warning_id] = true
+	push_warning("[rtv_lore_elements] " + message)
 
 func _is_journal_toggle_event(event: InputEvent) -> bool:
 	var repaired_action := _ensure_journal_input_action()
@@ -845,6 +1133,7 @@ func _load_journal() -> void:
 	_journal_discovered_ids = _sanitize_journal_ids(config.get_value("journal", "discovered_ids", []))
 	_journal_read_ids = _sanitize_journal_ids(config.get_value("journal", "read_ids", []))
 	_prune_read_ids_to_discovered()
+	_refresh_map_pin_layer()
 
 func _sanitize_journal_ids(raw_ids) -> Array:
 	var clean_ids: Array = []
@@ -885,6 +1174,8 @@ func _record_note_discovered(note_id: String, should_save: bool) -> bool:
 
 	if should_save && changed:
 		_save_journal()
+	if changed:
+		_refresh_map_pin_layer()
 	return changed
 
 func _record_note_read(note_id: String, should_save: bool) -> bool:
