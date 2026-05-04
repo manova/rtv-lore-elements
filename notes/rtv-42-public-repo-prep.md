@@ -32,5 +32,5 @@ marketing copy.
 ## Post-merge steps
 
 After the PR merges, set the GitHub repository description and topics, then flip
-the repository to public. The README keeps a `<!-- MODWORKSHOP_LINK -->`
-sentinel so RTV-40 can replace the ModWorkshop stub when the page is published.
+the repository to public. RTV-40 replaces the README's ModWorkshop stub with the
+published listing URL once the page is live.
