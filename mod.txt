@@ -1,10 +1,13 @@
 [mod]
 name="Lore Elements"
 id="rtv_lore_elements"
-version="0.1.0"
+version="0.1.1"
 priority=100
 
 [autoload]
 RtvLoreElements="res://rtv-lore-elements/Main.gd"
 
 [registry]
+
+[updates]
+modworkshop=56568

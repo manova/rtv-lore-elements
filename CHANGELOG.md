@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 While the project is below 1.0.0, the public API is unstable and minor versions may introduce breaking changes.
 
+## [0.1.1] - 2026-05-04
+
+### Fixed
+
+- Added ModWorkshop update metadata to `mod.txt` so Metro Mod Loader can check for future Lore Elements updates.
+
 ## [0.1.0] - 2026-05-03
 
 First public release.
@@ -37,4 +43,5 @@ First public release.
 - Built with assistance from Codex (code execution) and Perplexity Computer (product, design, planning)
 - Thanks to the Road to Vostok modding community on ModWorkshop
 
+[0.1.1]: https://github.com/manova/rtv-lore-elements/releases/tag/v0.1.1
 [0.1.0]: https://github.com/manova/rtv-lore-elements/releases/tag/v0.1.0
