@@ -868,8 +868,25 @@ func _on_world_pickup_restore_post(_target_shelter) -> void:
 func _correct_world_pickup_restored_contacts(candidates: Array) -> void:
 	# Native LoadShelter creates furniture, restores the pose, then Freeze()s
 	# pickups. Drop/sleep guards intentionally skip these bodies. Give freshly
-	# restored colliders one physics frame, then repair only shallow overlap.
+	# restored colliders one physics frame before the bounded restore repairs.
 	await get_tree().physics_frame
+	# Legacy patient-report saves used an upright XY mesh with a bottom-edge
+	# origin. Custom papers use XZ and a centered origin. Only repair physically
+	# invalid, supported legacy-like poses; unmarked saves can also be modern.
+	candidates.sort_custom(func(a, b): return a.pose.origin.y < b.pose.origin.y)
+	var legacy_repairs := []
+	var restored_rids: Array[RID] = []
+	for candidate in candidates:
+		var restored = candidate.body.get_ref()
+		if !is_instance_valid(restored) || !restored.is_inside_tree() || !restored.freeze || restored.gravity_scale <= 0.0:
+			continue
+		if !restored.global_transform.is_finite() || !restored.global_transform.is_equal_approx(candidate.pose):
+			continue
+		var variant := _get_world_pickup_variant_for_body(restored)
+		if !variant.is_empty() && absf(restored.global_basis.z.y) >= 0.55 && _world_pickup_legacy_support_gap(restored, restored.global_transform, variant.rest_offsets) < -0.015:
+			# Only deeply invalid legacy-like bodies may be ignored while their
+			# poses are rebuilt. Keep valid/moved/held modern papers as obstacles.
+			restored_rids.append(restored.get_rid())
 	for candidate in candidates:
 		var body = candidate.body.get_ref()
 		if !is_instance_valid(body) || !body.is_inside_tree() || !body.freeze || body.gravity_scale <= 0.0:
@@ -879,11 +896,91 @@ func _correct_world_pickup_restored_contacts(candidates: Array) -> void:
 		var variant := _get_world_pickup_variant_for_body(body)
 		if variant.is_empty() || variant.get("stabilize_drops", false) != true:
 			continue
+		var legacy := _world_pickup_legacy_restored_pose(body, variant, legacy_repairs, restored_rids)
+		if !legacy.is_empty():
+			body.global_transform = legacy.pose
+			legacy_repairs.append(legacy)
+			continue
 		var lift := _world_pickup_contact_lift(body, variant)
 		# Upward-only, <= 10 mm: do not lower intentional placements, wake a
 		# frozen save, flatten folds, relocate lost items or change release spin.
 		if is_finite(lift) && lift > WORLD_PICKUP_REST_TOLERANCE && lift <= 0.01:
 			body.global_position.y += lift
+	if !legacy_repairs.is_empty():
+		print("[rtv_lore_elements] repaired ", legacy_repairs.size(), " legacy placed-note poses; native checkpoint will retain them.")
+
+func _world_pickup_legacy_support_gap(body: RigidBody3D, pose: Transform3D, points: PackedVector3Array) -> float:
+	var gap := INF
+	var space := body.get_world_3d().direct_space_state
+	for offset in points:
+		var point := pose * offset
+		var query := PhysicsRayQueryParameters3D.create(
+			point + Vector3.UP * 0.18, point - Vector3.UP * 0.15,
+			body.collision_mask & ~4, [body.get_rid()])
+		var hit := space.intersect_ray(query)
+		if hit.is_empty() || !(hit.get("collider") is StaticBody3D) || hit.normal.y < 0.95:
+			continue
+		gap = minf(gap, point.y - hit.position.y)
+	return gap
+
+func _world_pickup_legacy_restored_pose(body: RigidBody3D, variant: Dictionary, repairs: Array, excluded: Array[RID]) -> Dictionary:
+	var old := body.global_transform
+	# Near-edge-on old interpretations are ambiguous. Never guess at displays.
+	if absf(old.basis.z.y) < 0.55 || !old.basis.is_equal_approx(old.basis.orthonormalized()):
+		return {}
+	var bounds: AABB = variant.contact_bounds
+	var center := bounds.get_center()
+	# Native MS_Patient_Report bounds: 200 x 300 x 8 mm, bottom-edge origin.
+	var legacy_center := old * Vector3(0.0, 0.15, 0.0)
+	var pose := Transform3D(old.basis * Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO)
+	pose.origin = legacy_center - pose.basis * center
+	var points: PackedVector3Array = variant.rest_offsets
+	var current_gap := _world_pickup_legacy_support_gap(body, old, points)
+	var target_gap := _world_pickup_legacy_support_gap(body, pose, points)
+	if !is_finite(current_gap) || !is_finite(target_gap) || target_gap < -0.01 || target_gap > 0.125:
+		return {}
+	var bottom := INF
+	var top := -INF
+	for point in points:
+		var height := (pose * point).y
+		bottom = minf(bottom, height)
+		top = maxf(top, height)
+	var stack := false
+	var support_height := bottom - target_gap
+	for repair in repairs:
+		# Old 50 mm proxies can leave a stack floating after its base changes.
+		# Admit only a connected, nearly horizontal legacy stack, never a valid
+		# modern upright display (its bottom already touches its support).
+		var separation: float = legacy_center.y - repair.legacy_center.y
+		var local: Vector3 = repair.old.affine_inverse() * legacy_center
+		var new_local: Vector3 = repair.pose.affine_inverse() * (pose * center)
+		var under: AABB = repair.bounds
+		if absf(old.basis.z.y) >= 0.95 && absf(repair.old.basis.z.y) >= 0.95 && separation >= 0.015 && separation <= 0.065 && absf(local.x) < 0.1 && local.y > 0.0 && local.y < 0.3 && absf(new_local.x) < under.size.x * 0.5 && absf(new_local.z) < under.size.z * 0.5:
+			stack = true
+			support_height = maxf(support_height, repair.top)
+	if current_gap >= -0.015 && !(stack && current_gap > 0.015):
+		return {}
+	var adjustment := support_height - bottom + 0.001
+	if absf(adjustment) > 0.125:
+		return {}
+	pose.origin.y += adjustment
+	# Validate the whole convex visual envelope against furniture and walls,
+	# not just downward rays. Valid newer papers remain collision obstacles.
+	var shape := ConvexPolygonShape3D.new()
+	shape.points = points
+	shape.margin = 0.0
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = shape
+	query.transform = pose
+	query.collision_mask = body.collision_mask
+	var obstacles_excluded: Array[RID] = excluded.duplicate()
+	if !obstacles_excluded.has(body.get_rid()):
+		obstacles_excluded.append(body.get_rid())
+	query.exclude = obstacles_excluded
+	query.margin = 0.0
+	if !body.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+		return {}
+	return {"pose":pose, "old":old, "legacy_center":legacy_center, "bounds":bounds, "top":top + adjustment}
 
 func _on_notebook_load_grid_pre(slot_data, _target_grid, _grid_position) -> void:
 	_upgrade_notebook_slot(slot_data, true)

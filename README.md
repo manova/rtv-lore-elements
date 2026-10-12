@@ -5,16 +5,16 @@ Readable notes and environmental storytelling for **Road to Vostok**.
 Lore Elements adds discoverable notes, letters, reports, lists, and map fragments to existing loot. Each note can be read in a styled multi-page reader, saved into a persistent journal, and, for selected notes, shown as a discovered pin on the in-game map.
 
 Version `0.2.0` adds original document families, inventory art, reader handwriting
-and supported upright placement. The final package is prepared but not yet
-published. See [release notes](RELEASE_NOTES.md) and
+and supported upright placement, including a bounded repair for older saved
+document poses. The corrected package is prepared but not yet published. See [release notes](RELEASE_NOTES.md) and
 [save safety and rollback](SAVE_SAFETY.md) before upgrading.
 
 ## Requirements
 
-- Road to Vostok; this version targets Steam build `25837777`
+- Road to Vostok `0.2.1.0`, Steam build `25837777`, is the tested baseline
 - Metro Mod Loader `3.4.2` is the tested baseline. Earlier releases required
   `3.1.1`; this version does not claim full testing on every loader version.
-- Mod Configuration Menu is optional but recommended
+- Mod Configuration Menu is optional; tested with `2.9.3`
 - Multi Save Slots is not required. Optional checks use the private
   `1.1.14-local-safe.1` build; this is not a claim about other MSS versions.
 
@@ -30,8 +30,14 @@ published. See [release notes](RELEASE_NOTES.md) and
    Metro-enabled setup. Do not enable it alongside an RTV-37 test archive.
 
 The public mod ID remains `rtv_lore_elements`; the Metro profile key for this
-version is `rtv_lore_elements@0.2.0`. Test archives have a different ID and must
-be disabled separately. Preparing this package does not change any installation.
+version is `rtv_lore_elements@0.2.0`. Test archives can have different IDs or
+version keys; disable them explicitly. Preparing this package does not change
+any installation.
+
+Fresh-game and upgrade checks passed, including three genuine older playthroughs
+on isolated copies. Back up before updating, keep one Lore archive enabled and
+let Metro finish its clean restart. Keep the matching backup for rollback; see
+[the full save-safety guide](SAVE_SAFETY.md).
 
 In Developer Mode the loader can also read loose mod folders, but packaged releases should keep `mod.txt` at archive root and the source files under `rtv-lore-elements/`.
 
