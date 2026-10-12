@@ -23,8 +23,11 @@ authoring/QA plan remains in the private working checkout, not this source subse
 - [x] Prepare a curated isolated source candidate, public provenance/QA summaries,
   exact offline packaging recipe and five gallery options.
 - [ ] Review the source commit and select the final cover/gallery.
-- [ ] Obtain separate push/tag/publication approval, verify remote state, publish
-  the approved artifact, then verify its served checksum and listing.
+- [x] Obtain GitHub branch-push/PR approval on 2026-10-12 and verify remote state;
+  base the PR on upstream main without the unrelated local tooling commit.
+- [ ] Complete GitHub review and obtain merge/tag/release approval; publish only
+  the approved artifact, then verify its served checksum and listing. Vostok Mods
+  and ModWorkshop publication remain a separate handoff.
 
 Current entry points: [source release](release/0.2.0/README.md),
 [building](BUILDING.md), [release notes](RELEASE_NOTES.md),

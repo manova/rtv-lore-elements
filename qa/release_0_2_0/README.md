@@ -43,5 +43,6 @@ The existing missing-input-action repair warning is not suppressed or treated
 as a save failure. See [release limits](../../RELEASE_NOTES.md) and
 [save safety/rollback](../../SAVE_SAFETY.md).
 
-The distribution and source candidate are prepared locally. Publication, a
-remote push, a release tag and final gallery selection still require approval.
+The distribution is prepared and the source branch is approved for a GitHub PR.
+Merge, release tagging, mod publication and final gallery selection remain
+separate from the source-review step.

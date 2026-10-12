@@ -1,7 +1,11 @@
 # Curated source verification
 
 Prepared locally on 2026-10-11 from the accepted final 0.2.0 source allowlist.
-This is source/package verification, not a new game session or publication.
+This is source/package verification, not a new game session or mod publication.
+On 2026-10-12 the release commit was carried onto upstream `main` for the approved
+GitHub PR, retaining the exact original source tree while leaving out a local-only
+MCP setup commit. Subsequent PR-status documentation changes are outside the
+115 frozen package inputs; the original preparation branch is retained.
 
 - All 115 packaged source files match the frozen archive's SHA256 manifest.
 - The standalone source builder reproduces all 130 ZIP entries (115 files and

@@ -1,8 +1,9 @@
 # Lore Elements 0.2.0 source preparation
 
-This is the curated local source candidate for the accepted asset-pass release.
-Source preparation is authorized; pushing, tagging, uploading and publishing
-remain separate, unapproved actions. No publication date is set.
+This is the curated source candidate for the accepted asset-pass release.
+The branch push and GitHub PR are authorized as of 2026-10-12. Review and merge
+remain ahead; a release tag, GitHub release assets and publication on Vostok Mods
+or ModWorkshop remain separate actions. No publication date is set.
 
 The 115 packaged files are byte-identical to the frozen final VMZ. Its three
 GDScripts and 99 art/resource/data files are unchanged from accepted RC1. The
@@ -28,9 +29,12 @@ paths, Blender checkpoints, intermediate artwork, extracted game assets, game
 binaries, local MCP configuration and the private QA/automation trees are not
 included. The selected public QA summaries report earlier results; they do not
 pretend the private test harness or proprietary native inputs ship with this repo.
-Removing local configuration from this tree does not erase earlier Git history.
+The PR branch starts from upstream `main`, excluding the local-only tooling
+commit from its ancestry as well as excluding configuration from the file tree.
+The original local preparation branch is retained unchanged.
 
-Before publication, review this commit and the final gallery/cover, refresh the
-remote history/tag state, and obtain explicit push/tag/publication approval.
-Only then should the reviewed commit receive a release tag and the exact VMZ
-be uploaded. A tag on the old pre-asset-pass commit would not describe 0.2.0.
+Before publication, finish GitHub review, obtain merge/tag/release approval and
+select the final gallery/cover. Only the approved final source should receive
+a release tag, and only the verified VMZ should become a release download.
+Source-branch publication through this PR is not a mod-release announcement.
+A tag on the old pre-asset-pass commit would not describe 0.2.0.
