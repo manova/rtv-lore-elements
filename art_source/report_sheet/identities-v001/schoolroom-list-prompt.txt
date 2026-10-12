@@ -1,0 +1,18 @@
+Use case: photorealistic-natural.
+Asset type: ORIGINAL opaque base-color texture atlas for a realistic loose paper pickup in a survival game. Flat surface artwork, not a photograph of a prop.
+Canvas: landscape 4:3, ideally 2048 by 1536 pixels. Two equal PORTRAIT 2:3 faces side by side: LEFT HALF front, RIGHT HALF completely BLANK reverse. Paper fills the entire canvas edge to edge, NO gap, border, divider, sheet silhouette, background or transparency.
+Material: modestly handled gray-cream matte office paper, fine photographic fibers, sparse low-contrast wear, not antique parchment. Flat neutral scan-like diffuse illumination. NO cast shadows, directional highlights, fake raised edges, prominent folds or vignette. Real bends, thickness and tears will come from Blender. Both halves use the same quiet stock.
+All front marks remain inside the left half with 12% horizontal margins within that half. Never put writing on the right half. Clear, ordinary functional document design, never a decorative poster.
+Front: a practical shelter supplies list written in slightly uneven dark blue-black ballpoint handwriting on plain school office paper. Small heading and a short list, with the two count lines separated near the lower third. No invented checkmarks or ruled notebook spirals. Top/bottom margins 12%.
+Text (verbatim, in this order; keep natural line grouping):
+"CLASSROOM SUPPLIES"
+"for shelter use"
+"Chalk, tape, scissors"
+"Old maps, sports mats"
+"Blankets from storage"
+"Batteries from science room"
+"Radio from headmaster office"
+"Names checked in: 47"
+"Names reunited: 31"
+Only the exact text specified above. No additional names, dates, numbers, pseudo-writing, logos, seals, signatures or watermarks. These are short excerpts from existing fictional lore; the full story remains in the game reader. Reverse must be blank without mirrored or ghost text. No copied game assets. Opaque albedo only, not a normal map.
+

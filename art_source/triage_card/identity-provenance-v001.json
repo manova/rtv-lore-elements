@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-06",
+  "mode": "built-in image generation; two base edits and one targeted name correction",
+  "input_sha256": "fb351097508b740fadad8a5714533c70fea8e5eb5444d68c7efbcaad551e2e4b",
+  "correction_prompt": "Use case: precise-object-edit.\nInput image 1 is the EDIT TARGET, a flat two-half game texture atlas.\nChange ONLY the faded handwritten patient-name entry immediately right of printed \"NAME\" in the upper part of the LEFT half, approximately global X 13%-39%, Y 19%-25%. The existing mark resembles a decipherable person's name; it must instead be genuinely unreadable, consistent with \"Name unreadable\" in the authored story. Reduce it to a few faded, broken blue-black ink remnants and an irregular rubbed ink smudge. No readable letters, no replacement name, no surname, no initials, no solid censor bar. Keep printed \"NAME\" and its rule intact.\nEverything else must remain unchanged: exact other wording (\"CLINIC TRIAGE\", \"SEX\", \"Male\", \"AGE\", \"~40\", \"OBSERVATIONS\", \"Exposure\", \"Lacerations — both hands\", \"CARE\", \"Iodine\", \"Blanket\"), handwriting, checks, all rules, margins, paper fibers and color, center divider, completely blank right/back half, square atlas framing. Do not redraw the full document. Flat opaque albedo texture; no physical card edges, holes, shadows, logos, blood or new text.",
+  "variants": {
+    "clinic": {
+      "sha256": "a75500114a7f3f0c0cf7502e366e65761874a5b52ec3b9dc3c441f48b5026278",
+      "note_id": "rtv_lore_clinic_triage_card",
+      "review": "Name now genuinely unreadable; Male, ~40, Exposure, Lacerations - both hands, Iodine and Blanket match authored story. Small utilitarian header/field labels are original surface layout.",
+      "runtime_file": "assets/textures/triage_clinic_ink_v001.png"
+    },
+    "school": {
+      "sha256": "8b3acbeea909892d70a07bbac069d89d00e17ef798eec5136a6d70636e228b30",
+      "note_id": "rtv_lore_triage_unknown_male",
+      "review": "School Medical Stn., UNKNOWN MALE, ~30, 02:14, GSW R-shoulder, Conscious non-verbal, Pressure dressing and 03:40 stable are consistent with authored story.",
+      "runtime_file": "assets/textures/triage_school_ink_v001.png"
+    }
+  },
+  "dimensions_px": [
+    1254,
+    1254
+  ],
+  "postprocessing": "Byte-for-byte copies of generated outputs; no raster editing outside imagegen",
+  "limits": [
+    "Generative derivatives preserve palette and atlas layout visually, not pixel-identical paper fibers",
+    "3D and native-lighting reviews are separate gates",
+    "Full story remains canonical in data/notes.json and the reader"
+  ],
+  "record_scope": "Curated historical origin summary; raw scenes, intermediary images and local QA are not distributed. See art_source/README.md for the current runtime source boundary.",
+  "private_origin_record_sha256": "281a98649090de8fa2ac617795ae3672d2887998a92e376eff802e887d2105ec"
+}

@@ -1,0 +1,15 @@
+Use case: photorealistic-natural.
+Asset type: ORIGINAL opaque base-color texture atlas for a realistic loose office-paper pickup in a survival game. This is flat surface artwork, not a photograph of a prop.
+Canvas: landscape 4:3, ideally 2048 by 1536 pixels. Two equally sized PORTRAIT 2:3 paper faces side by side. LEFT HALF is front, RIGHT HALF is blank reverse. Paper fills the canvas edge to edge, with NO gap, border, divider, visible sheet boundary, surrounding background or transparency. The right half must remain completely free of writing.
+Material: ordinary modestly handled gray-cream matte office paper, fine photographic fibers, sparse low-contrast handling marks near margins, restrained creasing. Not brown antique parchment. Flat neutral scan-like diffuse illumination, NO cast shadows, curled silhouettes, directional highlights, fake raised edges, strong fold stripes or dark vignette. Real bends and thickness will come from an original Blender mesh.
+Front identity: a municipal evacuation notice copied BY HAND, in practical slightly uneven dark blue-black ballpoint lettering. Confident ordinary block handwriting and occasional connected lowercase; not typographic print, not decorative calligraphy. The heading is slightly larger and underlined once by hand. Below it, a few compact left-aligned handwritten lines. Keep all marks inside the left half, with 12% horizontal margins and 12% top/bottom margins measured within that half. Leave generous quiet space below. Body letters should be small enough to resemble an actual used A4-like notice, not giant poster type, but crisp at close range.
+Use ONLY these exact words, in this order, with the line breaks below:
+"MUNICIPAL NOTICE"
+"Report to the school gymnasium."
+"Identification, medicine,"
+"warm clothing,"
+"food for two days."
+"Do not return for property"
+"after registration."
+No additional words, names, dates, page numbers, symbols, stamps, official seal, signatures, logos, fake pseudo-writing or watermark. These are short excerpts from existing fictional lore; the full readable story remains dynamic in the game's reader.
+Reverse: same original stock, understated small handling marks, no readable writing, no mirrored text, no ghost text. Opaque albedo only. No normal map, no lighting baked in.

@@ -1,0 +1,16 @@
+Use case: photorealistic-natural.
+Asset type: ORIGINAL opaque base-color texture atlas for a realistic loose paper pickup in a survival game. Flat surface artwork, not a photograph of a prop.
+Canvas: landscape 4:3, ideally 2048 by 1536 pixels. Two equal PORTRAIT 2:3 faces side by side: LEFT HALF front, RIGHT HALF completely BLANK reverse. Paper fills the entire canvas edge to edge, NO gap, border, divider, sheet silhouette, background or transparency.
+Material: modestly handled gray-cream matte office paper, fine photographic fibers, sparse low-contrast wear, not antique parchment. Flat neutral scan-like diffuse illumination. NO cast shadows, directional highlights, fake raised edges, prominent folds or vignette. Real bends, thickness and tears will come from Blender. Both halves use the same quiet stock.
+All front marks remain inside the left half with 12% horizontal margins within that half. Never put writing on the right half. Clear, ordinary functional document design, never a decorative poster.
+Front: a no-nonsense typed patrol locker warning, dark charcoal slightly worn typewriter ink. Small heading, three distinct short paragraphs, generous negative space below. Very faint old tape residue at two upper corners, no actual tape strip or object. Top margin 12%, bottom margin 14%.
+Text (verbatim, in this order; keep natural line grouping):
+"PATROL WARNING"
+"Do not pursue signal flares"
+"beyond the quarry road."
+"Do not answer single knocks"
+"on checkpoint doors after curfew."
+"Do not split pairs"
+"to investigate crying."
+Only the exact text specified above. No additional names, dates, numbers, pseudo-writing, logos, seals, signatures or watermarks. These are short excerpts from existing fictional lore; the full story remains in the game reader. Reverse must be blank without mirrored or ghost text. No copied game assets. Opaque albedo only, not a normal map.
+

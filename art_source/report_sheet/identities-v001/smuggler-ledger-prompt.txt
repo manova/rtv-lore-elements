@@ -1,0 +1,17 @@
+Use case: photorealistic-natural.
+Asset type: ORIGINAL opaque base-color texture atlas for a realistic loose paper pickup in a survival game. Flat surface artwork, not a photograph of a prop.
+Canvas: landscape 4:3, ideally 2048 by 1536 pixels. Two equal PORTRAIT 2:3 faces side by side: LEFT HALF front, RIGHT HALF completely BLANK reverse. Paper fills the entire canvas edge to edge, NO gap, border, divider, sheet silhouette, background or transparency.
+Material: modestly handled gray-cream matte office paper, fine photographic fibers, sparse low-contrast wear, not antique parchment. Flat neutral scan-like diffuse illumination. NO cast shadows, directional highlights, fake raised edges, prominent folds or vignette. Real bends, thickness and tears will come from Blender. Both halves use the same quiet stock.
+All front marks remain inside the left half with 12% horizontal margins within that half. Never put writing on the right half. Clear, ordinary functional document design, never a decorative poster.
+Front: a private handwritten ledger excerpt, faint desaturated gray bookkeeping rules, ordinary slightly hurried dark blue-black pen strokes, not a printed official form and not theatrical calligraphy. Restrained thumb wear, no blood/burns. A short heading and route followed by three owed entries. Make currency signs and amounts exact. Top/bottom margins 12%.
+Text (verbatim, in this order; keep natural line grouping):
+"Run 14"
+"Border at km 7"
+"Tuesday, moonless."
+"Owed:"
+"400 € to the cousin in Kotka"
+"60,000 ₽ to nobody you ask about"
+"two cartons to the man at the gate"
+"Don't write the name of the truck."
+Only the exact text specified above. No additional names, dates, numbers, pseudo-writing, logos, seals, signatures or watermarks. These are short excerpts from existing fictional lore; the full story remains in the game reader. Reverse must be blank without mirrored or ghost text. No copied game assets. Opaque albedo only, not a normal map.
+

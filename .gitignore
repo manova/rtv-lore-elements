@@ -38,3 +38,9 @@ modloader_conflicts.txt
 # Codex / agent scratch
 .codex/
 *.scratch.md
+
+# Local authoring and Python caches (not public release inputs)
+*.blend
+*.blend1
+__pycache__/
+*.pyc

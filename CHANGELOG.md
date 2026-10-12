@@ -4,6 +4,44 @@ All notable changes to this project will be documented in this file. The format 
 
 While the project is below 1.0.0, the public API is unstable and minor versions may introduce breaking changes.
 
+## [0.2.0] - Unreleased
+
+Final package prepared on 2026-10-11 from the accepted `0.2.0-rc.1`.
+Runtime, artwork and content are unchanged from that candidate; only release
+metadata and documentation differ. Installation and publication are separate.
+
+### Added
+
+- Original folded documents, torn notebook pages, inked medical cards, full-size
+  sheets and a child's crayon map, covering the 17 authored notes. Damaged Field
+  Note retains the native Patient Report as a fallback and control.
+- Per-family inventory icons and a focused reader/handwriting coherence pass.
+- A custom-document upright placement preset and bounded supported release.
+
+### Changed
+
+- Inventory footprints follow document size; total values follow the existing
+  narrative value-per-slot policy. Stable note IDs and authored story pages remain.
+- Notebook and folded-document upgrades use versioned resources and scoped
+  inventory migration. Saves written with these resources require a compatible
+  archive; downgrading only the mod is not supported.
+
+### Fixed
+
+- Custom paper drop, wall-placement and shallow restored-contact cases covered
+  by the focused asset-pass tests, without changing native item behavior.
+- Inventory discovery accepts Metro 3.4.2's trailing post-hook result argument
+  without replacing the native return value; older four-argument calls remain valid.
+
+### Compatibility
+
+- Target: Steam build 25837777, Metro 3.4.2; MCM 2.9.3 and the separately tested
+  private MSS build are optional, not dependencies.
+- Isolated fresh-New and pre-asset-upgrade gameplay and full-relaunch checks pass.
+  Retains documented cold-bootstrap and couch-support limitations.
+- No new lore stories, player-created map pins or public lore-registration API
+  are included in this bounded asset release.
+
 ## [0.1.1] - 2026-05-04
 
 ### Fixed

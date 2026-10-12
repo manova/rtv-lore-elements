@@ -1,0 +1,45 @@
+{
+  "status": "options-not-published",
+  "images": [
+    {
+      "file": "media/release-0.2.0/clinic-reader.png",
+      "sha256": "49ebf077a823cbbe746c4ce1323f5b35b63303988dc813584376e37a2f4f3ea6",
+      "size_bytes": 883953,
+      "width": 667,
+      "height": 1066,
+      "pixels_unchanged": true
+    },
+    {
+      "file": "media/release-0.2.0/document-family-lineup.png",
+      "sha256": "b17a28b048cc22697b5c49ccd57e5afa6db7e0e5b197dc73c9680759f61a99d9",
+      "size_bytes": 844806,
+      "width": 1489,
+      "height": 391,
+      "pixels_unchanged": true
+    },
+    {
+      "file": "media/release-0.2.0/schoolroom-reader.png",
+      "sha256": "a224a8cec5c089e0085f8a169a0254f33381066adba1291ab5e7a2104ecef92a",
+      "size_bytes": 837070,
+      "width": 720,
+      "height": 1013,
+      "pixels_unchanged": true
+    },
+    {
+      "file": "media/release-0.2.0/supported-sheets.png",
+      "sha256": "b28cc28d84e43f3a5f1108f381ac25884860bb2890f9b1b2e9666078873d81b1",
+      "size_bytes": 595983,
+      "width": 702,
+      "height": 541,
+      "pixels_unchanged": true
+    },
+    {
+      "file": "media/release-0.2.0/triage-tag-reader.png",
+      "sha256": "6ce11c1b07eb921b801166735506917574bdc59f68a81e93ec733e864486f802",
+      "size_bytes": 932059,
+      "width": 670,
+      "height": 1066,
+      "pixels_unchanged": true
+    }
+  ]
+}

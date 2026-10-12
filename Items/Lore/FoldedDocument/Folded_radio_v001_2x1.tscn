@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://rtv-lore-elements/assets/shaders/triage_inventory.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://rtv-lore-elements/assets/textures/folded_radio_icon_v001.res" id="2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_inventory"]
+shader = ExtResource("1")
+
+[node name="Folded_radio" type="Sprite2D"]
+material = SubResource("ShaderMaterial_inventory")
+position = Vector2(64, 32)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2")
