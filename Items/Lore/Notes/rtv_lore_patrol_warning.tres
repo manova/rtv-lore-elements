@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="ItemData" format=3]
 
-[ext_resource type="Texture2D" path="res://Items/Lore/Patient_Report/Files/Icon_Patient_Report.png" id="1"]
+[ext_resource type="Texture2D" path="res://rtv-lore-elements/assets/textures/sheet_patrol-warning_icon_v001.res" id="1"]
 [ext_resource type="Script" path="res://Scripts/ItemData.gd" id="2"]
-[ext_resource type="PackedScene" path="res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld_2x2.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://rtv-lore-elements/Items/Lore/ReportSheet/Sheet_patrol-warning_v001_2x2.tscn" id="3"]
 
 [resource]
 script = ExtResource("2")

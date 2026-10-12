@@ -2,6 +2,50 @@
 
 > Readable notes and environmental storytelling for Road to Vostok.
 
+## Current release checkpoint — 0.2.0
+
+The asset pass is accepted and the final package is frozen. This public plan
+retains the original design below as historical context; discovery examples and
+open questions there are not the current runtime API. The original detailed
+authoring/QA plan remains in the private working checkout, not this source subset.
+
+- [x] Deliver original folded, notebook, card, sheet and crayon-map families for
+  all 17 authored notes; retain the legacy native-control item and stable IDs.
+- [x] Complete inventory art, reader/handwriting refinement, family footprints
+  and value-per-slot policy without adding story content.
+- [x] Accept physical drops, wall-safe preview, restored-item correction,
+  upright rotation and supported display; keep bounded furniture limitations.
+- [x] Pass isolated fresh/upgrade-save, cold/interrupted-start, compatibility,
+  persistence and matched-backup rollback checks.
+- [x] Freeze RC1 runtime/art and prepare the exact final 115-file package.
+- [x] Separately back up and adopt normal Lore 0.2.0 with Metro 3.4.2; accept
+  normal Load 5 and shared-journal access without claiming a new acquisition test.
+- [x] Prepare a curated isolated source candidate, public provenance/QA summaries,
+  exact offline packaging recipe and five gallery options.
+- [ ] Review the source commit and select the final cover/gallery.
+- [x] Obtain GitHub branch-push/PR approval on 2026-10-12 and verify remote state;
+  base the PR on upstream main without the unrelated local tooling commit.
+- [ ] Complete GitHub review and obtain merge/tag/release approval; publish only
+  the approved artifact, then verify its served checksum and listing. Vostok Mods
+  and ModWorkshop publication remain a separate handoff.
+
+Current entry points: [source release](release/0.2.0/README.md),
+[building](BUILDING.md), [release notes](RELEASE_NOTES.md),
+[save safety](SAVE_SAFETY.md) and [public QA summary](qa/release_0_2_0/README.md).
+No new asset or gameplay test is requested for byte-identical source preparation.
+
+### Deferred scope and decisions
+
+- Couch/reclined support and unsuitable outdoor backings are not guaranteed;
+  retain firm-base/near-vertical-support behavior rather than pinning papers.
+- Watch for recurring post-reload jitter; request a short clip if it returns.
+- Native direct-flashlight washout and face-down loot settling remain known limits.
+- Further reader/physical-page matching, a standalone placement quality-of-life
+  mod and the public lore API are future work, not release blockers.
+- Final cover and readable-story spoiler selection remain open publication choices.
+
+## Original design and roadmap
+
 ## Why this mod exists
 
 Road to Vostok's official roadmap commits to **lore elements** in Build 3 (Q4 2026) — readable notes, environmental storytelling, and similar atmospheric content. As of April 2026 (Build 1), nothing on the workshop ([351 mods surveyed](https://modworkshop.net/g/roadtovostok)) addresses this. The genre's standout games (S.T.A.L.K.E.R., Metro, Tarkov) rely heavily on found-document storytelling, and RtV's empty interiors are conspicuously silent.
@@ -35,7 +79,7 @@ This mod ships ahead of the official feature with a community version: collectib
 
 ## Technical approach
 
-This mod uses **both** the registry API (to add note items) and the hook API (to add the "Read" UI). See [`SHARED_CONTEXT.md`](../SHARED_CONTEXT.md) for the framework primer.
+This mod uses **both** the registry API (to add note items) and the hook API (to add the "Read" UI). See [`SHARED_CONTEXT.md`](SHARED_CONTEXT.md) for the framework primer.
 
 ### Note item — Registry approach
 
@@ -176,7 +220,7 @@ Note the UI caveat from `Limitations.md`: the action is functional but won't app
 
 ## References
 
-- [Shared context](../SHARED_CONTEXT.md) — read first
+- [Shared context](SHARED_CONTEXT.md) — read first
 - [Hooks docs](https://github.com/ametrocavich/vostok-mod-loader/blob/main/docs/wiki/Hooks.md)
 - [Registry docs](https://github.com/ametrocavich/vostok-mod-loader/blob/main/docs/wiki/Registry.md)
 - [Mod Format docs](https://github.com/ametrocavich/vostok-mod-loader/blob/main/docs/wiki/Mod-Format.md)

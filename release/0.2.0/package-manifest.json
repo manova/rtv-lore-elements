@@ -1,0 +1,1922 @@
+{
+  "schema": 1,
+  "version": "0.2.0",
+  "file_count": 115,
+  "archive_name": "rtv_lore_elements-0.2.0.vmz",
+  "archive_sha256": "49121927608f0498fb76008983a77e013c71709526bd33e991ce1a5a29492b7b",
+  "archive_size_bytes": 42690266,
+  "zip": {
+    "compression": "DEFLATE",
+    "compresslevel": -1,
+    "create_system": 3,
+    "create_version": 20,
+    "extract_version": 20
+  },
+  "entries": [
+    {
+      "member": "mod.txt",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "mod.txt",
+      "sha256": "da996fe9044fb35cdb4cb581c2e397d663c1f0324eb8c29b96ffe0002144045e",
+      "size_bytes": 182
+    },
+    {
+      "member": "rtv-lore-elements/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/data/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/data/note_types.json",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "data/note_types.json",
+      "sha256": "cb6d51de8f50bbb6044e41bf744f3b410ca8f7783524f0c30076881982a42fdf",
+      "size_bytes": 4041
+    },
+    {
+      "member": "rtv-lore-elements/data/notes.json",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "data/notes.json",
+      "sha256": "6f07f435126d51ffc4a511dd34162831afe23c9dd3e78798a86ece194b0002a9",
+      "size_bytes": 13438
+    },
+    {
+      "member": "rtv-lore-elements/data/strings/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/data/strings/en.json",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "data/strings/en.json",
+      "sha256": "ab69ac2633841ff7956634bc112495490b481947a5c66f120495c861d358e311",
+      "size_bytes": 891
+    },
+    {
+      "member": "rtv-lore-elements/assets/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/assets/audio/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/assets/audio/voiceover/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/OFL.txt",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/OFL.txt",
+      "sha256": "1f9d81d094273d82f3898a1ee8b598a717d050ecbf5ff7bede105b704880157b",
+      "size_bytes": 4385
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/Caveat-Regular.ttf",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/Caveat-Regular.ttf",
+      "sha256": "7af58d70e539c9195cc328617a68c9961ed804a4404b0b818989ba7c013e8776",
+      "size_bytes": 297900
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_tag_icon.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_tag_icon.png",
+      "sha256": "c2fde0fb07b9a13478b883d880b602243130dd5e3d0b024032f66ac0324e2612",
+      "size_bytes": 3357
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_tag_icon_texture.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_tag_icon_texture.res",
+      "sha256": "6fb43e5f21f07df71f10b937139f473e0cb50e5f301554d662d906069f80a5ce",
+      "size_bytes": 1822
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/hamina_dispatch_icon_texture.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/hamina_dispatch_icon_texture.res",
+      "sha256": "f16e69d8823d4cdc223470fb4ed29c143224c4c913b63d1bebb34f5a7bf329ab",
+      "size_bytes": 23915
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_tag_albedo.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_tag_albedo.png",
+      "sha256": "2dfa26c80d259617f4cc5b47a77d524cf0ed4b2838d1c2eccb5b97b58e19a31b",
+      "size_bytes": 30805
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/hamina_dispatch_albedo.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/hamina_dispatch_albedo.png",
+      "sha256": "40892b8f349e9e2b26c0850d384f6c83a7b81962738b5be65af37244d811b703",
+      "size_bytes": 399097
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/hamina_dispatch_icon.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/hamina_dispatch_icon.png",
+      "sha256": "dca55017a203a7fffcd2306bda58752f35f94fc1c59d97d40cca0ebad1f93339",
+      "size_bytes": 32075
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/hamina_dispatch_mesh.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/hamina_dispatch_mesh.tres",
+      "sha256": "ca0444e83f082f99792bdb6fb1cba1efa351ecc6f7ab40f92e82165eaf8cb3d7",
+      "size_bytes": 27333
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/triage_tag_mesh.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/triage_tag_mesh.tres",
+      "sha256": "58cf1fbbe8a9d1ee6431e0de89bd40523f1276c6a3d53ce975d685bb203c4dce",
+      "size_bytes": 46052
+    },
+    {
+      "member": "rtv-lore-elements/README.md",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "README.md",
+      "sha256": "42ab972122f6fdbc9b76c60af944511d42695fc5c5f9c7ad2faa234b5fa3588f",
+      "size_bytes": 4900
+    },
+    {
+      "member": "rtv-lore-elements/CHANGELOG.md",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "CHANGELOG.md",
+      "sha256": "3b33b4c27144b5f62301bbaa71f6de5f150cc8c78f798793dfa9cb7efa5b6d66",
+      "size_bytes": 5047
+    },
+    {
+      "member": "rtv-lore-elements/LICENSE",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "LICENSE",
+      "sha256": "491cffa0db00e3c59bbb503d6e0c39bffdf6b3eba967d3058ce0cf400cb56dd3",
+      "size_bytes": 1065
+    },
+    {
+      "member": "rtv-lore-elements/LICENSE-CONTENT",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "LICENSE-CONTENT",
+      "sha256": "6c6d9cbb5c59f2f0f1594850bc5242a7bafbc1c787b06a0415926138654a1b75",
+      "size_bytes": 886
+    },
+    {
+      "member": "rtv-lore-elements/Main.gd",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Main.gd",
+      "sha256": "8140dfb392aac9f87b9147e33b50c3d8c12071e2d61317db6852bc9306f4f911",
+      "size_bytes": 142778
+    },
+    {
+      "member": "rtv-lore-elements/Items/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Note_HelloWorld/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Note_HelloWorld/Note_HelloWorld.tres",
+      "sha256": "8c71a303377c3e7b877c42fe371ff88950c9e7f06778bdd17df0dfde357e54a8",
+      "size_bytes": 780
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Note_HelloWorld/Note_HelloWorld_2x2.tscn",
+      "sha256": "486eff4bb5421f1f8cc8ed2809a38f51886e926298b7e7edfc250c804677b356",
+      "size_bytes": 359
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Note_HelloWorld/Note_HelloWorld.tscn",
+      "sha256": "a7353a1b2b28fbdb1eedd9d62e89f3e6777c18607308fdc36518ae22fe2cd06b",
+      "size_bytes": 1506
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_clinic_triage_card.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_clinic_triage_card.tres",
+      "sha256": "b79ee3c6eb833ea0302452a345bfc941f12328f919431d0029d42ae586be8048",
+      "size_bytes": 777
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_last_letter_leena.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_last_letter_leena.tres",
+      "sha256": "eb0d2fbb800c61dfe51a7eef0377942ffdcfa1fb11f30edc2b67b9de5d319284",
+      "size_bytes": 789
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_smuggler_ledger.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_smuggler_ledger.tres",
+      "sha256": "7c5d0aad739ed33e79911f6b5cd8c2f4e277c951c30333a751f37303c52101b8",
+      "size_bytes": 809
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_child_kitchen_map.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_child_kitchen_map.tres",
+      "sha256": "bda801b9aa8cbb838c5cdb2727dea3b86efe276e587f10666851a6da5b877231",
+      "size_bytes": 770
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_letter_tampere.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_letter_tampere.tres",
+      "sha256": "dcaa2619da93ca0e2b3bbc2b14038a959117a83d393c6b94dae0c680b94ae77c",
+      "size_bytes": 794
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_border_shift_log.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_border_shift_log.tres",
+      "sha256": "82cf18dda27331b177d95739ad252b6682674f349a00358273ae0f1e8b995fd5",
+      "size_bytes": 790
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_patrol_warning.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_patrol_warning.tres",
+      "sha256": "59d1b035c87012940094abaef829e37f4cffcb839135d49d3aa0364621268a28",
+      "size_bytes": 811
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_forest_cache_note.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_forest_cache_note.tres",
+      "sha256": "91d4fa316613a8dac10bbedc21a106117781cfaf47d5c69263c965c117103796",
+      "size_bytes": 777
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_radio_transcript.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_radio_transcript.tres",
+      "sha256": "500167878b1e8b67f246660930b25d838c259330c1856760f33d5c8348b4b022",
+      "size_bytes": 783
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_guard_three_lines.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_guard_three_lines.tres",
+      "sha256": "26b693a4476ae107897d69cbecaf7509889602385bd14a4c3d49ae5d7450b371",
+      "size_bytes": 783
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_posted_orders_layered.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_posted_orders_layered.tres",
+      "sha256": "38f5d1b12c3bc30c903b33daff4eb9b04fad84188f61b298e0e6de6dbb87a4f9",
+      "size_bytes": 810
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_schoolroom_list.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_schoolroom_list.tres",
+      "sha256": "3c636445994b1510106c33da6b130e0d246541269ab40d06aef2cb48713847c4",
+      "size_bytes": 802
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_evacuation_notice.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_evacuation_notice.tres",
+      "sha256": "3a317147d73281b1f5c04c6744137e5ef4f91df51c171babaca0d7b73443e9cf",
+      "size_bytes": 797
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_rail_manifest.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_rail_manifest.tres",
+      "sha256": "e0a6fed78a476865d776b88af4a2a37f62b0a246dd19c00a5a3e9472939118a8",
+      "size_bytes": 816
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_hamina_last_shift.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_hamina_last_shift.tres",
+      "sha256": "5dd73e37e58696f6d531a90851510a9cc91a507829d02f2bf9e93fc02d38d806",
+      "size_bytes": 794
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_weathered_recipe.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_weathered_recipe.tres",
+      "sha256": "fcfaf855b82b48daa353e8d50053affb73ce79bd39de2f692bae4ffcf03e8c49",
+      "size_bytes": 780
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/Notes/rtv_lore_triage_unknown_male.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/Notes/rtv_lore_triage_unknown_male.tres",
+      "sha256": "cbe5f3d0e3cd9000cb842a9068c68f4b00b41a99212eb4bd0295a253da768ccb",
+      "size_bytes": 764
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TriageTag/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TriageTag/TriageTag_1x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TriageTag/TriageTag_1x1.tscn",
+      "sha256": "96f4f849b932dadb1a31bb6c25107c5cb22d66b4f9ff133e8de05b21d200c702",
+      "size_bytes": 359
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/HaminaDispatch/",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 1107099664
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/HaminaDispatch/HaminaDispatch_2x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/HaminaDispatch/HaminaDispatch_2x1.tscn",
+      "sha256": "431d7f479d9075d1dac9edf3a9672acecfbc7772539bc1e51edffaaef53a3853",
+      "size_bytes": 369
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TornNotebook/TornNotebook_2x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TornNotebook/TornNotebook_2x1.tscn",
+      "sha256": "312d966e03810db71de18bdd60018bbcb62a44788b6878810a4b69a28210a791",
+      "size_bytes": 365
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/torn_notebook_blender_mesh.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/torn_notebook_blender_mesh.tres",
+      "sha256": "90c961f072d0f399b8288a9f1fefa9aeba6ccdda03f1d4b5381cc552ad294790",
+      "size_bytes": 169458
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/torn_notebook_albedo.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/torn_notebook_albedo.png",
+      "sha256": "a907806664c83e805834959d6cf5141563a57cc53cd054c468eb5712b182c9e2",
+      "size_bytes": 2587677
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/torn_notebook_icon.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/torn_notebook_icon.png",
+      "sha256": "5d2024e74a5bb9557cc6b458acfd4c96b1db8d2f506000781f73901d32e5cfac",
+      "size_bytes": 26970
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/torn_notebook_icon_texture.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/torn_notebook_icon_texture.res",
+      "sha256": "a30d9b20628492d25bd6e311d1517033eeb73c9f76dce4238beb36fc54f128a7",
+      "size_bytes": 19181
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TornNotebook/Portrait/rtv_lore_forest_cache_note.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TornNotebook/Portrait/rtv_lore_forest_cache_note.tres",
+      "sha256": "ef638f7598742d534c8b8c009cd83245e2bfc5a77e3841f19e802a167473b785",
+      "size_bytes": 786
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TornNotebook/Portrait/rtv_lore_guard_three_lines.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TornNotebook/Portrait/rtv_lore_guard_three_lines.tres",
+      "sha256": "a98a913c8d3bef46a90dc0c0c619d401f40611616d1ea4cf55402f734d21be0a",
+      "size_bytes": 792
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TornNotebook/Portrait/rtv_lore_weathered_recipe.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TornNotebook/Portrait/rtv_lore_weathered_recipe.tres",
+      "sha256": "0b227ee5024b11e1236ea7a5b0509db7241a58bc5f7aa9dcb790dfc2bce8e299",
+      "size_bytes": 789
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TornNotebook/TornNotebook_1x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TornNotebook/TornNotebook_1x2.tscn",
+      "sha256": "347a84981febafea17f6b0d5b218fb9d6b806870cd1a4c245174846a52b69f12",
+      "size_bytes": 382
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/torn_notebook_portrait_icon.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/torn_notebook_portrait_icon.png",
+      "sha256": "ca2c30969c0229cdb02b23b665e4e5c71acc07f0340e91f6b21d420d2c1dc274",
+      "size_bytes": 36679
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/torn_notebook_portrait_icon_texture.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/torn_notebook_portrait_icon_texture.res",
+      "sha256": "a7d8c9d7227f82ef5ef6a0d15447057bdb8abb064ced5b616e4da54e6c3bbffa",
+      "size_bytes": 25624
+    },
+    {
+      "member": "rtv-lore-elements/assets/shaders/triage_inventory.gdshader",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/shaders/triage_inventory.gdshader",
+      "sha256": "25be24eab9c4913a51a87106f1a06339bc81e03f21516f47ec77310ff231ee2a",
+      "size_bytes": 231
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/triage_card_blender_v001.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/triage_card_blender_v001.tres",
+      "sha256": "5312815cf63df21cdfa22a9b2307e853b1b2834b868239316141365bf9ad19e8",
+      "size_bytes": 113386
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_clinic_ink_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_clinic_ink_v001.png",
+      "sha256": "a75500114a7f3f0c0cf7502e366e65761874a5b52ec3b9dc3c441f48b5026278",
+      "size_bytes": 2062806
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_school_ink_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_school_ink_v001.png",
+      "sha256": "8b3acbeea909892d70a07bbac069d89d00e17ef798eec5136a6d70636e228b30",
+      "size_bytes": 2360016
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_clinic_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_clinic_icon_v001.res",
+      "sha256": "0fddb37b2ecb835e526e01cc6d48eccebc79e9a2be260037952a4774b9dc58e9",
+      "size_bytes": 7762
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/triage_school_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/triage_school_icon_v001.res",
+      "sha256": "21616c00f07d683f6fd13f2c718de3ae47ab600dc7179f8cae75fe37bb13e8e4",
+      "size_bytes": 7982
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TriageTag/TriageClinic_v001_1x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TriageTag/TriageClinic_v001_1x1.tscn",
+      "sha256": "888cf2ed07988195cb0bae339c0aee4e1c2859c8cdad4ab532a9077797630431",
+      "size_bytes": 512
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/TriageTag/TriageSchool_v001_1x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/TriageTag/TriageSchool_v001_1x1.tscn",
+      "sha256": "7b3d841623978a94c18a679d107b86cd1fc9cdd86f597b015a33450c26d53549",
+      "size_bytes": 512
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/folded_document_split_uv_v001.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/folded_document_split_uv_v001.tres",
+      "sha256": "3a65e2a0f29fb135a09fd87442531749f02223622f44bfcac67334c74535a6a7",
+      "size_bytes": 27350
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_border_albedo_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_border_albedo_v001.png",
+      "sha256": "e111b60854e1bceae1c9b083f625b44d6c9ea8467a818a5ad53837da29cdb561",
+      "size_bytes": 2605375
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_border_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_border_icon_v001.res",
+      "sha256": "23318e1409632e28f8d4e55fba93fd2941e62ff21f2b59787269b6986a9cc845",
+      "size_bytes": 16678
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Folded_border_v001_2x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Folded_border_v001_2x1.tscn",
+      "sha256": "9386f6f5bc5a1b0fc96363aaa575deb25a1393468562425176b921c53597f516",
+      "size_bytes": 513
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Compact/rtv_lore_border_shift_log.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Compact/rtv_lore_border_shift_log.tres",
+      "sha256": "49e42dd54d231b3e1cd1b1b03e98abdefd61d6b4c8b9cdf4fb58d0db657167b9",
+      "size_bytes": 791
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_radio_albedo_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_radio_albedo_v001.png",
+      "sha256": "7dbb0f96ce73e6bead3cc7236929bf2d4a59828597f2339a21c6de4432216105",
+      "size_bytes": 2533944
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_radio_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_radio_icon_v001.res",
+      "sha256": "62733056e5381cc75b1cf91a438cac63b90797b1633cae36a274d4e2abcbcf51",
+      "size_bytes": 15597
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Folded_radio_v001_2x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Folded_radio_v001_2x1.tscn",
+      "sha256": "0181692aae41f66e1c9af44d176d02f26f0c13814016363a2b6165fb2cd960b5",
+      "size_bytes": 511
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Compact/rtv_lore_radio_transcript.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Compact/rtv_lore_radio_transcript.tres",
+      "sha256": "b7cb2dcf86fca45e7a6b4c404ecf1edcdcb37903877317b4d4bce2f218b12c05",
+      "size_bytes": 778
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_leena_albedo_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_leena_albedo_v001.png",
+      "sha256": "4bc1cc2adafa454b06db050e0fd019dbf79116773c47e81edc6026d0e636b449",
+      "size_bytes": 2585701
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_leena_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_leena_icon_v001.res",
+      "sha256": "8d8671fbf70b4c4cb71ccdfecc0109f3a636deb21514bb430ce7c607209d5e4a",
+      "size_bytes": 14057
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Folded_leena_v001_2x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Folded_leena_v001_2x1.tscn",
+      "sha256": "23749eb0c098813651ffe54697a725e20a2c2916eacbe04a935aea2eafbc00a8",
+      "size_bytes": 511
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Compact/rtv_lore_last_letter_leena.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Compact/rtv_lore_last_letter_leena.tres",
+      "sha256": "775adeacc17985962539f51354ffd4c3acb09a0f56271fb824fce665c3b46287",
+      "size_bytes": 781
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_tampere_albedo_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_tampere_albedo_v001.png",
+      "sha256": "343d43a049b08eb440424fee398f5227a679674d06a5a8e2e1c143df1b895f36",
+      "size_bytes": 2326118
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/folded_tampere_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/folded_tampere_icon_v001.res",
+      "sha256": "b0b17e81999bc994acce34d1b98aa4aa6f7efbca387694786b658ce4de1bbc88",
+      "size_bytes": 14535
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Folded_tampere_v001_2x1.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Folded_tampere_v001_2x1.tscn",
+      "sha256": "396e172e5b0c2084baafe7a29ec6fa48c1915d24972e7da8b04b535d06beae23",
+      "size_bytes": 515
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/FoldedDocument/Compact/rtv_lore_letter_tampere.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/FoldedDocument/Compact/rtv_lore_letter_tampere.tres",
+      "sha256": "7522f1906ddff9e68979333cd8835bd56e1cae86c5ba16e1f8768713b1202675",
+      "size_bytes": 784
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/sheet_evacuation_v001.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/sheet_evacuation_v001.tres",
+      "sha256": "3444cbd7600e3d29bd4ca8443fa78aa5aa0d76dc36f8cfb2db7d6e5d2df38d22",
+      "size_bytes": 56476
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/sheet_rail-manifest_v001.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/sheet_rail-manifest_v001.tres",
+      "sha256": "c7defd2681251f792a5a0ddeaf539273b25b2702a73bb5b551b30b82631611be",
+      "size_bytes": 102739
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/sheet_posted-orders_v001.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/sheet_posted-orders_v001.tres",
+      "sha256": "bd3d7caa930d421b44eed47af509590dac6b91f2eae6cdfb3f2bf9f8417b92f1",
+      "size_bytes": 108374
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_evacuation_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_evacuation_icon_v001.res",
+      "sha256": "278f448e5508a1749d454bce3fc1b9ce52c7fa3b1bd11d16edbb180efcb1d0b6",
+      "size_bytes": 22158
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_rail-manifest_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_rail-manifest_icon_v001.res",
+      "sha256": "d50c3a12642f3423f8015d769a99f31108f5aa856caeb5a6b7005eac87b8b376",
+      "size_bytes": 26946
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_patrol-warning_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_patrol-warning_icon_v001.res",
+      "sha256": "5b94f97af005aaf8ccf8c0c19a4081733e3187f6a92da200c9866e5a70116ba6",
+      "size_bytes": 23746
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_schoolroom-list_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_schoolroom-list_icon_v001.res",
+      "sha256": "965971107f0421d4dfc74b8f8ccc2b0ee58e5603464c5df550bf249f91b0d976",
+      "size_bytes": 26742
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_smuggler-ledger_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_smuggler-ledger_icon_v001.res",
+      "sha256": "bb71afca4f0b98e61ab3e6387167d2033875522efd91c78ea7c526ac6300e173",
+      "size_bytes": 23466
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_posted-orders_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_posted-orders_icon_v001.res",
+      "sha256": "f3cfb233d9793b6695b5d9f1fd7811da1b84629831554f138bebe6e55b50f9b9",
+      "size_bytes": 23242
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_evacuation_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_evacuation_v001.png",
+      "sha256": "16e695abb8e2c6d15dcb50a6d62089c82387fd78ce4b591d5db1e37f05fcf068",
+      "size_bytes": 2683572
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_rail-manifest_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_rail-manifest_v001.png",
+      "sha256": "2f43272f00e14f1c36d240c71535c227501a763f1733a309c314cadf5dd4eb5a",
+      "size_bytes": 2953164
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_patrol-warning_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_patrol-warning_v001.png",
+      "sha256": "86017bdefd65418b8d7d1399661f25928054fe57deef4b02e97762f8f3396d33",
+      "size_bytes": 2821833
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_schoolroom-list_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_schoolroom-list_v001.png",
+      "sha256": "f37bb66da9e7f2ef0fb7f891cfa53e34c4da409509b5ea5d80cb27fec6b579ae",
+      "size_bytes": 2777839
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_smuggler-ledger_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_smuggler-ledger_v001.png",
+      "sha256": "93413f5842358ce0afc59f6b88689dc6fbb5346ca7142afe683c102f40a66420",
+      "size_bytes": 2810407
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_posted-orders-07_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_posted-orders-07_v001.png",
+      "sha256": "d5e7edc18c292cdce9dd37006ba8d6e56a01793c18aec90d1f4479a3d70fcd20",
+      "size_bytes": 2770660
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/sheet_posted-orders-11_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/sheet_posted-orders-11_v001.png",
+      "sha256": "aba52cd0c159c30cd7b3d346e3a77846c24480ba02762250e3d80272bb5bf4d5",
+      "size_bytes": 2819060
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/ReportSheet/Sheet_rail-manifest_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/ReportSheet/Sheet_rail-manifest_v001_2x2.tscn",
+      "sha256": "5d31415d32a81ed6b1f43f5fd87c8e60747f60b09e5f1aac49da220759248294",
+      "size_bytes": 525
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/ReportSheet/Sheet_evacuation_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/ReportSheet/Sheet_evacuation_v001_2x2.tscn",
+      "sha256": "e4e692c683999ea43f333c897000946dc61c5cc545bcfd0ad267246b38497984",
+      "size_bytes": 519
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/ReportSheet/Sheet_patrol-warning_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/ReportSheet/Sheet_patrol-warning_v001_2x2.tscn",
+      "sha256": "b7384de02f394ddb3b4d104f17d2ccc52df79b6ec0d78b97e338367a66d4750c",
+      "size_bytes": 527
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/ReportSheet/Sheet_posted-orders_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/ReportSheet/Sheet_posted-orders_v001_2x2.tscn",
+      "sha256": "35e9be4f87fa25869381f8484822ceeaa22e79e50cca9a4abbcd43cba3274e60",
+      "size_bytes": 525
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/ReportSheet/Sheet_smuggler-ledger_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/ReportSheet/Sheet_smuggler-ledger_v001_2x2.tscn",
+      "sha256": "971d525785022f28e299797fa48c78981ee60106886caef675605ac0b4c5701c",
+      "size_bytes": 529
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/ReportSheet/Sheet_schoolroom-list_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/ReportSheet/Sheet_schoolroom-list_v001_2x2.tscn",
+      "sha256": "8299f24d15f734082504752891edc22dc99a0a966245a334d8868be249175e3e",
+      "size_bytes": 529
+    },
+    {
+      "member": "rtv-lore-elements/assets/models/crayon_map_v001.tres",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/models/crayon_map_v001.tres",
+      "sha256": "4a075c1eeafbb8f1430ab798684df0422beec677d7eaeba0c121c0b809e10164",
+      "size_bytes": 73142
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/crayon_map_albedo_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        48
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/crayon_map_albedo_v001.png",
+      "sha256": "5b7060fdadd24cbb4b2477b6819f6da8a694cdac7dd1ed5e6cf45de800646bb5",
+      "size_bytes": 2843955
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/crayon_map_icon_v001.res",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        50
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/crayon_map_icon_v001.res",
+      "sha256": "a00ca952c62e45cd03d20981150027331f45e68211787729d1d7b44ec0a5589a",
+      "size_bytes": 39310
+    },
+    {
+      "member": "rtv-lore-elements/Items/Lore/CrayonMap/CrayonMap_v001_2x2.tscn",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        50
+      ],
+      "external_attr": 25165824,
+      "source": "Items/Lore/CrayonMap/CrayonMap_v001_2x2.tscn",
+      "sha256": "76554202bb6e8caef5896b4c0e0c88d7eaaf810c5bb220831da7cb84eb088ab3",
+      "size_bytes": 506
+    },
+    {
+      "member": "rtv-lore-elements/assets/textures/reader/triage_stock_v001.png",
+      "date_time": [
+        2026,
+        10,
+        8,
+        11,
+        40,
+        50
+      ],
+      "external_attr": 25165824,
+      "source": "assets/textures/reader/triage_stock_v001.png",
+      "sha256": "fb351097508b740fadad8a5714533c70fea8e5eb5444d68c7efbcaad551e2e4b",
+      "size_bytes": 2660877
+    },
+    {
+      "member": "rtv-lore-elements/ReaderPresentation.gd",
+      "date_time": [
+        2026,
+        10,
+        11,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 25165824,
+      "source": "ReaderPresentation.gd",
+      "sha256": "d19329f3fc0a3b18a4e5707bf169658a4418871bdd7a34e9ac054860a0f66953",
+      "size_bytes": 5349
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/PatrickHand-Regular.ttf",
+      "date_time": [
+        2026,
+        10,
+        11,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/PatrickHand-Regular.ttf",
+      "sha256": "0f173b3e6cb6d1af25babf7f0057c5ac4ee11f9992b0469bb817e967ef4ad0fc",
+      "size_bytes": 214772
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/PatrickHand-OFL.txt",
+      "date_time": [
+        2026,
+        10,
+        11,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/PatrickHand-OFL.txt",
+      "sha256": "377f4f9c19e935228552478eb68cc2ed82910988a60ba60e2ac73b09f32d02d1",
+      "size_bytes": 4376
+    },
+    {
+      "member": "rtv-lore-elements/ReaderInk.gd",
+      "date_time": [
+        2026,
+        10,
+        11,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 25165824,
+      "source": "ReaderInk.gd",
+      "sha256": "a3b5e755822f6fbadedb775108c855592cc601f6cafc4c57ef1d86d7e7acc626",
+      "size_bytes": 2063
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/NothingYouCouldDo.ttf",
+      "date_time": [
+        2026,
+        10,
+        11,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/NothingYouCouldDo.ttf",
+      "sha256": "1daf8cf79076bf59c5a9117b5efd6ecea35e57a05ef127fe4f95b072b8a5245d",
+      "size_bytes": 34920
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/NothingYouCouldDo-OFL.txt",
+      "date_time": [
+        2026,
+        10,
+        11,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/NothingYouCouldDo-OFL.txt",
+      "sha256": "0e441ae9f18ad0c294cc5b6ae3974c2db1614cab220598578b1b58c4cc334485",
+      "size_bytes": 4362
+    },
+    {
+      "member": "rtv-lore-elements/RELEASE_NOTES.md",
+      "date_time": [
+        2026,
+        10,
+        11,
+        17,
+        18,
+        40
+      ],
+      "external_attr": 25165824,
+      "source": "RELEASE_NOTES.md",
+      "sha256": "010b41b98048ad3fe451013c9deaeee177142f09e4d825a03ecf177747c6275e",
+      "size_bytes": 3467
+    },
+    {
+      "member": "rtv-lore-elements/SAVE_SAFETY.md",
+      "date_time": [
+        2026,
+        10,
+        11,
+        17,
+        18,
+        40
+      ],
+      "external_attr": 25165824,
+      "source": "SAVE_SAFETY.md",
+      "sha256": "18d48ee590388caaea3215c853545f70a1f26b3217ccfa01a42e975099bd7a1b",
+      "size_bytes": 3260
+    },
+    {
+      "member": "rtv-lore-elements/ASSET_CREDITS.md",
+      "date_time": [
+        2026,
+        10,
+        11,
+        17,
+        18,
+        40
+      ],
+      "external_attr": 25165824,
+      "source": "ASSET_CREDITS.md",
+      "sha256": "197d35c397000339e26f9addb96839b12018c493b922eb8ba8f8f505d15f0396",
+      "size_bytes": 2594
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/PatrickHand-provenance.md",
+      "date_time": [
+        2026,
+        10,
+        11,
+        17,
+        18,
+        40
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/PatrickHand-provenance.md",
+      "sha256": "a8e7b3378ec210fd1b211aaa7d5af2272ddab3c99e20655d8d0c3b308d6cf08d",
+      "size_bytes": 1233
+    },
+    {
+      "member": "rtv-lore-elements/assets/fonts/NothingYouCouldDo-provenance.md",
+      "date_time": [
+        2026,
+        10,
+        11,
+        17,
+        18,
+        40
+      ],
+      "external_attr": 25165824,
+      "source": "assets/fonts/NothingYouCouldDo-provenance.md",
+      "sha256": "04e7020eb409776ff4dac7caa9c1e29df304e6ec44cd32865f476a15c3ce4266",
+      "size_bytes": 1287
+    }
+  ]
+}

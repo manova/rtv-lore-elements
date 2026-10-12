@@ -2,6 +2,12 @@
 
 Thanks for helping make Lore Elements better.
 
+For the frozen 0.2.0 source and offline packaging checks, see [BUILDING.md](BUILDING.md).
+The curated repository does not include private save fixtures, game extracts or
+raw Blender checkpoints. Do not add those, local MCP settings or gameplay logs
+to a public pull request. A changed runtime needs fresh integration QA, not only
+a successful package build.
+
 Please open an issue before starting non-trivial work. Trivial fixes may go
 straight to a pull request: typo fixes, broken-link fixes, or a single-string
 copy edit that does not change lore meaning or gameplay behavior.

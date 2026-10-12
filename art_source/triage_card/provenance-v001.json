@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-06",
+  "sha256": "fb351097508b740fadad8a5714533c70fea8e5eb5444d68c7efbcaad551e2e4b",
+  "dimensions_px": [
+    1254,
+    1254
+  ],
+  "creation_method": "Built-in image generation; original text-to-image request, no reference images",
+  "postprocessing": "Copied byte-for-byte into the repository; no raster edits",
+  "runtime_file": "assets/textures/reader/triage_stock_v001.png",
+  "generation_prompt": "Use case: stylized-concept. Asset type: ORIGINAL GAME DIFFUSE/ALBEDO TEXTURE ATLAS, not a rendered object. Create one square flat texture atlas for a small 75 by 120 mm stiff field-clinician triage card in a restrained weathered semi-photoreal survival game. The image is a perfectly flat uniformly lit scanned paper surface, no perspective and no cast shadows. The whole square is dusty pink-tan warm fibrous cardstock, base roughly #c8b1a0, with subtle realistic tiny paper fibers, sparse tiny specks, light localized handling smudges and quiet fine surface variation; not parchment, concrete, fabric or leather. ATLAS LAYOUT: left half is card front and right half is card back, each full-height portrait panel with a narrow tan separator at center. Do not draw the outside silhouette, physical card edges, holes, grommets or 3D bevels: these will be modeled separately. On the left/front panel only, add a restrained faded brick-red (#9d2f2a) narrow horizontal form header rule at 18 percent from the top, a thin faded red side accent near its far left margin, and three widely spaced extremely fine incomplete brown-neutral form rules across its middle/lower area. Leave most of the front calm for dynamic readable text applied separately. Right/back panel almost blank with very faint ink show-through and natural fibers; no form lines on back. No outlines or decorative border. CRITICAL: absolutely no text, letters, numbers, pseudo-writing, stamps, crosses, logos, icons, symbols, badges, labels, watermarks, strings or metal components. No heavy stains or blood. Neutral albedo only, no dramatic lighting, highlights, shading gradients or baked ambient occlusion. Square edge-to-edge texture, opaque.",
+  "record_scope": "Curated historical origin summary; raw scenes, intermediary images and local QA are not distributed. See art_source/README.md for the current runtime source boundary.",
+  "private_origin_record_sha256": "4811155ca85d57b11f315de934936a0cb1a379d374233c170e79b35613ba5482"
+}

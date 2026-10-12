@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-07",
+  "mode": "built-in image generation",
+  "scope": "Five remaining full-size identities; six original front/blank-back atlases because Posted Orders has two distinct sheet layers.",
+  "postprocessing": "Byte-identical generated pixels copied to versioned repo paths. No raster edits, native images, game mesh extraction or repaint.",
+  "generator_deviations": [
+    "Returned 1448x1086 RGB instead of the ideal 2048x1536; correct 4:3 atlas aspect.",
+    "Faint middle seams lie outside the inherited inset UV regions.",
+    "Order 7 heading occupies about the upper fifth rather than requested upper 14%; the smaller upper bulletin leaves that full heading exposed.",
+    "Rail stamp sits slightly lower than requested margin but remains safely above the modest physical tear."
+  ],
+  "decisions": [
+    "Patrol, Schoolroom and Ledger share the original 1696-triangle source mesh with object-level materials; no bespoke geometry per story.",
+    "Rail uses a 3296-triangle closed shell with a real non-repeating torn bottom and undistorted artwork parameterization.",
+    "Orders use two closed 0.16 mm shells totaling 3392 triangles; first overlap read too subtly. One bounded refinement adds -1.2 degree in-plane angle, up to 1.8 mm extra local corner lift and 0.86 linear tint only on the older order.",
+    "Keep stories, current four-slot values, runtime icons, physics, game packages and saves unchanged until native integration."
+  ],
+  "assets": [
+    {
+      "key": "rail-manifest",
+      "id": "rtv_lore_rail_manifest",
+      "style": "Front: an industrial freight transfer form. Plain slightly uneven dark charcoal typewriter text and fine gray table rules dividing the three wagon entries. A restrained faded brick-red rectangular DELAYED stamp below the entries. Top margin 12%, bottom 24% completely free of ink because a physical torn-bottom mesh will trim it. Do NOT draw a tear or missing piece in the image.",
+      "text": [
+        "FREIGHT YARD TRANSFER SHEET",
+        "Wagon 03",
+        "Tools, dry batteries, water filters",
+        "Wagon 04",
+        "Medical cartons, winter blankets",
+        "Wagon 05",
+        "Sealed crates",
+        "No civilian inventory",
+        "DELAYED"
+      ],
+      "runtime_file": "assets/textures/sheet_rail-manifest_v001.png",
+      "sha256": "2f43272f00e14f1c36d240c71535c227501a763f1733a309c314cadf5dd4eb5a",
+      "prompt": "art_source/report_sheet/identities-v001/rail-manifest-prompt.txt"
+    },
+    {
+      "key": "patrol-warning",
+      "id": "rtv_lore_patrol_warning",
+      "style": "Front: a no-nonsense typed patrol locker warning, dark charcoal slightly worn typewriter ink. Small heading, three distinct short paragraphs, generous negative space below. Very faint old tape residue at two upper corners, no actual tape strip or object. Top margin 12%, bottom margin 14%.",
+      "text": [
+        "PATROL WARNING",
+        "Do not pursue signal flares",
+        "beyond the quarry road.",
+        "Do not answer single knocks",
+        "on checkpoint doors after curfew.",
+        "Do not split pairs",
+        "to investigate crying."
+      ],
+      "runtime_file": "assets/textures/sheet_patrol-warning_v001.png",
+      "sha256": "86017bdefd65418b8d7d1399661f25928054fe57deef4b02e97762f8f3396d33",
+      "prompt": "art_source/report_sheet/identities-v001/patrol-warning-prompt.txt"
+    },
+    {
+      "key": "schoolroom-list",
+      "id": "rtv_lore_schoolroom_list",
+      "style": "Front: a practical shelter supplies list written in slightly uneven dark blue-black ballpoint handwriting on plain school office paper. Small heading and a short list, with the two count lines separated near the lower third. No invented checkmarks or ruled notebook spirals. Top/bottom margins 12%.",
+      "text": [
+        "CLASSROOM SUPPLIES",
+        "for shelter use",
+        "Chalk, tape, scissors",
+        "Old maps, sports mats",
+        "Blankets from storage",
+        "Batteries from science room",
+        "Radio from headmaster office",
+        "Names checked in: 47",
+        "Names reunited: 31"
+      ],
+      "runtime_file": "assets/textures/sheet_schoolroom-list_v001.png",
+      "sha256": "f37bb66da9e7f2ef0fb7f891cfa53e34c4da409509b5ea5d80cb27fec6b579ae",
+      "prompt": "art_source/report_sheet/identities-v001/schoolroom-list-prompt.txt"
+    },
+    {
+      "key": "smuggler-ledger",
+      "id": "rtv_lore_smuggler_ledger",
+      "style": "Front: a private handwritten ledger excerpt, faint desaturated gray bookkeeping rules, ordinary slightly hurried dark blue-black pen strokes, not a printed official form and not theatrical calligraphy. Restrained thumb wear, no blood/burns. A short heading and route followed by three owed entries. Make currency signs and amounts exact. Top/bottom margins 12%.",
+      "text": [
+        "Run 14",
+        "Border at km 7",
+        "Tuesday, moonless.",
+        "Owed:",
+        "400 € to the cousin in Kotka",
+        "60,000 ₽ to nobody you ask about",
+        "two cartons to the man at the gate",
+        "Don't write the name of the truck."
+      ],
+      "runtime_file": "assets/textures/sheet_smuggler-ledger_v001.png",
+      "sha256": "93413f5842358ce0afc59f6b88689dc6fbb5346ca7142afe683c102f40a66420",
+      "prompt": "art_source/report_sheet/identities-v001/smuggler-ledger-prompt.txt"
+    },
+    {
+      "key": "posted-orders-07",
+      "id": "rtv_lore_posted_orders_layered",
+      "layer": "under",
+      "style": "Front: the earlier official notice in a layered posting. Slightly worn dark charcoal typewriter text on subtly aged gray-cream paper. IMPORTANT: place the small heading ORDER NO. 7 at 5% down the left panel and KYMENLAAKSO REGIONAL ADMINISTRATION on two compact lines immediately below; all three heading lines MUST finish before 14% of panel height. This upper strip stays exposed under a later Blender sheet. Start the body at 24% height, well separated from the header. No fictional official seal or pseudo-language. Words [obscured] must not be printed; omit those passages entirely.",
+      "text": [
+        "ORDER NO. 7",
+        "KYMENLAAKSO",
+        "REGIONAL ADMINISTRATION",
+        "To all civilian residents of Area 05:",
+        "Remain in your residence.",
+        "Close all windows.",
+        "Issued: 22.06",
+        "Signed: District Coordinator"
+      ],
+      "runtime_file": "assets/textures/sheet_posted-orders-07_v001.png",
+      "sha256": "d5e7edc18c292cdce9dd37006ba8d6e56a01793c18aec90d1f4479a3d70fcd20",
+      "prompt": "art_source/report_sheet/identities-v001/posted-orders-07-prompt.txt"
+    },
+    {
+      "key": "posted-orders-11",
+      "id": "rtv_lore_posted_orders_layered",
+      "layer": "over",
+      "style": "Front: the later official notice laid over an older order in the eventual Blender model. Ordinary functional dark charcoal typewriter lettering, small bold heading, spare left-aligned paragraphs and a date near the lower third. Slightly cooler and less worn gray-cream stock than an old notice. Top/bottom margins 12%. No fake seal, logos or pseudo-language. Do NOT depict layered sheets or cast shadow inside the texture; geometry supplies the layering.",
+      "text": [
+        "ORDER NO. 11",
+        "To all civilians remaining in Area 05:",
+        "Evacuate west on foot before sunset.",
+        "Do not wait for transport.",
+        "Carry no more than you can run with.",
+        "Routes: Highway E18 west.",
+        "Do not use rail.",
+        "Issued: 29.06"
+      ],
+      "runtime_file": "assets/textures/sheet_posted-orders-11_v001.png",
+      "sha256": "aba52cd0c159c30cd7b3d346e3a77846c24480ba02762250e3d80272bb5bf4d5",
+      "prompt": "art_source/report_sheet/identities-v001/posted-orders-11-prompt.txt"
+    }
+  ],
+  "record_scope": "Curated historical origin summary; raw scenes, intermediary images and local QA are not distributed. See art_source/README.md for the current runtime source boundary.",
+  "private_origin_record_sha256": "a498a227d3a697531acca3c9617292987109580fc6d6eaa535a4ec40c81a62bc"
+}

@@ -2,15 +2,207 @@
 # See PLANNING.md for project context, architecture, and phased roadmap.
 extends Node
 
+# Awake custom paper pickups need a rendered-contact skin and containment.
+# Keeping this child under the body gives automatic cleanup; sleep/preview stops
+# both loops. Native wake and a subsequent release rearm the same helper.
+class PaperContactPresenter extends Node:
+	var coordinator: WeakRef
+	var base_mesh_position := Vector3.ZERO
+	var wall_previous := Transform3D.IDENTITY
+	var wall_tracking := false
+	var wall_offsets: Array = []
+	var wall_planes: Array = []
+
+	func _physics_process(_delta: float) -> void:
+		var host = coordinator.get_ref() if coordinator != null else null
+		if !is_instance_valid(host):
+			set_physics_process(false)
+			return
+		host._contain_world_pickup_motion(get_parent(), self)
+
+	func _process(_delta: float) -> void:
+		var host = coordinator.get_ref() if coordinator != null else null
+		if !is_instance_valid(host):
+			set_process(false)
+			return
+		host._present_world_pickup_contact(get_parent(), self)
+
 const NOTE_DATA_PATH := "res://rtv-lore-elements/data/notes.json"
 const NOTE_TYPE_DATA_PATH := "res://rtv-lore-elements/data/note_types.json"
 const UI_STRINGS_PATH := "res://rtv-lore-elements/data/strings/en.json"
 const UI_STRINGS_LOCALE := "en"
 const NOTE_ITEM_PATH_PREFIX := "res://rtv-lore-elements/Items/Lore/Notes/"
 const LEGACY_NOTE_ITEM_PATH := "res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tres"
+const HAMINA_NOTE_ID := "rtv_lore_hamina_last_shift"
+const TRIAGE_NOTE_IDS := [
+	"rtv_lore_clinic_triage_card",
+	"rtv_lore_triage_unknown_male",
+]
+const NOTEBOOK_NOTE_IDS := [
+	"rtv_lore_forest_cache_note", "rtv_lore_weathered_recipe", "rtv_lore_guard_three_lines",
+]
+const NOTEBOOK_PORTRAIT_ITEM_PREFIX := "res://rtv-lore-elements/Items/Lore/TornNotebook/Portrait/"
+const FOLDED_NOTE_IDS := [
+	"rtv_lore_border_shift_log", "rtv_lore_radio_transcript",
+	"rtv_lore_last_letter_leena", "rtv_lore_letter_tampere",
+]
+const FOLDED_COMPACT_ITEM_PREFIX := "res://rtv-lore-elements/Items/Lore/FoldedDocument/Compact/"
+const HAMINA_PICKUP_MESH_PATH := "res://rtv-lore-elements/assets/models/hamina_dispatch_mesh.tres"
+const HAMINA_PICKUP_ALBEDO_PATH := "res://rtv-lore-elements/assets/textures/hamina_dispatch_albedo.png"
+const TRIAGE_PICKUP_MESH_PATH := "res://rtv-lore-elements/assets/models/triage_card_blender_v001.tres"
+const TRIAGE_PICKUP_ALBEDO_PATH := "res://rtv-lore-elements/assets/textures/triage_clinic_ink_v001.png"
+const WORLD_ITEM_SHADER_PATH := "res://Shaders/Standard.gdshader"
+const HAMINA_PICKUP_WORLD_SCALE := 1.3
+const HAMINA_PICKUP_MIN_DIMENSIONS := Vector3(0.14, 0.001, 0.09)
+const HAMINA_PICKUP_MAX_DIMENSIONS := Vector3(0.16, 0.004, 0.11)
+const HAMINA_PICKUP_ALBEDO_SIZE := Vector2i(512, 512)
+const WORLD_PICKUP_VARIANT_DEFINITIONS := {
+	"hamina_dispatch": {
+		"display_name": "Hamina dispatch",
+		"note_ids": [HAMINA_NOTE_ID],
+		"mesh_path": HAMINA_PICKUP_MESH_PATH,
+		"albedo_path": HAMINA_PICKUP_ALBEDO_PATH,
+		"albedo_size": HAMINA_PICKUP_ALBEDO_SIZE,
+		"world_scale": HAMINA_PICKUP_WORLD_SCALE,
+		"minimum_dimensions": HAMINA_PICKUP_MIN_DIMENSIONS,
+		"maximum_dimensions": HAMINA_PICKUP_MAX_DIMENSIONS,
+		"stabilize_drops": true,
+	},
+	"triage_tag": {
+		"display_name": "triage tag",
+		"note_ids": TRIAGE_NOTE_IDS,
+		"mesh_path": TRIAGE_PICKUP_MESH_PATH,
+		"albedo_path": TRIAGE_PICKUP_ALBEDO_PATH,
+		"albedo_size": Vector2i(1254, 1254),
+		# Story identity is a surface choice, not a separate physics family.
+		"albedo_by_note_id": {
+			"rtv_lore_clinic_triage_card": TRIAGE_PICKUP_ALBEDO_PATH,
+			"rtv_lore_triage_unknown_male": "res://rtv-lore-elements/assets/textures/triage_school_ink_v001.png",
+		},
+		"material_tint": Color(0.88, 0.88, 0.88, 1.0),
+		"world_scale": 1.0,
+		"minimum_dimensions": Vector3(0.074, 0.001, 0.118),
+		"maximum_dimensions": Vector3(0.078, 0.0015, 0.122),
+		"stabilize_drops": true,
+	},
+	"folded_document": {
+		"display_name": "folded document",
+		"note_ids": FOLDED_NOTE_IDS,
+		"mesh_path": "res://rtv-lore-elements/assets/models/folded_document_split_uv_v001.tres",
+		"albedo_path": "res://rtv-lore-elements/assets/textures/folded_border_albedo_v001.png",
+		"albedo_size": Vector2i(1086, 1448),
+		"albedo_by_note_id": {
+			"rtv_lore_border_shift_log": "res://rtv-lore-elements/assets/textures/folded_border_albedo_v001.png",
+			"rtv_lore_radio_transcript": "res://rtv-lore-elements/assets/textures/folded_radio_albedo_v001.png",
+			"rtv_lore_last_letter_leena": "res://rtv-lore-elements/assets/textures/folded_leena_albedo_v001.png",
+			"rtv_lore_letter_tampere": "res://rtv-lore-elements/assets/textures/folded_tampere_albedo_v001.png",
+		},
+		"material_tint": Color(0.70, 0.70, 0.70, 1.0),
+		"world_scale": HAMINA_PICKUP_WORLD_SCALE,
+		"minimum_dimensions": HAMINA_PICKUP_MIN_DIMENSIONS,
+		"maximum_dimensions": HAMINA_PICKUP_MAX_DIMENSIONS,
+		"stabilize_drops": true,
+	},
+	# RTV37 notebook family: collision is derived from accepted mesh bounds.
+	"torn_notebook": {
+		"display_name": "torn notebook page",
+		"note_ids": ["rtv_lore_forest_cache_note", "rtv_lore_weathered_recipe", "rtv_lore_guard_three_lines"],
+		"mesh_path": "res://rtv-lore-elements/assets/models/torn_notebook_blender_mesh.tres",
+		"albedo_path": "res://rtv-lore-elements/assets/textures/torn_notebook_albedo.png",
+		"albedo_size": Vector2i(1254, 1254),
+		"material_tint": Color(0.82, 0.82, 0.82, 1.0),
+		"world_scale": 1.0,
+		"minimum_dimensions": Vector3(0.134, 0.002, 0.189),
+		"maximum_dimensions": Vector3(0.136, 0.004, 0.191),
+		"stabilize_drops": true,
+	},
+	# End RTV37 notebook family.
+	"crayon_map": {
+		"display_name": "handled crayon map",
+		"note_ids": ["rtv_lore_child_kitchen_map"],
+		"mesh_path": "res://rtv-lore-elements/assets/models/crayon_map_v001.tres",
+		"albedo_path": "res://rtv-lore-elements/assets/textures/crayon_map_albedo_v001.png",
+		"albedo_size": Vector2i(1448, 1086),
+		"material_tint": Color(0.86, 0.86, 0.86, 1.0),
+		"world_scale": 1.0,
+		# Bounds include reopened folds, not inflated paper stock thickness.
+		"minimum_dimensions": Vector3(0.199, 0.0108, 0.299),
+		"maximum_dimensions": Vector3(0.201, 0.0111, 0.301),
+		"angular_damp": 4.0,
+		"stabilize_drops": true,
+	},
+	"report_sheet": {
+		"display_name": "full-size report sheet",
+		"note_ids": ["rtv_lore_evacuation_notice", "rtv_lore_patrol_warning", "rtv_lore_schoolroom_list", "rtv_lore_smuggler_ledger"],
+		"mesh_path": "res://rtv-lore-elements/assets/models/sheet_evacuation_v001.tres",
+		"albedo_path": "res://rtv-lore-elements/assets/textures/sheet_evacuation_v001.png",
+		"albedo_size": Vector2i(1448, 1086),
+		"albedo_by_note_id": {
+			"rtv_lore_evacuation_notice": "res://rtv-lore-elements/assets/textures/sheet_evacuation_v001.png",
+			"rtv_lore_patrol_warning": "res://rtv-lore-elements/assets/textures/sheet_patrol-warning_v001.png",
+			"rtv_lore_schoolroom_list": "res://rtv-lore-elements/assets/textures/sheet_schoolroom-list_v001.png",
+			"rtv_lore_smuggler_ledger": "res://rtv-lore-elements/assets/textures/sheet_smuggler-ledger_v001.png",
+		},
+		"material_tint": Color(0.86, 0.86, 0.86, 1.0),
+		"world_scale": 1.0,
+		"minimum_dimensions": Vector3(0.199, 0.0035, 0.299),
+		"maximum_dimensions": Vector3(0.201, 0.0037, 0.301),
+		"angular_damp": 4.0,
+		"stabilize_drops": true,
+	},
+	"report_sheet_rail": {
+		"display_name": "torn rail manifest sheet",
+		"note_ids": ["rtv_lore_rail_manifest"],
+		"mesh_path": "res://rtv-lore-elements/assets/models/sheet_rail-manifest_v001.tres",
+		"albedo_path": "res://rtv-lore-elements/assets/textures/sheet_rail-manifest_v001.png",
+		"albedo_size": Vector2i(1448, 1086),
+		"material_tint": Color(0.86, 0.86, 0.86, 1.0),
+		"world_scale": 1.0,
+		"minimum_dimensions": Vector3(0.199, 0.0033, 0.292),
+		"maximum_dimensions": Vector3(0.201, 0.0036, 0.295),
+		"angular_damp": 4.0,
+		"stabilize_drops": true,
+	},
+	"report_sheet_orders": {
+		"display_name": "layered posted orders",
+		"note_ids": ["rtv_lore_posted_orders_layered"],
+		"mesh_path": "res://rtv-lore-elements/assets/models/sheet_posted-orders_v001.tres",
+		"albedo_path": "res://rtv-lore-elements/assets/textures/sheet_posted-orders-07_v001.png",
+		"albedo_size": Vector2i(1448, 1086),
+		# Explicit layer order matches the reviewed two-surface export. Factors
+		# are linear stock colors, independent of the sRGB family exposure tint.
+		"material_layers": [
+			{"albedo_path": "res://rtv-lore-elements/assets/textures/sheet_posted-orders-07_v001.png", "stock_factor": 0.86},
+			{"albedo_path": "res://rtv-lore-elements/assets/textures/sheet_posted-orders-11_v001.png", "stock_factor": 1.0},
+		],
+		"material_tint": Color(0.86, 0.86, 0.86, 1.0),
+		"world_scale": 1.0,
+		"minimum_dimensions": Vector3(0.199, 0.0039, 0.299),
+		"maximum_dimensions": Vector3(0.201, 0.0042, 0.301),
+		"angular_damp": 4.0,
+		"stabilize_drops": true,
+	},
+}
+const HAMINA_DROP_GUARD_FRAMES := 360
+const HAMINA_DROP_GUARD_CLEARANCE := 0.001
+const HAMINA_DROP_GUARD_RECOVERY_HEIGHT := 0.035
+const WORLD_PICKUP_PENETRATION_TOLERANCE := 0.006
+const WORLD_PICKUP_REST_TOLERANCE := 0.0001
+const WORLD_PICKUP_REST_CLEARANCE := 0.00015
+const WORLD_PICKUP_REST_MAX_LOWERING := 0.006
+const HAMINA_DROP_GUARD_MIN_NORMAL_Y := 0.45
+# Wall-only safety net: do not inflate paper or change furniture-edge support.
+const WORLD_PICKUP_WALL_CLEARANCE := 0.001
+const WORLD_PICKUP_WALL_CONTACT_TOLERANCE := 0.002
+const WORLD_PICKUP_WALL_RELEASE_REACH := 0.035
+const WORLD_PICKUP_WALL_TOP_CLEARANCE := 0.02
+const WORLD_PICKUP_WALL_MAX_NORMAL_Y := 0.2
 const JOURNAL_DATA_PATH := "user://lore-elements-journal.cfg"
 const JOURNAL_INPUT_ACTION := "rtv_lore_open_journal"
 const READER_FONT_PATH := "res://rtv-lore-elements/assets/fonts/Caveat-Regular.ttf"
+const READER_PRINT_FONT_PATH := "res://rtv-lore-elements/assets/fonts/NothingYouCouldDo.ttf"
+const READER_PRESENTATION := preload("res://rtv-lore-elements/ReaderPresentation.gd")
+const READER_INK := preload("res://rtv-lore-elements/ReaderInk.gd")
 const VOICEOVER_AUDIO_PATH_PREFIX := "res://rtv-lore-elements/assets/audio/voiceover/"
 const VOICEOVER_AUDIO_BUS := "SFX"
 const NOTE_LOOT_TABLE := "LT_Master"
@@ -66,6 +258,11 @@ const LEGACY_HELLO_NOTE := {
 
 var GAME_DATA = preload("res://Resources/GameData.tres")
 var NOTE_SCENE_TEMPLATE = preload("res://rtv-lore-elements/Items/Lore/Note_HelloWorld/Note_HelloWorld.tscn")
+
+# Restore-only bookkeeping. Never serialize or rewrite a save from these hooks.
+var _world_pickup_restore_enabled := false
+var _world_pickup_restore_pending := false
+var _world_pickup_before_restore := {}
 var AUDIO_INSTANCE_2D_SCENE = preload("res://Resources/AudioInstance2D.tscn")
 
 var _lib = null
@@ -83,8 +280,14 @@ var _note_type_warning_ids := {}
 var _ui_strings := {}
 var _ui_string_warning_keys := {}
 var _reader_font = null
+var _reader_print_font = null
 var _reader_mono_font = null
+var _reader_paper_textures: Dictionary = {}
 var _mcm_helpers = null
+var _world_pickup_variants := {}
+var _world_pickup_variant_by_note_id := {}
+var _hamina_pickup_mesh: ArrayMesh = null
+var _hamina_pickup_material: ShaderMaterial = null
 var _registered_voiceover_ids := {}
 var _voiceover_warning_ids := {}
 var _pin_warning_ids := {}
@@ -114,6 +317,20 @@ var _reader_prev_button: Button = null
 var _reader_next_button: Button = null
 var _reader_from_journal := false
 var _active_voiceover_player: Node = null
+var _hamina_pickup_stabilization_logged := false
+var _hamina_drop_guard_correction_logged := false
+var _hamina_guarded_pickup_ids := {}
+var _world_pickup_stabilization_logged := {}
+var _world_pickup_guard_correction_logged := {}
+var _world_pickup_guarded_ids := {}
+var _world_pickup_guard_generation := 0
+var _world_pickup_placement_ids := {}
+var _world_pickup_context_starts := {}
+var _world_pickup_collision_ids := {}
+var _world_pickup_upright_enabled := false
+var _world_pickup_orientation_inputs := {}
+var _notebook_portrait_enabled := false
+var _folded_compact_enabled := false
 
 func _process(_delta: float) -> void:
 	_update_map_pin_screen_positions()
@@ -155,6 +372,7 @@ func _on_lib_ready() -> void:
 	_load_reader_font()
 	if _reader_font == null:
 		push_warning("[rtv_lore_elements] Caveat font unavailable; reader will use the default UI font.")
+	_load_world_pickup_assets()
 	_register_read_hooks()
 	_register_ui_manager_input_hook()
 	_register_discovery_hooks()
@@ -162,6 +380,11 @@ func _on_lib_ready() -> void:
 	_register_mcm_config()
 	_register_loot_multiplier_hooks()
 	_register_map_pin_hooks()
+	_register_world_pickup_release_hooks()
+	_register_world_pickup_restore_hooks()
+	_register_world_pickup_monitor()
+	_register_notebook_inventory_hooks()
+	_register_folded_inventory_hooks()
 	_register_lore_content()
 	_load_journal()
 
@@ -169,13 +392,288 @@ func _load_reader_font() -> void:
 	var font := FontFile.new()
 	var error := font.load_dynamic_font(READER_FONT_PATH)
 	if error == OK:
-		_reader_font = font
+		_reader_font = READER_INK.pen_font(font)
 	else:
 		push_warning("[rtv_lore_elements] Caveat font load failed: " + str(error))
 
 	var mono_font := SystemFont.new()
 	mono_font.font_names = PackedStringArray(["Consolas", "Courier New", "DejaVu Sans Mono", "monospace"])
 	_reader_mono_font = mono_font
+	var print_font := FontFile.new()
+	if FileAccess.file_exists(READER_PRINT_FONT_PATH) && print_font.load_dynamic_font(READER_PRINT_FONT_PATH) == OK:
+		if _reader_font != null: print_font.fallbacks = [_reader_font]
+		_reader_print_font = print_font
+	else:
+		_reader_print_font = _reader_font
+
+func _load_world_pickup_assets() -> void:
+	_world_pickup_variants = {}
+	_world_pickup_variant_by_note_id = {}
+	_hamina_pickup_mesh = null
+	_hamina_pickup_material = null
+
+	var shader_resource = ResourceLoader.load(
+		WORLD_ITEM_SHADER_PATH,
+		"Shader",
+		ResourceLoader.CACHE_MODE_REUSE
+	)
+	if !(shader_resource is Shader):
+		push_warning(
+			"[rtv_lore_elements] vanilla world-item shader unavailable; "
+			+ "using shared note pickups."
+		)
+		return
+
+	for variant_id in WORLD_PICKUP_VARIANT_DEFINITIONS:
+		_load_world_pickup_variant(
+			str(variant_id),
+			WORLD_PICKUP_VARIANT_DEFINITIONS[variant_id],
+			shader_resource as Shader
+		)
+
+	var hamina_variant: Dictionary = _world_pickup_variants.get(
+		"hamina_dispatch",
+		{}
+	)
+	_hamina_pickup_mesh = hamina_variant.get("mesh") as ArrayMesh
+	_hamina_pickup_material = hamina_variant.get("material") as ShaderMaterial
+
+func _load_world_pickup_variant(
+	variant_id: String,
+	definition: Dictionary,
+	shader: Shader
+) -> void:
+	var display_name := str(definition.get("display_name", variant_id))
+	var mesh_path := str(definition.get("mesh_path", ""))
+	var mesh_resource = ResourceLoader.load(
+		mesh_path,
+		"ArrayMesh",
+		ResourceLoader.CACHE_MODE_IGNORE
+	)
+	if !(mesh_resource is ArrayMesh):
+		_warn_world_pickup_fallback(display_name, "mesh unavailable")
+		return
+
+	var pickup_mesh := mesh_resource as ArrayMesh
+	var material_layers: Array = definition.get("material_layers", [])
+	var expected_surfaces := material_layers.size() if !material_layers.is_empty() else 1
+	if pickup_mesh.get_surface_count() != expected_surfaces:
+		_warn_world_pickup_fallback(display_name, "mesh surface count must match its explicit material layers")
+		return
+
+	var mesh_dimensions := pickup_mesh.get_aabb().size
+	var minimum_dimensions: Vector3 = definition.get(
+		"minimum_dimensions",
+		Vector3.ZERO
+	)
+	var maximum_dimensions: Vector3 = definition.get(
+		"maximum_dimensions",
+		Vector3(INF, INF, INF)
+	)
+	if !_dimensions_in_range(
+		mesh_dimensions,
+		minimum_dimensions,
+		maximum_dimensions
+	):
+		_warn_world_pickup_fallback(
+			display_name,
+			"mesh dimensions are invalid: " + str(mesh_dimensions)
+		)
+		return
+
+	var albedo_path := str(definition.get("albedo_path", ""))
+	var expected_albedo_size: Vector2i = definition.get(
+		"albedo_size",
+		Vector2i(512, 512)
+	)
+	var albedo_image := _load_world_pickup_albedo(albedo_path, expected_albedo_size, display_name)
+	if albedo_image == null:
+		return
+
+	var material_tint: Color = definition.get("material_tint", Color.WHITE)
+	var pickup_material := _build_world_pickup_material(
+		variant_id,
+		shader,
+		albedo_image,
+		material_tint
+	)
+	var materials_by_note_id := {}
+	var surface_paths: Dictionary = definition.get("albedo_by_note_id", {})
+	var note_ids: Array = definition.get("note_ids", [])
+	var layer_materials: Array[ShaderMaterial] = []
+	if !material_layers.is_empty():
+		# Mixed per-story/per-layer mapping is intentionally unsupported. Fail
+		# atomically rather than silently dropping a layer or showing wrong ink.
+		if !surface_paths.is_empty():
+			_warn_world_pickup_fallback(display_name, "layer and per-note mappings cannot be combined")
+			return
+		for layer in material_layers:
+			if !(layer is Dictionary) || !layer.has("albedo_path"):
+				_warn_world_pickup_fallback(display_name, "invalid layer material definition")
+				return
+			var factor := float(layer.get("stock_factor", 1.0))
+			if !is_finite(factor) || factor <= 0.0 || factor > 1.0:
+				_warn_world_pickup_fallback(display_name, "invalid linear stock factor")
+				return
+			var layer_image := _load_world_pickup_albedo(str(layer.albedo_path), expected_albedo_size, display_name)
+			if layer_image == null:
+				return
+			var layer_tint := Color(factor, factor, factor, 1.0).linear_to_srgb() * material_tint
+			layer_materials.append(_build_world_pickup_material(
+				variant_id + "_layer_" + str(layer_materials.size()), shader, layer_image, layer_tint
+			))
+	if !surface_paths.is_empty():
+		# Fail the family atomically rather than show another patient's record.
+		if surface_paths.size() != note_ids.size():
+			_warn_world_pickup_fallback(display_name, "surface mapping must cover every note")
+			return
+		for note_id in note_ids:
+			if !surface_paths.has(note_id):
+				_warn_world_pickup_fallback(display_name, "surface missing for " + str(note_id))
+				return
+			var surface_path := str(surface_paths[note_id])
+			if surface_path == albedo_path:
+				materials_by_note_id[note_id] = pickup_material
+				continue
+			var surface_image := _load_world_pickup_albedo(surface_path, expected_albedo_size, display_name)
+			if surface_image == null:
+				return
+			materials_by_note_id[note_id] = _build_world_pickup_material(
+				variant_id + "_" + str(note_id), shader, surface_image, material_tint
+			)
+	var runtime_variant := definition.duplicate(true)
+	runtime_variant["id"] = variant_id
+	runtime_variant["mesh"] = pickup_mesh
+	runtime_variant["material"] = pickup_material
+	runtime_variant["materials_by_note_id"] = materials_by_note_id
+	runtime_variant["layer_materials"] = layer_materials
+	# Retain the accepted thin symmetric proxy and its natural edge tipping.
+	# Presentation compensates for the solver's overlap allowance independently.
+	var world_dimensions := mesh_dimensions * float(definition.get("world_scale", 1.0))
+	runtime_variant["collision_size"] = Vector3(
+		world_dimensions.x + 0.004, maxf(world_dimensions.y + 0.002, 0.006), world_dimensions.z + 0.004
+	)
+	runtime_variant["collision_position"] = Vector3(0.0, world_dimensions.y * 0.5, 0.0)
+	var rest_offsets := PackedVector3Array()
+	var hull := pickup_mesh.create_convex_shape(true, false)
+	if hull == null || hull.points.is_empty():
+		_warn_world_pickup_fallback(display_name, "visual contact hull unavailable")
+		return
+	var mesh_center := pickup_mesh.get_aabb().get_center()
+	var mesh_min_y := pickup_mesh.get_aabb().position.y
+	var rest_scale := float(definition.get("world_scale", 1.0))
+	for point in hull.points:
+		rest_offsets.append((point - Vector3(mesh_center.x, mesh_min_y, mesh_center.z)) * rest_scale)
+	runtime_variant["rest_offsets"] = rest_offsets
+	var contact_query := ConvexPolygonShape3D.new()
+	var query_points := PackedVector3Array()
+	for point in rest_offsets:
+		query_points.append(point + Vector3.UP * HAMINA_DROP_GUARD_RECOVERY_HEIGHT)
+		query_points.append(point - Vector3.UP * HAMINA_DROP_GUARD_RECOVERY_HEIGHT)
+	contact_query.points = query_points
+	contact_query.margin = 0.0
+	runtime_variant["contact_query"] = contact_query
+	var contact_faces := pickup_mesh.get_faces()
+	for index in range(contact_faces.size()):
+		contact_faces[index] = (contact_faces[index] - Vector3(mesh_center.x, mesh_min_y, mesh_center.z)) * rest_scale
+	runtime_variant["contact_faces"] = contact_faces
+	runtime_variant["contact_bounds"] = AABB(Vector3(-world_dimensions.x * 0.5, 0.0, -world_dimensions.z * 0.5), world_dimensions)
+	var contact_groups := {}
+	for index in range(0, contact_faces.size(), 3):
+		var center := (contact_faces[index]+contact_faces[index+1]+contact_faces[index+2])/3.0
+		var cell := Vector2i(floori(center.x/world_dimensions.x*8.0), floori(center.z/world_dimensions.z*8.0))
+		if !contact_groups.has(cell):
+			contact_groups[cell] = {"bounds":AABB(contact_faces[index],Vector3.ZERO), "indices":[]}
+		var group: Dictionary = contact_groups[cell]
+		group.indices.append(index)
+		for corner in range(3): group.bounds = (group.bounds as AABB).expand(contact_faces[index+corner])
+	runtime_variant["contact_groups"] = contact_groups.values()
+	_world_pickup_variants[variant_id] = runtime_variant
+	for note_id in definition.get("note_ids", []):
+		_world_pickup_variant_by_note_id[str(note_id)] = variant_id
+
+	var world_scale := float(definition.get("world_scale", 1.0))
+	print(
+		"[rtv_lore_elements] loaded "
+		+ display_name
+		+ " pickup: raw="
+		+ str(mesh_dimensions)
+		+ ", world="
+		+ str(mesh_dimensions * world_scale)
+		+ ", collision="
+		+ str(runtime_variant["collision_size"])
+	)
+
+func _load_world_pickup_albedo(path: String, expected_size: Vector2i, display_name: String) -> Image:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		_warn_world_pickup_fallback(display_name, "albedo unavailable")
+		return null
+	var image := Image.new()
+	if image.load_png_from_buffer(file.get_buffer(file.get_length())) != OK || image.is_empty():
+		_warn_world_pickup_fallback(display_name, "albedo could not be decoded")
+		return null
+	if image.get_size() != expected_size:
+		_warn_world_pickup_fallback(display_name, "albedo must be " + str(expected_size))
+		return null
+	if !image.has_mipmaps() && image.generate_mipmaps() != OK:
+		_warn_world_pickup_fallback(display_name, "albedo mipmaps failed")
+		return null
+	return image
+
+func _build_world_pickup_material(
+	variant_id: String,
+	shader: Shader,
+	albedo_image: Image,
+	material_tint: Color = Color.WHITE
+) -> ShaderMaterial:
+	var pickup_material := ShaderMaterial.new()
+	pickup_material.resource_name = "RTV_" + variant_id.to_pascal_case() + "_PickupMaterial"
+	pickup_material.shader = shader
+	pickup_material.set_shader_parameter(
+		"albedo",
+		ImageTexture.create_from_image(albedo_image)
+	)
+	pickup_material.set_shader_parameter("normal", null)
+	pickup_material.set_shader_parameter("tint", material_tint)
+	pickup_material.set_shader_parameter("limiter", 0.1)
+	pickup_material.set_shader_parameter("dynamic", false)
+	pickup_material.set_shader_parameter("fractional", false)
+	pickup_material.set_shader_parameter("enableRain", false)
+	pickup_material.set_shader_parameter("enableSnow", false)
+	pickup_material.set_shader_parameter("snowTop", 0.0)
+	pickup_material.set_shader_parameter("snowSide", 0.0)
+	pickup_material.set_shader_parameter("snowBottom", 0.0)
+	pickup_material.set_shader_parameter("occlusion", false)
+	pickup_material.set_shader_parameter("noise", false)
+	pickup_material.set_shader_parameter("metal", false)
+	pickup_material.set_shader_parameter("glow", false)
+	pickup_material.set_shader_parameter("viewmodel", false)
+	pickup_material.set_shader_parameter("fresnel", 0.5)
+	return pickup_material
+
+func _warn_world_pickup_fallback(display_name: String, reason: String) -> void:
+	push_warning(
+		"[rtv_lore_elements] "
+		+ display_name
+		+ " pickup "
+		+ reason
+		+ "; using the shared note pickup."
+	)
+
+func _dimensions_in_range(
+	dimensions: Vector3,
+	minimum: Vector3,
+	maximum: Vector3
+) -> bool:
+	return (
+		dimensions.x >= minimum.x
+		&& dimensions.y >= minimum.y
+		&& dimensions.z >= minimum.z
+		&& dimensions.x <= maximum.x
+		&& dimensions.y <= maximum.y
+		&& dimensions.z <= maximum.z
+	)
 
 func _load_ui_strings() -> void:
 	_ui_strings = {}
@@ -310,6 +808,460 @@ func _register_map_pin_hooks() -> void:
 	var node_added_callback := Callable(self, "_on_tree_node_added_for_pins")
 	if !get_tree().node_added.is_connected(node_added_callback):
 		get_tree().node_added.connect(node_added_callback)
+
+func _register_world_pickup_release_hooks() -> void:
+	# Unfreeze awaits a timer: a post-hook would arrive a second too late, and
+	# Metro suppresses overlapping calls to that coroutine. Observe the native
+	# Placer exits instead, after its immediate Unfreeze writes disable CCD.
+	var physics_pre: int = _lib.hook("placer-_physics_process-pre", _on_placer_physics_pre, 40)
+	var physics_post: int = _lib.hook("placer-_physics_process-post", _on_placer_physics_post, 40)
+	_lib.hook("placer-collided-pre", _on_placer_collided_pre, 40)
+	_lib.hook("placer-collided-post", _on_placer_collided_post, 40)
+	_lib.hook("placer-contextplace-pre", _on_placer_context_pre, 40)
+	_lib.hook("placer-contextplace-post", _on_placer_context_post, 40)
+	var input_pre: int = _lib.hook("placer-_input-pre", _on_placer_input_pre, 40)
+	var input_post: int = _lib.hook("placer-_input-post", _on_placer_input_post, 40)
+	_world_pickup_upright_enabled = physics_pre != -1 && physics_post != -1 && input_pre != -1 && input_post != -1
+	if !_world_pickup_upright_enabled:
+		push_warning("[rtv_lore_elements] upright placement hooks unavailable; retaining native orientation cycle.")
+
+func _register_notebook_inventory_hooks() -> void:
+	# Keep old resource paths landscape for existing external save references.
+	# Convert only at the UI load/create boundary; never rewrite save scripts.
+	var load_hook: int = _lib.hook("interface-loadgriditem-pre", _on_notebook_load_grid_pre, 40)
+	var create_hook: int = _lib.hook("interface-create-pre", _on_notebook_create_pre, 40)
+	_notebook_portrait_enabled = load_hook != -1 && create_hook != -1
+	if !_notebook_portrait_enabled:
+		push_warning("[rtv_lore_elements] notebook portrait hooks unavailable; retaining legacy inventory orientation.")
+
+func _register_world_pickup_restore_hooks() -> void:
+	var before: int = _lib.hook("loader-loadshelter-pre", _on_world_pickup_restore_pre, 40)
+	var after: int = _lib.hook("loader-loadshelter-post", _on_world_pickup_restore_post, 40)
+	_world_pickup_restore_enabled = before != -1 && after != -1
+	if !_world_pickup_restore_enabled:
+		push_warning("[rtv_lore_elements] shelter restore hooks unavailable; saved pickup poses remain unchanged.")
+
+func _on_world_pickup_restore_pre(_target_shelter) -> void:
+	_world_pickup_before_restore.clear()
+	_world_pickup_restore_pending = _world_pickup_restore_enabled
+	if !_world_pickup_restore_enabled:
+		return
+	for body in get_tree().get_nodes_in_group("Item"):
+		_world_pickup_before_restore[body.get_instance_id()] = true
+
+func _on_world_pickup_restore_post(_target_shelter) -> void:
+	if !_world_pickup_restore_enabled || !_world_pickup_restore_pending:
+		return
+	_world_pickup_restore_pending = false
+	var candidates := []
+	for node in get_tree().get_nodes_in_group("Item"):
+		if _world_pickup_before_restore.has(node.get_instance_id()) || !(node is RigidBody3D):
+			continue
+		var body := node as RigidBody3D
+		if !body.freeze || _get_world_pickup_variant_for_body(body).is_empty():
+			continue
+		candidates.append({"body": weakref(body), "pose": body.global_transform})
+	_world_pickup_before_restore.clear()
+	if !candidates.is_empty():
+		_correct_world_pickup_restored_contacts(candidates)
+
+func _correct_world_pickup_restored_contacts(candidates: Array) -> void:
+	# Native LoadShelter creates furniture, restores the pose, then Freeze()s
+	# pickups. Drop/sleep guards intentionally skip these bodies. Give freshly
+	# restored colliders one physics frame, then repair only shallow overlap.
+	await get_tree().physics_frame
+	for candidate in candidates:
+		var body = candidate.body.get_ref()
+		if !is_instance_valid(body) || !body.is_inside_tree() || !body.freeze || body.gravity_scale <= 0.0:
+			continue
+		if !body.global_transform.is_finite() || !body.global_transform.is_equal_approx(candidate.pose):
+			continue
+		var variant := _get_world_pickup_variant_for_body(body)
+		if variant.is_empty() || variant.get("stabilize_drops", false) != true:
+			continue
+		var lift := _world_pickup_contact_lift(body, variant)
+		# Upward-only, <= 10 mm: do not lower intentional placements, wake a
+		# frozen save, flatten folds, relocate lost items or change release spin.
+		if is_finite(lift) && lift > WORLD_PICKUP_REST_TOLERANCE && lift <= 0.01:
+			body.global_position.y += lift
+
+func _on_notebook_load_grid_pre(slot_data, _target_grid, _grid_position) -> void:
+	_upgrade_notebook_slot(slot_data, true)
+
+func _on_notebook_create_pre(slot_data, _target_grid, _use_drop) -> void:
+	_upgrade_notebook_slot(slot_data, false)
+
+func _upgrade_notebook_slot(slot_data, preserve_cells: bool) -> void:
+	if !_notebook_portrait_enabled || slot_data == null || slot_data.itemData == null:
+		return
+	var old_item = slot_data.itemData
+	if str(old_item.file) not in NOTEBOOK_NOTE_IDS || old_item.size != Vector2(2, 1):
+		return
+	var portrait = load(NOTEBOOK_PORTRAIT_ITEM_PREFIX + str(old_item.file) + ".tres")
+	if portrait == null || portrait.size != Vector2(1, 2):
+		push_warning("[rtv_lore_elements] portrait resource unavailable; preserving saved notebook footprint.")
+		return
+	slot_data.itemData = portrait
+	if preserve_cells:
+		# Old landscape false -> new portrait true (and conversely). Position,
+		# occupied cells, condition and all other SlotData fields remain intact.
+		slot_data.gridRotated = !slot_data.gridRotated
+
+func _register_folded_inventory_hooks() -> void:
+	# Keep legacy 2x2 external paths intact. Shrink only before native UI creates
+	# occupied cells; both rotations remain subsets of the original saved square.
+	var load_hook: int = _lib.hook("interface-loadgriditem-pre", _on_folded_load_grid_pre, 40)
+	var create_hook: int = _lib.hook("interface-create-pre", _on_folded_create_pre, 40)
+	_folded_compact_enabled = load_hook != -1 && create_hook != -1
+	if !_folded_compact_enabled:
+		push_warning("[rtv_lore_elements] folded inventory hooks unavailable; retaining legacy footprint and value.")
+
+func _on_folded_load_grid_pre(slot_data, _target_grid, _grid_position) -> void:
+	_upgrade_folded_slot(slot_data)
+
+func _on_folded_create_pre(slot_data, _target_grid, _use_drop) -> void:
+	_upgrade_folded_slot(slot_data)
+
+func _upgrade_folded_slot(slot_data) -> void:
+	if !_folded_compact_enabled || slot_data == null || slot_data.itemData == null:
+		return
+	var old_item = slot_data.itemData
+	if str(old_item.file) not in FOLDED_NOTE_IDS || old_item.size != Vector2(2, 2):
+		return
+	var compact = load(FOLDED_COMPACT_ITEM_PREFIX + str(old_item.file) + ".tres")
+	if compact == null || compact.size != Vector2(2, 1) || compact.file != old_item.file:
+		push_warning("[rtv_lore_elements] folded resource unavailable; preserving saved item.")
+		return
+	# Keep position, rotation, condition and every other SlotData field. Either
+	# orientation frees two old cells without entering any neighbor's footprint.
+	slot_data.itemData = compact
+
+func _on_placer_physics_pre(_delta: float) -> void:
+	_capture_world_pickup_placement(_world_pickup_placement_ids)
+	var placer = _lib._caller
+	if !_world_pickup_can_orient(placer) || placer.orientationMode != 4 || placer.initialWait:
+		return
+	if !Input.is_action_just_pressed("place"):
+		return
+	# Plan without moving the held body. Apply only if this exact G invocation
+	# subsequently takes the native release branch, not a contact or pickup.
+	var snapshot: Dictionary = _world_pickup_placement_ids.get(placer.get_instance_id(), {})
+	if snapshot.get("id", 0) != placer.placable.get_instance_id():
+		return
+	var supported := _world_pickup_supported_display_pose(placer.placable)
+	if !supported.is_empty():
+		snapshot["supported_pose"] = supported.pose
+
+func _on_placer_physics_post(_delta: float) -> void:
+	_apply_world_pickup_upright(_delta)
+	_finish_world_pickup_placement(_world_pickup_placement_ids)
+
+func _world_pickup_can_orient(placer) -> bool:
+	if !_world_pickup_upright_enabled || !is_instance_valid(placer):
+		return false
+	var data = placer.gameData
+	if data.freeze || data.isReloading || data.isInspecting || !data.isPlacing || data.decor:
+		return false
+	var pickup = placer.get("placable")
+	if !is_instance_valid(pickup):
+		return false
+	return _get_world_pickup_variant_for_body(pickup).get("stabilize_drops", false) == true
+
+func _on_placer_input_pre(event: InputEvent) -> void:
+	var placer = _lib._caller
+	if !is_instance_valid(placer):
+		return
+	var placer_id: int = placer.get_instance_id()
+	_world_pickup_orientation_inputs.erase(placer_id)
+	if !(event is InputEventMouseButton) || !event.pressed || event.button_index != MOUSE_BUTTON_MIDDLE:
+		return
+	if _world_pickup_can_orient(placer) && placer.orientationMode == 3:
+		_world_pickup_orientation_inputs[placer_id] = placer.placable.get_instance_id()
+
+func _on_placer_input_post(_event: InputEvent) -> void:
+	var placer = _lib._caller
+	if !is_instance_valid(placer):
+		return
+	var placer_id: int = placer.get_instance_id()
+	var pickup_id: int = _world_pickup_orientation_inputs.get(placer_id, 0)
+	_world_pickup_orientation_inputs.erase(placer_id)
+	if pickup_id == 0 || !_world_pickup_can_orient(placer):
+		return
+	# Extend only native 3 -> 1 wrapping, for the same held authored pickup.
+	# The next native click already wraps 4 -> 1; modes 1-3 stay untouched.
+	if placer.placable.get_instance_id() == pickup_id && placer.orientationMode == 1:
+		placer.orientationMode = 4
+
+func _apply_world_pickup_upright(delta: float) -> void:
+	var placer = _lib._caller
+	if !_world_pickup_can_orient(placer) || placer.orientationMode != 4:
+		return
+	var pickup = placer.placable
+	var snapshot: Dictionary = _world_pickup_placement_ids.get(placer.get_instance_id(), {})
+	if snapshot.get("id", 0) != pickup.get_instance_id():
+		return
+	# Authored paper fronts are +Y and printed tops -Z: +90 pitch makes both
+	# front-facing and upright. Native yaw/scroll still apply. Run BEFORE the
+	# existing swept preview constraint so this turn cannot bypass an obstacle.
+	pickup.global_rotation.x = lerp_angle(pickup.global_rotation.x, PI / 2.0, delta * 5.0)
+	pickup.global_rotation.z = lerp_angle(pickup.global_rotation.z, 0.0, delta * 5.0)
+
+func _world_pickup_display_ray(body: RigidBody3D, start: Vector3, end: Vector3) -> Dictionary:
+	var query := PhysicsRayQueryParameters3D.create(start, end, body.collision_mask, [body.get_rid()])
+	var hit := body.get_world_3d().direct_space_state.intersect_ray(query)
+	# Moving pickups/characters are not a reliable display foundation. Static
+	# scene furniture and walls work without changing their collision masks.
+	if hit.is_empty() || !(hit.collider is StaticBody3D):
+		return {}
+	return hit
+
+func _world_pickup_display_floor(body: RigidBody3D, pose: Transform3D, collision: CollisionShape3D) -> Dictionary:
+	var half: Vector3 = (collision.shape as BoxShape3D).size * 0.5
+	var height := -INF
+	var lowest := INF
+	var support_id := 0
+	# Require support under both sides and the middle, not a single ray across
+	# a shelf edge. Probe the lower edge of these flat-authored (+Z bottom) papers.
+	for x in [-0.8 * half.x, 0.0, 0.8 * half.x]:
+		var a := pose * (collision.position + Vector3(x, -half.y, half.z))
+		var b := pose * (collision.position + Vector3(x, half.y, half.z))
+		var bottom := a if a.y < b.y else b
+		var hit := _world_pickup_display_ray(body, bottom + Vector3.UP * 0.003, bottom + Vector3.DOWN * 0.025)
+		if hit.is_empty() || hit.normal.dot(Vector3.UP) < 0.995:
+			return {}
+		var id: int = hit.collider.get_instance_id()
+		if support_id != 0 && id != support_id:
+			return {}
+		support_id = id
+		height = maxf(height, hit.position.y)
+		lowest = minf(lowest, hit.position.y)
+	if height - lowest > 0.003:
+		return {}
+	return {"height": height, "id": support_id}
+
+func _world_pickup_display_path_clear(body: RigidBody3D, collision: CollisionShape3D, start: Transform3D, target: Transform3D) -> bool:
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = collision.shape
+	query.collision_mask = body.collision_mask
+	query.exclude = [body.get_rid()]
+	query.margin = 0.001
+	var space := body.get_world_3d().direct_space_state
+	query.transform = start * collision.transform
+	if !space.intersect_shape(query, 1).is_empty():
+		return false
+	# A bounded five-degree lean gets finer angular steps than normal preview.
+	# Cast each translation too, so a clear endpoint cannot jump through a lip.
+	var previous := start
+	for step in range(1, 33):
+		var next := start.interpolate_with(target, float(step) / 32.0)
+		query.transform = previous * collision.transform
+		query.motion = next.origin - previous.origin
+		var fractions := space.cast_motion(query)
+		if fractions.size() != 2 || fractions[0] < 0.99999:
+			return false
+		query.motion = Vector3.ZERO
+		query.transform = next * collision.transform
+		if !space.intersect_shape(query, 1).is_empty():
+			return false
+		previous = next
+	return true
+
+func _world_pickup_supported_display_pose(body: RigidBody3D) -> Dictionary:
+	# This is a one-shot placement finish, never a drop/restore correction or
+	# persistent attachment. All geometry is queried before changing the body.
+	var pose := body.global_transform
+	var collision := body.get_node_or_null("Collision") as CollisionShape3D
+	if collision == null || collision.disabled || !(collision.shape is BoxShape3D):
+		return {}
+	if !pose.is_finite() || !pose.basis.get_scale().is_equal_approx(Vector3.ONE) || !collision.basis.is_equal_approx(Basis.IDENTITY):
+		return {}
+	if (-pose.basis.z).dot(Vector3.UP) < 0.999:
+		return {}
+	var front := Vector3(pose.basis.y.x, 0, pose.basis.y.z).normalized()
+	if front.length_squared() < 0.99:
+		return {}
+	var floor := _world_pickup_display_floor(body, pose, collision)
+	if floor.is_empty():
+		return {}
+	var half: Vector3 = (collision.shape as BoxShape3D).size * 0.5
+	var backing := {}
+	# Three upper-back samples require an actual nearby backing across most
+	# of the sheet, facing its reverse. Side walls and isolated pegs do not count.
+	for x in [-0.8 * half.x, 0.0, 0.8 * half.x]:
+		var point := pose * (collision.position + Vector3(x, -half.y, -half.z * 0.8))
+		var hit := _world_pickup_display_ray(body, point + front * 0.003, point - front * 0.03)
+		if hit.is_empty() || absf(hit.normal.y) > 0.05 || hit.normal.dot(front) < 0.985:
+			return {}
+		if !backing.is_empty():
+			if hit.collider != backing.collider || hit.normal.dot(backing.normal) < 0.999 || absf((hit.position - backing.position).dot(backing.normal)) > 0.003:
+				return {}
+		backing = hit
+	var lean := deg_to_rad(5.0)
+	var up := Vector3.UP * cos(lean) - front * sin(lean)
+	var target := Transform3D(Basis(Vector3.UP.cross(front), front * cos(lean) + Vector3.UP * sin(lean), -up), pose.origin)
+	var min_height := INF
+	var back_distance := INF
+	for x in [-half.x, half.x]:
+		for y in [-half.y, half.y]:
+			for z in [-half.z, half.z]:
+				var corner := target * (collision.position + Vector3(x, y, z))
+				min_height = minf(min_height, corner.y)
+				back_distance = minf(back_distance, (corner - backing.position).dot(backing.normal))
+	# Fit just clear of the backing and base, moving a few centimetres at most.
+	# This gives the thin body a real backward lean instead of vertical balance.
+	target.origin += front * ((0.002 - back_distance) / front.dot(backing.normal))
+	target.origin.y += float(floor.height) + 0.002 - min_height
+	if target.origin.distance_to(pose.origin) > 0.045:
+		return {}
+	var final_floor := _world_pickup_display_floor(body, target, collision)
+	if final_floor.is_empty() || final_floor.id != floor.id || absf(final_floor.height - floor.height) > 0.001:
+		return {}
+	if !_world_pickup_display_path_clear(body, collision, pose, target):
+		return {}
+	return {"pose": target}
+
+func _on_placer_collided_pre(_body: Node3D) -> void:
+	_capture_world_pickup_placement(_world_pickup_collision_ids)
+
+func _on_placer_collided_post(_body: Node3D) -> void:
+	_finish_world_pickup_placement(_world_pickup_collision_ids)
+
+func _on_placer_context_pre(target: Node3D) -> void:
+	var placer = _lib._caller
+	if !is_instance_valid(placer) || !(placer.get_parent() is Node3D):
+		return
+	_world_pickup_context_starts.erase(placer.get_instance_id())
+	if _get_world_pickup_variant_for_body(target).is_empty() || placer.gameData.decor:
+		return
+	# Inventory instances can start at the world origin, not at the player.
+	# Native ContextPlace teleports them one metre ahead before its wait. Keep
+	# the viewpoint as the source side for the sweep when that wait completes.
+	_world_pickup_context_starts[placer.get_instance_id()] = {
+		"id": target.get_instance_id(), "origin": (placer.get_parent() as Node3D).global_position,
+	}
+
+func _on_placer_context_post(_target: Node3D) -> void:
+	var placer = _lib._caller
+	if !is_instance_valid(placer):
+		return
+	var snapshot: Dictionary = _world_pickup_context_starts.get(placer.get_instance_id(), {})
+	_world_pickup_context_starts.erase(placer.get_instance_id())
+	var body = instance_from_id(int(snapshot.get("id", 0)))
+	if !(body is RigidBody3D) || placer.get("placable") != body:
+		return
+	var start: Transform3D = body.global_transform
+	start.origin = snapshot.origin
+	_constrain_world_pickup_preview(body, start, placer)
+
+func _constrain_world_pickup_preview(body: RigidBody3D, previous: Transform3D, placer: Node3D = null) -> void:
+	if !body.is_inside_tree() || !previous.is_finite() || !body.global_transform.is_finite():
+		return
+	var collision := body.get_node_or_null("Collision") as CollisionShape3D
+	if collision == null || collision.shape == null:
+		return
+	var space := body.get_world_3d().direct_space_state
+	var target := body.global_transform
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = collision.shape
+	query.collision_mask = body.collision_mask
+	query.exclude = [body.get_rid()]
+	query.margin = 0.001
+	var safe := previous
+	# Resolve translation at the current orientation first. A blocked turn must
+	# not veto movement away from a wall, nor blocked travel a clear turn.
+	query.transform = previous * collision.transform
+	query.motion = target.origin - previous.origin
+	var fraction := space.cast_motion(query)
+	if fraction.size() == 2:
+		safe.origin += query.motion * fraction[0]
+	query.transform = safe * collision.transform
+	query.motion = Vector3.ZERO
+	if !space.intersect_shape(query, 1).is_empty():
+		safe.origin = previous.origin
+	var blocked_travel := safe.origin.distance_squared_to(target.origin) > 0.00000001
+	# Sample only the requested rotation at the reachable origin. Keep the last
+	# clear intermediate pose; never rotate through an obstacle or push aside.
+	var angle := previous.basis.get_rotation_quaternion().angle_to(target.basis.get_rotation_quaternion())
+	var steps := maxi(1, int(ceil(angle / 0.025)))
+	for step in range(1, steps + 1):
+		var next := Transform3D(previous.basis.slerp(target.basis, float(step) / steps), safe.origin)
+		query.transform = next * collision.transform
+		if !space.intersect_shape(query, 1).is_empty():
+			break
+		safe = next
+	body.global_transform = safe
+	if blocked_travel && is_instance_valid(placer) && placer.get_parent() is Node3D:
+		# Native scrolling moves a target, not the held body. Discard unreachable
+		# distance so one backward scroll does not first pay off hidden overshoot.
+		# Preserve native near/far limits, rotation controls and G/contact release.
+		var local := (placer.get_parent() as Node3D).to_local(safe.origin)
+		var forward := -placer.basis.z
+		if forward.length_squared() > 0.000001:
+			var reachable := local.dot(forward) / forward.length_squared()
+			var old_distance: float = placer.distance
+			placer.distance = clampf(reachable, placer.minDistance, placer.maxDistance)
+			placer.position += forward * (placer.distance - old_distance)
+
+func _capture_world_pickup_placement(snapshots: Dictionary) -> void:
+	var placer = _lib._caller
+	if !is_instance_valid(placer):
+		return
+	var placer_id: int = placer.get_instance_id()
+	snapshots.erase(placer_id)
+	var pickup = placer.get("placable")
+	if !is_instance_valid(pickup):
+		return
+	var variant := _get_world_pickup_variant_for_body(pickup)
+	if variant.is_empty() || variant.get("stabilize_drops", false) != true:
+		return
+	var pickup_id: int = pickup.get_instance_id()
+	snapshots[placer_id] = {"id": pickup_id, "pose": pickup.global_transform}
+	# A prior drop must never freeze or flatten a newly held preview.
+	_clear_world_pickup_guard(pickup_id)
+	var presenter := pickup.get_node_or_null("RTVLoreContactPresenter") as PaperContactPresenter
+	if presenter != null:
+		presenter.wall_tracking = false
+		presenter.set_physics_process(false)
+
+func _finish_world_pickup_placement(snapshots: Dictionary) -> void:
+	var placer = _lib._caller
+	if !is_instance_valid(placer):
+		return
+	var placer_id: int = placer.get_instance_id()
+	var snapshot: Dictionary = snapshots.get(placer_id, {})
+	var pickup_id: int = snapshot.get("id", 0)
+	snapshots.erase(placer_id)
+	if pickup_id == 0:
+		return
+	var pickup = instance_from_id(pickup_id)
+	if !is_instance_valid(pickup):
+		return
+	if placer.get("placable") == pickup:
+		_constrain_world_pickup_preview(pickup, snapshot.pose, placer)
+		return
+	if snapshot.has("supported_pose") && placer.get("placable") == null && !placer.gameData.isPlacing:
+		# Do not override another hook's release or a changed pose. Native G's
+		# exact kick identifies the synchronous path we planned in the pre-hook.
+		if !pickup.freeze && pickup.gravity_scale > 0.0 && pickup.global_transform.is_equal_approx(snapshot.pose) && pickup.linear_velocity.is_equal_approx(Vector3(0, 0.1, 0)) && pickup.angular_velocity.is_equal_approx(Vector3.ONE):
+			pickup.global_transform = snapshot.supported_pose
+			pickup.linear_velocity = Vector3.ZERO
+			pickup.angular_velocity = Vector3.ZERO
+	# G release and Collided clear placable synchronously. Start a fresh,
+	# bounded guard even when this same node has already been placed before.
+	_stabilize_world_pickup_if_dropped(pickup_id)
+
+func _register_world_pickup_monitor() -> void:
+	var node_added_callback := Callable(
+		self,
+		"_on_tree_node_added_for_world_pickups"
+	)
+	if !get_tree().node_added.is_connected(node_added_callback):
+		get_tree().node_added.connect(node_added_callback)
+	print("[rtv_lore_elements] registered direct lore pickup monitor.")
+
+# Compatibility entry point retained for the existing Hamina regression tools.
+func _register_hamina_pickup_monitor() -> void:
+	_register_world_pickup_monitor()
 
 func _register_journal_input() -> void:
 	if _lib.register(_lib.Registry.INPUTS, JOURNAL_INPUT_ACTION, {
@@ -595,6 +1547,10 @@ func _build_note_item(definition: Dictionary):
 	var item_path := LEGACY_NOTE_ITEM_PATH
 	if note_id != LEGACY_HELLO_NOTE_ID:
 		item_path = NOTE_ITEM_PATH_PREFIX + note_id + ".tres"
+	if _notebook_portrait_enabled && note_id in NOTEBOOK_NOTE_IDS:
+		item_path = NOTEBOOK_PORTRAIT_ITEM_PREFIX + note_id + ".tres"
+	if _folded_compact_enabled && note_id in FOLDED_NOTE_IDS:
+		item_path = FOLDED_COMPACT_ITEM_PREFIX + note_id + ".tres"
 
 	var item_data = ResourceLoader.load(item_path, "", ResourceLoader.CACHE_MODE_IGNORE)
 	if item_data == null:
@@ -609,7 +1565,9 @@ func _build_note_item(definition: Dictionary):
 	item_data.display = str(definition.get("display", item_data.inventory))
 	item_data.type = "Lore"
 	item_data.weight = float(definition.get("weight", 0.05))
-	item_data.value = int(definition.get("value", 15))
+	# If migration hooks fail, the legacy four-cell item keeps its old price.
+	if _folded_compact_enabled || note_id not in FOLDED_NOTE_IDS:
+		item_data.value = int(definition.get("value", 15))
 	item_data.rarity = int(definition.get("rarity", 0))
 	item_data.usable = _has_reader_hook()
 	item_data.phrase = _ui_text("item.action.read")
@@ -632,6 +1590,7 @@ func _build_note_scene(note_id: String, item_data):
 	var scene_slot_data = slot_data.duplicate(true)
 	scene_slot_data.itemData = item_data
 	scene_instance.set("slotData", scene_slot_data)
+	_apply_note_scene_variant(note_id, scene_instance)
 	_set_scene_owner(scene_instance, scene_instance)
 
 	var packed_scene := PackedScene.new()
@@ -642,6 +1601,644 @@ func _build_note_scene(note_id: String, item_data):
 		return null
 
 	return packed_scene
+
+func _apply_note_scene_variant(note_id: String, scene_instance: Node) -> void:
+	var variant := _get_world_pickup_variant(note_id)
+	if variant.is_empty():
+		return
+
+	var mesh_node := scene_instance.get_node_or_null("Mesh")
+	var collision_node := scene_instance.get_node_or_null("Collision")
+	if !(mesh_node is MeshInstance3D) || !(collision_node is CollisionShape3D):
+		push_warning(
+			"[rtv_lore_elements] shared note scene is missing pickup variant nodes; "
+			+ "using the shared note pickup."
+		)
+		return
+
+	var pickup_mesh := variant.get("mesh") as ArrayMesh
+	var surface_materials: Dictionary = variant.get("materials_by_note_id", {})
+	var pickup_material := surface_materials.get(note_id, variant.get("material")) as ShaderMaterial
+	if pickup_mesh == null || pickup_material == null:
+		return
+	var world_scale := float(variant.get("world_scale", 1.0))
+	var collision_size: Vector3 = variant.get("collision_size", Vector3.ONE)
+	var collision_position: Vector3 = variant.get(
+		"collision_position",
+		Vector3.ZERO
+	)
+	var mesh_instance := mesh_node as MeshInstance3D
+	var collision_shape := collision_node as CollisionShape3D
+	var box_shape := BoxShape3D.new()
+	box_shape.size = collision_size
+	box_shape.margin = 0.001
+	var mesh_bounds := pickup_mesh.get_aabb()
+	var mesh_center := mesh_bounds.get_center()
+	var mesh_position := Vector3(
+		-mesh_center.x * world_scale,
+		-mesh_bounds.position.y * world_scale,
+		-mesh_center.z * world_scale
+	)
+
+	mesh_instance.transform = Transform3D.IDENTITY
+	mesh_instance.scale = Vector3.ONE * world_scale
+	mesh_instance.position = mesh_position
+	mesh_instance.mesh = pickup_mesh
+	var layer_materials: Array = variant.get("layer_materials", [])
+	mesh_instance.material_override = pickup_material if layer_materials.is_empty() else null
+	for surface in range(pickup_mesh.get_surface_count()):
+		mesh_instance.set_surface_override_material(surface, null if layer_materials.is_empty() else layer_materials[surface])
+	collision_shape.transform = Transform3D.IDENTITY
+	collision_shape.position = collision_position
+	collision_shape.shape = box_shape
+
+func _get_world_pickup_variant(note_id: String) -> Dictionary:
+	var variant_id := str(_world_pickup_variant_by_note_id.get(note_id, ""))
+	if variant_id.is_empty():
+		return {}
+	return _world_pickup_variants.get(variant_id, {})
+
+func _on_tree_node_added_for_world_pickups(node: Node) -> void:
+	if _get_world_pickup_variant_for_body(node).is_empty():
+		return
+	call_deferred(
+		"_stabilize_world_pickup_if_dropped",
+		node.get_instance_id()
+	)
+
+func _get_world_pickup_variant_for_body(node: Node) -> Dictionary:
+	if !(node is RigidBody3D) || !node.is_in_group("Item"):
+		return {}
+	var slot_data = node.get("slotData")
+	if slot_data == null:
+		return {}
+	var item_data = slot_data.get("itemData")
+	if item_data == null:
+		return {}
+	return _get_world_pickup_variant(str(item_data.get("file")))
+
+func _is_hamina_pickup_body(node: Node) -> bool:
+	var variant := _get_world_pickup_variant_for_body(node)
+	return str(variant.get("id", "")) == "hamina_dispatch"
+
+func _stabilize_world_pickup_if_dropped(pickup_id: int) -> void:
+	var node = instance_from_id(pickup_id)
+	if !(node is Node):
+		return
+	var variant := _get_world_pickup_variant_for_body(node)
+	if variant.is_empty() || variant.get("stabilize_drops", false) != true:
+		return
+	var pickup_body := node as RigidBody3D
+	if !pickup_body.is_inside_tree() || pickup_body.freeze || pickup_body.gravity_scale <= 0.0:
+		return
+	var variant_id := str(variant.get("id", "unknown"))
+	var display_name := str(variant.get("display_name", variant_id))
+
+	# Preserve the native release pose/spin. Automatic shape inertia allows
+	# contact torque to tip a sheet instead of balancing a fixed flat plate.
+	pickup_body.axis_lock_angular_x = false
+	pickup_body.axis_lock_angular_z = false
+	pickup_body.inertia = Vector3.ZERO
+	pickup_body.continuous_cd = true
+	if variant_id == "triage_tag":
+		# Light card stock should lose its rapid contact wobble without axis
+		# locks or imposed rest poses. This adds to the native world damping.
+		pickup_body.angular_damp = 2.0
+	if variant.has("angular_damp"):
+		# Opt-in full-size stock damping: retain release spin, free tipping and
+		# native sleep. Smaller accepted families keep their existing response.
+		pickup_body.angular_damp = float(variant.angular_damp)
+	var presenter := pickup_body.get_node_or_null("RTVLoreContactPresenter") as PaperContactPresenter
+	if presenter == null:
+		presenter = PaperContactPresenter.new()
+		presenter.name = "RTVLoreContactPresenter"
+		presenter.process_priority = 100
+		presenter.coordinator = weakref(self)
+		presenter.base_mesh_position = (pickup_body.get_node("Mesh") as MeshInstance3D).position
+		pickup_body.add_child(presenter)
+	presenter.set_process(true)
+	if !presenter.wall_tracking:
+		presenter.wall_offsets = _build_world_pickup_support_offsets(variant)
+		presenter.wall_planes.clear()
+		if !pickup_body.sleeping:
+			_clear_world_pickup_wall_overlap(pickup_body, presenter.wall_offsets)
+		presenter.wall_previous = pickup_body.global_transform
+		presenter.wall_tracking = true
+	presenter.set_physics_process(!pickup_body.sleeping)
+	var rest_callback := _on_world_pickup_sleeping_changed.bind(pickup_id)
+	if !pickup_body.sleeping_state_changed.is_connected(rest_callback):
+		pickup_body.sleeping_state_changed.connect(rest_callback)
+	if !_world_pickup_stabilization_logged.has(variant_id):
+		print(
+			"[rtv_lore_elements] "
+			+ display_name
+			+ " direct drop stabilization active: "
+			+ "free angular settling, shape inertia and CCD enabled."
+		)
+		_world_pickup_stabilization_logged[variant_id] = true
+		if variant_id == "hamina_dispatch":
+			_hamina_pickup_stabilization_logged = true
+
+	if !_world_pickup_guarded_ids.has(pickup_id):
+		_world_pickup_guard_generation += 1
+		_world_pickup_guarded_ids[pickup_id] = _world_pickup_guard_generation
+		if variant_id == "hamina_dispatch":
+			_hamina_guarded_pickup_ids[pickup_id] = true
+		_guard_world_pickup_drop(
+			pickup_body, pickup_id, variant, _world_pickup_guard_generation
+		)
+
+func _guard_world_pickup_drop(
+	pickup_body: RigidBody3D,
+	pickup_id: int,
+	variant: Dictionary,
+	generation: int
+) -> void:
+	var variant_id := str(variant.get("id", "unknown"))
+	var display_name := str(variant.get("display_name", variant_id))
+	var previous_position := pickup_body.global_position
+	var previous_basis := pickup_body.global_basis
+	var pickup_tree := pickup_body.get_tree()
+	if pickup_tree == null:
+		_clear_world_pickup_guard(pickup_id, generation)
+		return
+	for _frame in range(HAMINA_DROP_GUARD_FRAMES):
+		await pickup_tree.physics_frame
+		# An earlier coroutine must neither move this body nor clear a guard
+		# that was rearmed by another release while it was suspended.
+		if _world_pickup_guarded_ids.get(pickup_id, 0) != generation:
+			return
+		if !is_instance_valid(pickup_body):
+			_clear_world_pickup_guard(pickup_id, generation)
+			return
+
+		if !pickup_body.is_inside_tree() || pickup_body.freeze || pickup_body.gravity_scale <= 0.0:
+			break
+		var current_position := pickup_body.global_position
+		if (
+			!previous_position.is_finite()
+			|| !current_position.is_finite()
+		):
+			break
+		var support_hit := _find_world_pickup_support_hit(
+			pickup_body,
+			previous_position,
+			previous_basis,
+			current_position,
+			variant
+		)
+		if !support_hit.is_empty():
+			# Correct only a demonstrated penetration, never a near-surface hit.
+			# Do not freeze, flatten or erase spin: partial support must still tip.
+			pickup_body.global_position.y += float(support_hit["lift"]) + HAMINA_DROP_GUARD_CLEARANCE
+			var normal: Vector3 = support_hit["normal"]
+			var inward_speed := pickup_body.linear_velocity.dot(normal)
+			if inward_speed < 0.0:
+				pickup_body.linear_velocity -= normal * inward_speed
+			pickup_body.sleeping = false
+			if !_world_pickup_guard_correction_logged.has(variant_id):
+				print(
+					"[rtv_lore_elements] "
+					+ display_name
+					+ " support guard "
+					+ "recovered a crossed surface without freezing rotation."
+				)
+				_world_pickup_guard_correction_logged[variant_id] = true
+				if variant_id == "hamina_dispatch":
+					_hamina_drop_guard_correction_logged = true
+
+		previous_position = pickup_body.global_position
+		previous_basis = pickup_body.global_basis
+
+	_clear_world_pickup_guard(pickup_id, generation)
+
+func _on_world_pickup_sleeping_changed(pickup_id: int) -> void:
+	var body = instance_from_id(pickup_id)
+	if body is RigidBody3D && !body.sleeping:
+		var presenter := body.get_node_or_null("RTVLoreContactPresenter") as PaperContactPresenter
+		if presenter != null:
+			presenter.set_process(true)
+			presenter.set_physics_process(true)
+	# Physics signals may arrive while the space is locked. Recheck native
+	# sleep/placement state after dispatch, without installing a polling loop.
+	call_deferred("_correct_world_pickup_rest_contact", pickup_id)
+
+func _correct_world_pickup_rest_contact(pickup_id: int) -> void:
+	var node = instance_from_id(pickup_id)
+	if !(node is RigidBody3D):
+		return
+	var body := node as RigidBody3D
+	if !body.is_inside_tree() || !body.sleeping || body.freeze || body.gravity_scale <= 0.0:
+		return
+	if !body.global_transform.is_finite():
+		return
+	var variant := _get_world_pickup_variant_for_body(body)
+	if variant.is_empty() || variant.get("stabilize_drops", false) != true:
+		return
+	var correction := _world_pickup_contact_lift(body, variant)
+	if is_finite(correction) && absf(correction) > WORLD_PICKUP_REST_TOLERANCE:
+		# Transfer the rendered skin offset into the resting body's saved pose.
+		# No visible pop: the mesh is already at this surface before sleep.
+		body.global_position.y += correction
+		body.sleeping = true
+	var presenter := body.get_node_or_null("RTVLoreContactPresenter") as PaperContactPresenter
+	if presenter != null:
+		(body.get_node("Mesh") as MeshInstance3D).position = presenter.base_mesh_position
+		presenter.set_process(false)
+		presenter.wall_previous = body.global_transform
+		presenter.set_physics_process(false)
+
+func _present_world_pickup_contact(body: RigidBody3D, presenter: PaperContactPresenter) -> void:
+	var mesh := body.get_node_or_null("Mesh") as MeshInstance3D
+	if mesh == null:
+		presenter.set_process(false)
+		return
+	mesh.position = presenter.base_mesh_position
+	if !body.is_inside_tree() || body.freeze || body.gravity_scale <= 0.0:
+		presenter.set_process(false)
+		presenter.wall_tracking = false
+		presenter.set_physics_process(false)
+		return
+	if body.sleeping:
+		_correct_world_pickup_rest_contact(body.get_instance_id())
+		return
+	if !body.global_transform.is_finite():
+		return
+	var correction := _world_pickup_contact_lift(body, _get_world_pickup_variant_for_body(body))
+	if is_finite(correction) && absf(correction) > WORLD_PICKUP_REST_TOLERANCE:
+		# Render-only contact compensation: never teleport an awake rigid body,
+		# alter spin/velocity, or remove contact torque that makes overhangs tip.
+		mesh.global_position.y += correction
+
+func _world_pickup_wall_ray(body: RigidBody3D, start: Vector3, end: Vector3, top: float) -> Dictionary:
+	if start.is_equal_approx(end):
+		return {}
+	var space := body.get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(start, end, body.collision_mask, [body.get_rid()])
+	var hit := space.intersect_ray(query)
+	if hit.is_empty() || !(hit.get("collider") is StaticBody3D):
+		return {}
+	var normal: Vector3 = hit["normal"]
+	if absf(normal.y) > WORLD_PICKUP_WALL_MAX_NORMAL_Y || normal.length_squared() < 0.9:
+		return {}
+	# Require the same wall above the entire sheet. A stool/table side ending
+	# at its support surface must not shove a naturally overhanging page away.
+	var above: Vector3 = hit["position"]
+	above.y = top + WORLD_PICKUP_WALL_TOP_CLEARANCE
+	query.from = above + normal * WORLD_PICKUP_WALL_RELEASE_REACH
+	query.to = above - normal * WORLD_PICKUP_WALL_RELEASE_REACH
+	var upper := space.intersect_ray(query)
+	if upper.is_empty() || upper["rid"] != hit["rid"] || (upper["normal"] as Vector3).dot(normal) < 0.95:
+		return {}
+	return hit
+
+func _world_pickup_wall_top(body: RigidBody3D, offsets: Array) -> float:
+	var top := -INF
+	for offset in offsets:
+		top = maxf(top, (body.global_transform * (offset as Vector3)).y)
+	return top
+
+func _world_pickup_wall_depth(body: RigidBody3D, offsets: Array, hit: Dictionary) -> float:
+	var depth := -INF
+	for offset in offsets:
+		depth = maxf(depth, ((hit["position"] as Vector3) - body.global_transform * (offset as Vector3)).dot(hit["normal"]))
+	return depth
+
+func _move_world_pickup_out_of_wall(body: RigidBody3D, hit: Dictionary, depth: float) -> void:
+	var normal: Vector3 = hit["normal"]
+	body.global_position += normal * (depth + WORLD_PICKUP_WALL_CLEARANCE)
+	var inward := body.linear_velocity.dot(normal)
+	if inward < 0.0:
+		body.linear_velocity -= normal * inward
+	# Retain tangential motion and native angular contact response.
+
+func _clear_world_pickup_wall_overlap(body: RigidBody3D, offsets: Array) -> void:
+	# Only new releases: bounded probes can recover a shallow embedded start.
+	# Choose the nearest viable exterior, not the far side of a hollow wall.
+	for _pass in range(3):
+		var best := {}
+		var best_depth := WORLD_PICKUP_WALL_RELEASE_REACH
+		var top := _world_pickup_wall_top(body, offsets)
+		for offset in offsets:
+			var point: Vector3 = body.global_transform * (offset as Vector3)
+			for direction in [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK,
+				Vector3(-1, 0, -1).normalized(), Vector3(-1, 0, 1).normalized(),
+				Vector3(1, 0, -1).normalized(), Vector3(1, 0, 1).normalized()]:
+				var hit := _world_pickup_wall_ray(body, point + direction * WORLD_PICKUP_WALL_RELEASE_REACH, point, top)
+				if hit.is_empty():
+					continue
+				var depth := _world_pickup_wall_depth(body, offsets, hit)
+				if depth > 0.00001 && depth < best_depth:
+					best = hit
+					best_depth = depth
+		if best.is_empty():
+			break
+		_move_world_pickup_out_of_wall(body, best, best_depth)
+
+func _contain_world_pickup_motion(body: RigidBody3D, presenter: PaperContactPresenter) -> void:
+	if !body.is_inside_tree() || body.freeze || body.gravity_scale <= 0.0:
+		presenter.wall_tracking = false
+		presenter.set_physics_process(false)
+		return
+	if !body.global_transform.is_finite():
+		return
+	if presenter.wall_tracking:
+		# A slow edge-on fall can outlast the initial three-second coroutine.
+		# Retain flat-floor recovery while awake, including a native wake after
+		# expiry. Sloped contacts keep their accepted native settling: repeatedly
+		# lifting those changes downhill drift. No sleeping/held/saved polling.
+		if !body.sleeping && !_world_pickup_guarded_ids.has(body.get_instance_id()):
+			var support := _find_world_pickup_support_hit(body, presenter.wall_previous.origin,
+				presenter.wall_previous.basis, body.global_position, _get_world_pickup_variant_for_body(body))
+			if !support.is_empty() && (support["normal"] as Vector3).y >= 0.999:
+				body.global_position.y += float(support["lift"]) + HAMINA_DROP_GUARD_CLEARANCE
+				var normal: Vector3 = support["normal"]
+				var inward := body.linear_velocity.dot(normal)
+				if inward < 0.0:
+					# Supply the missed contact impulse at the recovered hit point.
+					# Merely cancelling vertical speed can repeatedly lift an
+					# upright sheet without letting that edge contact tip it.
+					body.apply_impulse(-normal * inward * body.mass,
+						(support["position"] as Vector3) - body.global_position)
+		var top := _world_pickup_wall_top(body, presenter.wall_offsets)
+		# Center plus all eight box corners catches translation and rotating
+		# edges. Rays are front-facing, so an exterior-to-interior crossing is
+		# recovered toward its recorded source side, not through the wall.
+		for offset in presenter.wall_offsets:
+			var start: Vector3 = presenter.wall_previous * (offset as Vector3)
+			var end: Vector3 = body.global_transform * (offset as Vector3)
+			var hit := _world_pickup_wall_ray(body, start, end, top)
+			if hit.is_empty():
+				continue
+			var known := false
+			for plane in presenter.wall_planes:
+				if (plane["rid"] == hit["rid"]
+					&& (plane["normal"] as Vector3).dot(hit["normal"]) > 0.999
+					&& absf(((plane["position"] as Vector3) - (hit["position"] as Vector3)).dot(hit["normal"])) < 0.001):
+					known = true
+			if !known:
+				presenter.wall_planes.append({"position": hit["position"], "normal": hit["normal"], "rid": hit["rid"]})
+				if presenter.wall_planes.size() > 4: presenter.wall_planes.pop_front()
+		# Let the native contact solver handle its small overlap/slop. Correcting
+		# every fraction of a millimeter removes its contact torque and chatters.
+		# Retain crossed planes so a slow sub-tolerance entry is still caught on
+		# later frames; re-probe the actual finite wall before moving anything.
+		var retained := []
+		for plane in presenter.wall_planes:
+			var depth := _world_pickup_wall_depth(body, presenter.wall_offsets, plane)
+			if depth < -WORLD_PICKUP_WALL_TOP_CLEARANCE:
+				continue
+			if depth > WORLD_PICKUP_WALL_CONTACT_TOLERANCE:
+				var normal: Vector3 = plane["normal"]
+				var center: Vector3 = body.global_transform * (presenter.wall_offsets[0] as Vector3)
+				var projected := center + normal * ((plane["position"] as Vector3) - center).dot(normal)
+				var confirmed := _world_pickup_wall_ray(body, projected + normal * 0.01, projected - normal * 0.01, top)
+				if confirmed.is_empty() || confirmed["rid"] != plane["rid"] || (confirmed["normal"] as Vector3).dot(normal) < 0.999:
+					continue
+				_move_world_pickup_out_of_wall(body, plane, depth)
+			retained.append(plane)
+		presenter.wall_planes = retained
+	presenter.wall_previous = body.global_transform
+	presenter.wall_tracking = true
+	if body.sleeping:
+		presenter.set_physics_process(false)
+
+func _world_pickup_contact_lift(body: RigidBody3D, variant: Dictionary) -> float:
+	var space := body.get_world_3d().direct_space_state
+	var lift := -INF
+	var supported := 0
+	# Use the real visual hull, on both faces, rather than the padded collision
+	# box. Correct only points with a nearby surface directly underneath them.
+	for offset in variant.get("rest_offsets", PackedVector3Array()):
+		var point := body.global_transform * (offset as Vector3)
+		var hit := _cast_world_pickup_support_ray(space, body,
+			point + Vector3.UP * HAMINA_DROP_GUARD_RECOVERY_HEIGHT,
+			point - Vector3.UP * WORLD_PICKUP_REST_MAX_LOWERING)
+		if hit.is_empty():
+			continue
+		supported += 1
+		var normal: Vector3 = hit["normal"]
+		var depth: float = ((hit["position"] as Vector3) - point).dot(normal)
+		lift = maxf(lift, depth / normal.y)
+	# Fully supported sheets already have their extremal hull points covered.
+	# Partial support needs finite-face intersections, not an infinite plane:
+	# a furniture edge may cross a face without passing under any hull vertex.
+	if supported < variant.get("rest_offsets", PackedVector3Array()).size():
+		lift = _world_pickup_interior_contact_lift(body, variant, lift)
+	return lift + WORLD_PICKUP_REST_CLEARANCE
+
+func _clip_world_pickup_face(poly: Array, a: Vector3, b: Vector3, side: float) -> Array:
+	var result := []
+	if poly.is_empty():
+		return result
+	var previous: Vector3 = poly.back()
+	var edge := Vector2(b.x-a.x, b.z-a.z)
+	var before := edge.cross(Vector2(previous.x-a.x, previous.z-a.z)) * side
+	for point: Vector3 in poly:
+		var after := edge.cross(Vector2(point.x-a.x, point.z-a.z)) * side
+		if (before >= 0.0) != (after >= 0.0):
+			result.append(previous.lerp(point, before / (before-after)))
+		if after >= 0.0:
+			result.append(point)
+		previous = point
+		before = after
+	return result
+
+func _world_pickup_interior_contact_lift(body: RigidBody3D, variant: Dictionary, lift: float) -> float:
+	var hull = variant.get("contact_query")
+	if !(hull is ConvexPolygonShape3D):
+		return lift
+	var space := body.get_world_3d().direct_space_state
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = hull
+	query.transform = body.global_transform
+	query.collision_mask = body.collision_mask
+	query.exclude = [body.get_rid()]
+	var overlaps := space.intersect_shape(query, 8)
+	if overlaps.is_empty():
+		return lift
+	var faces: PackedVector3Array = body.global_transform * (variant["contact_faces"] as PackedVector3Array)
+	var bounds: AABB = body.global_transform * (variant["contact_bounds"] as AABB)
+	var nearby := bounds.grow(HAMINA_DROP_GUARD_RECOVERY_HEIGHT)
+	var groups := []
+	for group in variant["contact_groups"]:
+		groups.append({"bounds":body.global_transform * (group.bounds as AABB), "indices":group.indices})
+	for overlap in overlaps:
+		var collider = overlap["collider"]
+		if !(collider is StaticBody3D):
+			continue
+		var owner_id: int = collider.shape_find_owner(overlap["shape"])
+		var node = collider.shape_owner_get_owner(owner_id)
+		if !(node is CollisionShape3D):
+			continue
+		var support_faces := PackedVector3Array()
+		if node.shape is ConcavePolygonShape3D:
+			support_faces = node.shape.get_faces()
+		elif node.shape is BoxShape3D:
+			var box := BoxMesh.new()
+			box.size = node.shape.size
+			support_faces = box.get_faces()
+		for index in range(0, support_faces.size(), 3):
+			var a: Vector3 = node.global_transform * support_faces[index]
+			var b: Vector3 = node.global_transform * support_faces[index+1]
+			var c: Vector3 = node.global_transform * support_faces[index+2]
+			var triangle_bounds := AABB(a, Vector3.ZERO).expand(b).expand(c)
+			if !nearby.intersects(triangle_bounds.grow(0.00001)):
+				continue
+			var normal := (b-a).cross(c-a).normalized()
+			if absf(normal.y) < HAMINA_DROP_GUARD_MIN_NORMAL_Y:
+				continue
+			var side := signf(Vector2(b.x-a.x,b.z-a.z).cross(Vector2(c.x-a.x,c.z-a.z)))
+			var vertical_normal := normal / normal.y
+			var plane_height := vertical_normal.dot(a)
+			var validated := false
+			var candidates := []
+			for group in groups:
+				var region: AABB = group.bounds
+				if (region.end.x < triangle_bounds.position.x || region.position.x > triangle_bounds.end.x
+					|| region.end.z < triangle_bounds.position.z || region.position.z > triangle_bounds.end.z):
+					continue
+				candidates.append_array(group.indices)
+			for face in candidates:
+				var p := faces[face]
+				var q := faces[face+1]
+				var r := faces[face+2]
+				if (maxf(p.x,maxf(q.x,r.x)) < triangle_bounds.position.x
+					|| minf(p.x,minf(q.x,r.x)) > triangle_bounds.end.x
+					|| maxf(p.z,maxf(q.z,r.z)) < triangle_bounds.position.z
+					|| minf(p.z,minf(q.z,r.z)) > triangle_bounds.end.z):
+					continue
+				# A linear plane separation cannot exceed its vertex maximum.
+				# Once another contact is deeper, no clipping/allocation is needed.
+				var maximum_depth := plane_height - minf(vertical_normal.dot(p), minf(vertical_normal.dot(q),vertical_normal.dot(r)))
+				if maximum_depth <= lift || maximum_depth < -WORLD_PICKUP_REST_MAX_LOWERING:
+					continue
+				var poly := _clip_world_pickup_face([p,q,r], a,b,side)
+				poly = _clip_world_pickup_face(poly, b,c,side)
+				poly = _clip_world_pickup_face(poly, c,a,side)
+				if poly.is_empty():
+					continue
+				if !validated:
+					# Confirm the accessible upward face. This rejects a table's
+					# underside and respects one-sided native collision geometry.
+					var center := Vector3.ZERO
+					for point: Vector3 in poly: center += point
+					center /= poly.size()
+					center = center.lerp((a+b+c)/3.0, 0.0001)
+					center.y = a.y - (normal.x*(center.x-a.x)+normal.z*(center.z-a.z))/normal.y
+					var hit := _cast_world_pickup_support_ray(space, body, center+Vector3.UP*0.001, center-Vector3.UP*0.001)
+					if hit.is_empty() || hit.get("collider") != collider:
+						break
+					validated = true
+				for point: Vector3 in poly:
+					var height := a.y - (normal.x*(point.x-a.x)+normal.z*(point.z-a.z))/normal.y
+					var depth := height-point.y
+					if depth >= -WORLD_PICKUP_REST_MAX_LOWERING && depth <= HAMINA_DROP_GUARD_RECOVERY_HEIGHT:
+						lift = maxf(lift, depth)
+	return lift
+
+func _clear_world_pickup_guard(pickup_id: int, generation: int = 0) -> void:
+	if generation != 0 && _world_pickup_guarded_ids.get(pickup_id, 0) != generation:
+		return
+	_world_pickup_guarded_ids.erase(pickup_id)
+	_hamina_guarded_pickup_ids.erase(pickup_id)
+
+func _find_world_pickup_support_hit(
+	pickup_body: RigidBody3D,
+	previous_position: Vector3,
+	previous_basis: Basis,
+	current_position: Vector3,
+	variant: Dictionary
+) -> Dictionary:
+	var world := pickup_body.get_world_3d()
+	if world == null:
+		return {}
+
+	var space_state := world.direct_space_state
+	var current_basis := pickup_body.global_basis
+	var deepest_hit := {}
+	for local_offset in _build_world_pickup_support_offsets(variant):
+		var previous_support := (
+			previous_position
+			+ previous_basis * (local_offset as Vector3)
+		)
+		var current_support := (
+			current_position
+			+ current_basis * (local_offset as Vector3)
+		)
+
+		if current_support.y < previous_support.y:
+			var segment_hit := _cast_world_pickup_support_ray(
+				space_state,
+				pickup_body,
+				previous_support,
+				current_support
+			)
+			deepest_hit = _choose_penetration_hit(deepest_hit, segment_hit, current_support)
+
+		var recovery_hit := _cast_world_pickup_support_ray(
+			space_state,
+			pickup_body,
+			current_support
+			+ Vector3.UP * HAMINA_DROP_GUARD_RECOVERY_HEIGHT,
+			current_support
+		)
+		deepest_hit = _choose_penetration_hit(deepest_hit, recovery_hit, current_support)
+
+	return deepest_hit
+
+func _choose_penetration_hit(current: Dictionary, candidate: Dictionary, point: Vector3) -> Dictionary:
+	if candidate.is_empty():
+		return current
+	var normal: Vector3 = candidate["normal"]
+	var position: Vector3 = candidate["position"]
+	var depth := (position - point).dot(normal)
+	if depth <= WORLD_PICKUP_PENETRATION_TOLERANCE:
+		return current
+	var lift := depth / normal.y
+	if lift <= float(current.get("lift", 0.0)):
+		return current
+	candidate["lift"] = lift
+	return candidate
+
+func _build_world_pickup_support_offsets(variant: Dictionary) -> Array:
+	var collision_size: Vector3 = variant.get("collision_size", Vector3.ZERO)
+	var center: Vector3 = variant.get("collision_position", Vector3.ZERO)
+	var offsets: Array = [center]
+	# Both faces matter when the item tips or lands upside down.
+	for x in [-0.5, 0.5]:
+		for y in [-0.5, 0.5]:
+			for z in [-0.5, 0.5]:
+				offsets.append(center + collision_size * Vector3(x, y, z))
+	return offsets
+
+func _cast_world_pickup_support_ray(
+	space_state: PhysicsDirectSpaceState3D,
+	pickup_body: RigidBody3D,
+	ray_from: Vector3,
+	ray_to: Vector3
+) -> Dictionary:
+	if ray_from.is_equal_approx(ray_to):
+		return {}
+	var query := PhysicsRayQueryParameters3D.create(
+		ray_from,
+		ray_to,
+		pickup_body.collision_mask,
+		[pickup_body.get_rid()]
+	)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	query.hit_from_inside = true
+	var result := space_state.intersect_ray(query)
+	if result.is_empty():
+		return {}
+	var collider = result.get("collider")
+	if collider is RigidBody3D && (collider as RigidBody3D).is_in_group("Item"):
+		return {}
+	var normal: Vector3 = result.get("normal", Vector3.ZERO)
+	if normal.y < HAMINA_DROP_GUARD_MIN_NORMAL_Y:
+		return {}
+	return result
 
 func _set_scene_owner(node: Node, owner: Node) -> void:
 	for child in node.get_children():
@@ -701,7 +2298,7 @@ func _on_ui_manager_input(event: InputEvent):
 
 	return null
 
-func _on_interface_auto_place_post(target_item, target_grid, _source_grid, _usedrop):
+func _on_interface_auto_place_post(target_item, target_grid, _source_grid, _usedrop, _result = null):
 	var interface_node = _lib._caller
 	if interface_node == null || target_grid == null:
 		return null
@@ -1161,6 +2758,11 @@ func _can_toggle_journal() -> bool:
 func _get_active_interface_node() -> Node:
 	return get_node_or_null("/root/Map/Core/UI/Interface")
 
+func _get_reader_presentation_style(note_id: String) -> Dictionary:
+	var base := _get_note_type_style(note_id)
+	var pages: Array = _notes.get(note_id, {}).get("pages", [])
+	return READER_PRESENTATION.style(note_id, base) if READER_PRESENTATION.supports(note_id, pages) else base
+
 func _open_note_reader(note_id: String, interface_node: Node, from_journal := false) -> void:
 	if !_notes.has(note_id):
 		push_warning("[rtv_lore_elements] no note text registered for " + note_id)
@@ -1175,8 +2777,14 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader_note_id = note_id
 	_reader_page_index = 0
 	_reader_from_journal = from_journal
-	var note_style := _get_note_type_style(note_id)
+	var note_style := _get_reader_presentation_style(note_id)
 	var paper_size := _style_vector2(note_style, "canvas_size", Vector2(680, 500))
+	# Reflow text rather than shrink fonts on smaller viewports. The original
+	# style data remains untouched for map pins and other consumers.
+	var available := _get_modal_viewport_size() - Vector2(64, 64)
+	paper_size = READER_PRESENTATION.fit(paper_size, available, bool(note_style.get("portrait_reader", false)))
+	note_style = note_style.duplicate(true)
+	note_style["canvas_size"] = [paper_size.x, paper_size.y]
 	var margins := _style_margins(note_style)
 	var ink_color := _style_color(note_style, "ink_color", Color(0.12, 0.1, 0.07))
 
@@ -1205,6 +2813,7 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	paper_root.custom_minimum_size = paper_size
 	paper_root.clip_contents = true
 	panel.add_child(paper_root)
+	_add_reader_paper_texture(paper_root, note_style)
 	_add_reader_decorations(paper_root, note_style)
 
 	var margin := MarginContainer.new()
@@ -1221,19 +2830,31 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	margin.add_child(layout)
 
 	_reader_title = Label.new()
-	_reader_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_reader_title.name = "Title"
+	_reader_title.horizontal_alignment = int(note_style.get("title_alignment", HORIZONTAL_ALIGNMENT_CENTER))
+	_reader_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_reader_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_reader_title.add_theme_color_override("font_color", ink_color)
 	_reader_title.add_theme_font_size_override("font_size", int(note_style.get("title_font_size", 24)))
 	layout.add_child(_reader_title)
+	var heading_rule := HSeparator.new()
+	var rule_style := StyleBoxLine.new()
+	rule_style.color = _style_color(note_style, "border_color", Color(.3,.25,.2)) * Color(1,1,1,.24)
+	heading_rule.add_theme_stylebox_override("separator", rule_style)
+	heading_rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layout.add_child(heading_rule)
 
 	_reader_body = RichTextLabel.new()
+	_reader_body.name = "Body"
 	_reader_body.bbcode_enabled = false
 	_reader_body.fit_content = false
 	_reader_body.scroll_active = true
 	_reader_body.mouse_filter = Control.MOUSE_FILTER_STOP
 	_reader_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_reader_body.custom_minimum_size = Vector2(0, maxf(210.0, paper_size.y - float(margins["top"]) - float(margins["bottom"]) - 118.0))
+	_reader_body.custom_minimum_size = Vector2(0, 120)
 	_reader_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_reader_body.selection_enabled = true
+	_reader_body.add_theme_constant_override("line_separation", 3)
 	_reader_body.add_theme_color_override("default_color", ink_color)
 	_reader_body.add_theme_font_size_override("normal_font_size", int(note_style.get("body_font_size", 25)))
 	var body_font := str(note_style.get("body_font", "handwritten"))
@@ -1241,13 +2862,16 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 		_reader_body.add_theme_font_override("normal_font", _reader_font)
 	elif body_font == "mono" && _reader_mono_font != null:
 		_reader_body.add_theme_font_override("normal_font", _reader_mono_font)
+	elif body_font == "handprint" && _reader_print_font != null:
+		_reader_body.add_theme_font_override("normal_font", _reader_print_font)
 	layout.add_child(_reader_body)
 
 	var footer := HBoxContainer.new()
+	footer.name = "PageNavigation"
 	footer.add_theme_constant_override("separation", 10)
 	layout.add_child(footer)
 
-	_reader_prev_button = _build_reader_button(_ui_text("reader.prev"), Vector2(76, 30), note_style)
+	_reader_prev_button = _build_reader_button(_ui_text("reader.prev"), Vector2(92, 40), note_style)
 	_reader_prev_button.pressed.connect(_show_previous_page)
 	footer.add_child(_reader_prev_button)
 
@@ -1259,19 +2883,44 @@ func _open_note_reader(note_id: String, interface_node: Node, from_journal := fa
 	_reader_page_counter.add_theme_font_size_override("font_size", 18)
 	footer.add_child(_reader_page_counter)
 
-	_reader_next_button = _build_reader_button(_ui_text("reader.next"), Vector2(76, 30), note_style)
+	_reader_next_button = _build_reader_button(_ui_text("reader.next"), Vector2(92, 40), note_style)
 	_reader_next_button.pressed.connect(_show_next_page)
 	footer.add_child(_reader_next_button)
 
-	var close_button := _build_reader_button(_ui_text("common.close"), Vector2(96, 32), note_style)
+	var close_button := _build_reader_button(_ui_text("common.close"), Vector2(112, 40), note_style)
+	close_button.name = "Close"
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	close_button.pressed.connect(_request_close_reader)
 	layout.add_child(close_button)
 
 	var attach_parent := _get_overlay_attach_parent(interface_node)
 	attach_parent.add_child(_reader)
+	get_viewport().size_changed.connect(_resize_note_reader, CONNECT_DEFERRED)
 	_refresh_reader_page()
 	_play_reader_voiceover()
+
+func _resize_note_reader() -> void:
+	if !is_instance_valid(_reader):
+		return
+	var modal: Control = _reader.get_node("ReaderModalRoot")
+	modal.custom_minimum_size = Vector2.ZERO
+	_sync_modal_root_size(modal)
+	var panel: Control = modal.get_node("Center/Paper")
+	var paper: Control = panel.get_node("PaperRoot")
+	var style := _get_reader_presentation_style(_reader_note_id).duplicate(true)
+	var wanted := _style_vector2(style, "canvas_size", Vector2(680,500))
+	var available := _get_modal_viewport_size() - Vector2(64,64)
+	var fitted := READER_PRESENTATION.fit(wanted, available, bool(style.get("portrait_reader", false)))
+	panel.custom_minimum_size = fitted
+	paper.custom_minimum_size = fitted
+	panel.pivot_offset = fitted * .5
+	var decorations := paper.get_node_or_null("ReaderDecorations")
+	if decorations != null:
+		paper.remove_child(decorations)
+		decorations.queue_free()
+	style["canvas_size"] = [fitted.x,fitted.y]
+	_add_reader_decorations(paper,style)
+	paper.move_child(paper.get_node("ReaderDecorations"),1 if paper.has_node("PaperStock") else 0)
 
 func _load_journal() -> void:
 	_journal_discovered_ids = []
@@ -1532,18 +3181,50 @@ func _build_paper_style(note_style: Dictionary) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = _style_color(note_style, "paper_color", Color(0.78, 0.72, 0.58))
 	style.border_color = _style_color(note_style, "border_color", Color(0.36, 0.27, 0.16))
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_right = 4
-	style.corner_radius_bottom_left = 4
+	style.set_border_width_all(1)
+	style.corner_radius_top_left = 1
+	style.corner_radius_top_right = 1
+	style.corner_radius_bottom_right = 1
+	style.corner_radius_bottom_left = 1
 	style.shadow_color = Color(0.0, 0.0, 0.0, 0.36)
 	style.shadow_size = 18
 	style.shadow_offset = Vector2(0, 5)
 	return style
+
+func _add_reader_paper_texture(parent: Control, note_style: Dictionary) -> void:
+	var path := str(note_style.get("paper_texture", ""))
+	if path.is_empty():
+		return
+	# Raw PNG decoding works in the VMZ without editor .import dependencies.
+	if !_reader_paper_textures.has(path):
+		if !FileAccess.file_exists(path):
+			_warn_note_type_once(path, "reader paper texture unavailable; retaining plain paper.")
+			return
+		var image := Image.new()
+		if image.load_png_from_buffer(FileAccess.get_file_as_bytes(path)) != OK:
+			_warn_note_type_once(path, "reader paper texture invalid; retaining plain paper.")
+			return
+		_reader_paper_textures[path] = ImageTexture.create_from_image(image)
+	var texture: Texture2D = _reader_paper_textures[path]
+	var region: Array = note_style.get("paper_region", [])
+	if region.size() != 4:
+		return
+	var area := Rect2(float(region[0]),float(region[1]),float(region[2]),float(region[3]))
+	if !Rect2(Vector2.ZERO,texture.get_size()).encloses(area) || !area.has_area():
+		return
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = area
+	atlas.filter_clip = true
+	var stock := TextureRect.new()
+	stock.name = "PaperStock"
+	stock.texture = atlas
+	stock.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	stock.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	stock.modulate.a = clampf(float(note_style.get("paper_opacity", .4)),0,1)
+	stock.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stock.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	parent.add_child(stock)
 
 func _build_reader_button(text: String, min_size: Vector2, note_style: Dictionary) -> Button:
 	var button := Button.new()
@@ -1556,6 +3237,11 @@ func _build_reader_button(text: String, min_size: Vector2, note_style: Dictionar
 	button.add_theme_stylebox_override("hover", _build_reader_button_style(note_style, 0.2))
 	button.add_theme_stylebox_override("pressed", _build_reader_button_style(note_style, 0.28))
 	button.add_theme_stylebox_override("disabled", _build_reader_button_style(note_style, 0.05))
+	var focus_style := StyleBoxFlat.new()
+	focus_style.draw_center = false
+	focus_style.border_color = _style_color(note_style, "ink_color", Color(.15,.12,.08))
+	focus_style.set_border_width_all(2)
+	button.add_theme_stylebox_override("focus", focus_style)
 	return button
 
 func _build_reader_button_style(note_style: Dictionary, alpha: float) -> StyleBoxFlat:
@@ -1573,34 +3259,35 @@ func _build_reader_button_style(note_style: Dictionary, alpha: float) -> StyleBo
 	return style
 
 func _add_reader_decorations(parent: Control, note_style: Dictionary) -> void:
+	var decorations := Control.new()
+	decorations.name = "ReaderDecorations"
+	decorations.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	decorations.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	parent.add_child(decorations)
+	parent = decorations
 	var decoration := str(note_style.get("decoration", "notice"))
 	var paper_size := _style_vector2(note_style, "canvas_size", Vector2(680, 500))
 	var accent := _style_color(note_style, "accent_color", Color(0.64, 0.18, 0.12))
 	var border := _style_color(note_style, "border_color", Color(0.36, 0.27, 0.16))
 	match decoration:
 		"header_stamp":
-			_add_reader_line(parent, Vector2(44, 72), Vector2(paper_size.x - 88.0, 1.0), Color(border.r, border.g, border.b, 0.34))
-			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 154.0, 34.0), Vector2(104, 28), -5.0)
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 154.0, 20.0), Vector2(104, 26), -3.0)
 		"ruled":
-			_add_reader_ruled_lines(parent, paper_size, Color(accent.r, accent.g, accent.b, 0.16))
-			_add_reader_signature_line(parent, paper_size, border)
+			_add_reader_ruled_lines(parent, paper_size, Color(accent.r, accent.g, accent.b, 0.09))
 		"letter":
-			_add_reader_line(parent, Vector2(54, 82), Vector2(paper_size.x - 108.0, 1.0), Color(border.r, border.g, border.b, 0.18))
-			_add_reader_signature_line(parent, paper_size, border)
-			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 146.0, 96.0), Vector2(86, 24), -4.0)
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 146.0, 20.0), Vector2(86, 24), -3.0)
 		"ledger":
-			_add_reader_ruled_lines(parent, paper_size, Color(border.r, border.g, border.b, 0.13))
-			_add_reader_line(parent, Vector2(92, 88), Vector2(1, paper_size.y - 152.0), Color(border.r, border.g, border.b, 0.18))
+			_add_reader_ruled_lines(parent, paper_size, Color(border.r, border.g, border.b, 0.07))
+			_add_reader_line(parent, Vector2(32, 116), Vector2(1, maxf(0,paper_size.y - 266)), Color(border.r, border.g, border.b, 0.18))
 		"map":
-			_add_reader_line(parent, Vector2(56, 74), Vector2(paper_size.x - 112.0, 1.0), Color(accent.r, accent.g, accent.b, 0.2))
-			_add_reader_line(parent, Vector2(paper_size.x * 0.5, 42), Vector2(1, paper_size.y - 84.0), Color(border.r, border.g, border.b, 0.12))
+			_add_reader_line(parent, Vector2(paper_size.x * 0.5, 24), Vector2(1, paper_size.y - 48), Color(border.r, border.g, border.b, 0.06))
 		"triage_tag":
-			_add_reader_grommet(parent, Vector2(46, 42), border)
-			_add_reader_line(parent, Vector2(80, 70), Vector2(paper_size.x - 122.0, 1.0), Color(border.r, border.g, border.b, 0.28))
-			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 142.0, 34.0), Vector2(92, 26), -3.0)
+			_add_reader_grommet(parent, Vector2(46, 24), border)
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 142.0, 20.0), Vector2(92, 26), -3.0)
+		"none":
+			pass
 		_:
-			_add_reader_line(parent, Vector2(46, 74), Vector2(paper_size.x - 92.0, 1.0), Color(border.r, border.g, border.b, 0.22))
-			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 146.0, 34.0), Vector2(96, 26), -4.0)
+			_add_reader_stamp(parent, note_style, Vector2(paper_size.x - 146.0, 20.0), Vector2(96, 26), -3.0)
 
 func _add_reader_line(parent: Control, position: Vector2, size: Vector2, color: Color) -> void:
 	var line := ColorRect.new()
@@ -1611,8 +3298,8 @@ func _add_reader_line(parent: Control, position: Vector2, size: Vector2, color: 
 	parent.add_child(line)
 
 func _add_reader_ruled_lines(parent: Control, paper_size: Vector2, color: Color) -> void:
-	var y := 112.0
-	while y < paper_size.y - 84.0:
+	var y := 138.0
+	while y < paper_size.y - 150.0:
 		_add_reader_line(parent, Vector2(44, y), Vector2(paper_size.x - 88.0, 1.0), color)
 		y += 31.0
 
@@ -1690,7 +3377,16 @@ func _refresh_reader_page() -> void:
 
 	_reader_page_index = clampi(_reader_page_index, 0, pages.size() - 1)
 	_reader_title.text = str(note.get("name", _reader_note_id))
-	_reader_body.text = str(pages[_reader_page_index])
+	if READER_PRESENTATION.supports(_reader_note_id, pages):
+		READER_PRESENTATION.render(_reader_body, _reader_note_id, _reader_page_index, str(pages[_reader_page_index]),
+			{"mono": _reader_mono_font, "handprint": _reader_print_font, "handwritten": _reader_font})
+	else:
+		var source := str(pages[_reader_page_index])
+		if str(_get_reader_presentation_style(_reader_note_id).get("body_font", "handwritten")) == "handwritten":
+			_reader_body.clear()
+			READER_INK.append(_reader_body, source, (_reader_note_id + str(_reader_page_index)).hash())
+		else:
+			_reader_body.text = source
 	_reader_page_counter.text = str(_reader_page_index + 1) + " / " + str(pages.size())
 	_reader_prev_button.disabled = _reader_page_index <= 0
 	_reader_next_button.disabled = _reader_page_index >= pages.size() - 1
@@ -1734,6 +3430,8 @@ func _stop_reader_voiceover() -> void:
 
 func _close_reader() -> void:
 	var had_reader := _reader && is_instance_valid(_reader)
+	if get_viewport() != null && get_viewport().size_changed.is_connected(_resize_note_reader):
+		get_viewport().size_changed.disconnect(_resize_note_reader)
 	_stop_reader_voiceover()
 	if _reader && is_instance_valid(_reader):
 		_reader.queue_free()

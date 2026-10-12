@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-07",
+  "mode": "built-in image generation",
+  "use_case": "photorealistic-natural",
+  "note_id": "rtv_lore_child_kitchen_map",
+  "sha256": "5b7060fdadd24cbb4b2477b6819f6da8a694cdac7dd1ed5e6cf45de800646bb5",
+  "dimensions_px": [
+    1448,
+    1086
+  ],
+  "postprocessing": "Byte-identical copy; no raster edits, native source, native repaint or extraction",
+  "layout": "Left portrait 2:3 drawing; right portrait 2:3 blank reverse; UVs preserve the window label near midpoint",
+  "content_basis": "Existing child house-map story. Room adjacency and small furniture sketches are noncanonical visual interpretation, not new world/navigation facts. The full story remains dynamic in the reader.",
+  "generator_deviations": [
+    "1448x1086 returned instead of requested ideal 2048x1536; exact 4:3 aspect retained",
+    "Window label has less than requested margin near atlas midpoint",
+    "Small bathroom and kitchen furniture details are inferred from named rooms"
+  ],
+  "intended_geometry": {
+    "unfolded_mm": [
+      200,
+      300
+    ],
+    "stock_mm": 0.18,
+    "shape": "reopened broad folds and localized handling, not a trash ball"
+  },
+  "runtime_file": "assets/textures/crayon_map_albedo_v001.png",
+  "record_scope": "Curated historical origin summary; raw scenes, intermediary images and local QA are not distributed. See art_source/README.md for the current runtime source boundary.",
+  "private_origin_record_sha256": "7d1624d62c892d5ca1a224d4349bf266395b1238faf4625284d074c075d98fb6"
+}

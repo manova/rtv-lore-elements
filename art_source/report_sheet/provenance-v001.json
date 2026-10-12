@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-07",
+  "mode": "built-in image generation",
+  "note_id": "rtv_lore_evacuation_notice",
+  "sha256": "16e695abb8e2c6d15dcb50a6d62089c82387fd78ce4b591d5db1e37f05fcf068",
+  "dimensions_px": [
+    1448,
+    1086
+  ],
+  "atlas_layout": "4:3 landscape canvas, left portrait 2:3 front, right portrait 2:3 blank reverse",
+  "postprocessing": "Byte-identical copy of generated output; no raster editing, native art input, native repaint or extracted asset",
+  "surface_text": [
+    "MUNICIPAL NOTICE",
+    "Report to the school gymnasium.",
+    "Identification, medicine,",
+    "warm clothing,",
+    "food for two days.",
+    "Do not return for property",
+    "after registration."
+  ],
+  "content_basis": "Existing story describes a municipal notice copied by hand. Heading and shortened instruction/list excerpts introduce no new names, dates, destinations or events. Full text remains in the reader.",
+  "generator_deviations": [
+    "Requested ideally 2048x1536; returned 1448x1086 with exact 4:3 aspect ratio.",
+    "A faint central seam is present. Prepared front/back UVs leave it outside both printable faces; pixels remain unchanged."
+  ],
+  "native_reuse_decision": "Native Patient Report shape fails loose-sheet silhouette gate before artwork fitting: rigid backing, raised inset face, rounded backing corners, 200x300 mm and 8 mm overall depth. No native UV remapping or native export was performed.",
+  "runtime_file": "assets/textures/sheet_evacuation_v001.png",
+  "record_scope": "Curated historical origin summary; raw scenes, intermediary images and local QA are not distributed. See art_source/README.md for the current runtime source boundary.",
+  "private_origin_record_sha256": "cc71097133721c6c5add8a5897658bbb0b134cbd95c6f8b76ae75f0160a5da18"
+}

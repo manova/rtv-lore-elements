@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-06",
+  "mode": "built-in image generation",
+  "dimensions_px": [
+    1086,
+    1448
+  ],
+  "atlas_layout": "Top half front, bottom half blank reverse; two landscape 3:2 faces",
+  "postprocessing": "Byte-identical copies of generated outputs. No raster editing, resizing or painted-over native artwork.",
+  "variants": {
+    "border": {
+      "sha256": "e111b60854e1bceae1c9b083f625b44d6c9ea8467a818a5ad53837da29cdb561",
+      "note_id": "rtv_lore_border_shift_log",
+      "surface_text": [
+        "BORDER POST 14",
+        "NIGHT SHIFT",
+        "02:10 — Eastern fence lights failed.",
+        "Count batteries, not rumors.",
+        "Sgt. A. Koivu"
+      ],
+      "content_basis": "Header, time and signatory come from the existing story. The failure and batteries lines are concise renderings of its stated events/dialogue, not additional lore.",
+      "runtime_file": "assets/textures/folded_border_albedo_v001.png"
+    },
+    "radio": {
+      "sha256": "7dbb0f96ce73e6bead3cc7236929bf2d4a59828597f2339a21c6de4432216105",
+      "note_id": "rtv_lore_radio_transcript",
+      "surface_text": [
+        "EMERGENCY CHANNEL 6",
+        "03:42  Road status requested.",
+        "03:44  Command orders silence.",
+        "03:53  Transmission ends."
+      ],
+      "content_basis": "Existing emergency channel and timestamps; short faithful summaries of the canonical log entries. No invented callsign, organization or date.",
+      "runtime_file": "assets/textures/folded_radio_albedo_v001.png"
+    },
+    "leena": {
+      "sha256": "4bc1cc2adafa454b06db050e0fd019dbf79116773c47e81edc6026d0e636b449",
+      "note_id": "rtv_lore_last_letter_leena",
+      "surface_text": [
+        "Leena,",
+        "I left the compass in the blue cup.",
+        "North is still north, even here."
+      ],
+      "content_basis": "Canonical salutation and excerpts; the compass sentence ends before the original subordinate clause. No invented sender signature.",
+      "runtime_file": "assets/textures/folded_leena_albedo_v001.png"
+    },
+    "tampere": {
+      "sha256": "343d43a049b08eb440424fee398f5227a679674d06a5a8e2e1c143df1b895f36",
+      "note_id": "rtv_lore_letter_tampere",
+      "surface_text": [
+        "My boy,",
+        "The candle by the window",
+        "is the same candle.",
+        "— Mama"
+      ],
+      "content_basis": "Existing salutation, first sentence and closing. No invented town/date line or other family details.",
+      "runtime_file": "assets/textures/folded_tampere_albedo_v001.png"
+    }
+  },
+  "mesh_source_sha256": "ca0444e83f082f99792bdb6fb1cba1efa351ecc6f7ab40f92e82165eaf8cb3d7",
+  "mesh_workflow": "Isolated Godot UV-buffer-only derivative of the accepted original Blender geometry. Existing Blender files and the Hamina runtime mesh are not changed.",
+  "generator_deviations": [
+    "Requested 1536x2048; returned 1086x1448 with the exact intended 3:4 aspect ratio.",
+    "Generated center crease and subtle outer-edge shading are excluded by the inset front/back UV ranges; original pixels are retained."
+  ],
+  "limits": [
+    "Artwork supplies pickup identity, not the full localized reader content.",
+    "UV-only derivative requires its own runtime path; do not replace the original Hamina mesh or albedo.",
+    "Native offline lighting is not actual Windows in-game acceptance."
+  ],
+  "record_scope": "Curated historical origin summary; raw scenes, intermediary images and local QA are not distributed. See art_source/README.md for the current runtime source boundary.",
+  "private_origin_record_sha256": "4babf0d9be0f8a28373765cd8d6f7c501d7b0815c007072f8dbff4cbaa7fcae4"
+}

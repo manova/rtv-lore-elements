@@ -1,0 +1,22 @@
+Use case: photorealistic-natural.
+Asset type: ORIGINAL opaque base-color texture atlas for a handled child's Crayon Map paper pickup in a realistic survival game. Flat surface artwork, not a prop photograph or an infographic.
+Canvas: landscape 4:3, ideally 2048 by 1536 pixels. Two equally sized PORTRAIT 2:3 paper faces side by side. LEFT HALF is front, RIGHT HALF is completely blank reverse. Warm gray-ivory drawing paper fills the entire canvas edge to edge. NO visible sheet boundary, central divider, gap, frame, surrounding background or transparency.
+Material: ordinary inexpensive uncoated drawing paper with fine realistic fibers, a few restrained fingertip smudges near margins and rubbed wax flecks. It has been folded, handled and reopened, not left outdoors for decades. No antique parchment, coffee rings, blood or dramatic staining. Neutral scan-like diffuse color with NO directional lighting, cast shadows, strong fold stripes, raised edges, curled silhouette or dark vignette. Real folds and thickness will come from a Blender mesh.
+Front: a young child's imperfect overhead plan of their own house, drawn with wax crayons, NOT a professional floor plan. Uneven dark-blue room outlines that wobble and get retraced, varied pressure, granular wax skipping across the paper fibers. Restrained faded blue, muted red, dull green and graphite-black. Keep it sincere and uneasy, not cute clip art or a horror poster. Sparse furniture symbols only where the text implies them: one shared bed, a desk, a broken television, a bathroom window and stairs. No people or creatures. Room layout is only a child's approximate drawing, not a navigable architectural blueprint.
+Composition within LEFT HALF only: child-lettered title at top; uneven house outline subdivided into loosely drawn rooms below, with short labels and small furniture symbols inside. One room is scribbled heavily black, its label legible nearby. A small open break in the outer house outline is the door. A short irregular stair symbol has a downward arrow. Small warning beneath the plan. Plenty of quiet paper between marks. ALL crayon marks and words must remain within the left half with at least 9% margins inside that half. The front drawing should occupy most of that half, but nothing crosses the center of the full canvas.
+Text: use ONLY the following exact words, each ONCE, in deliberately uneven child handwriting; preserve the odd spelling and capitalization. Attach labels to corresponding rooms/objects rather than arranging them as a typed list:
+"MY HOUSE"
+"door"
+"my BED"
+"me and TUOMAS"
+"MAMA WORK desk"
+"LIVING"
+"tv broke"
+"the BLACK ROOM"
+"BAFROOM"
+"window"
+"stairs go DOWN"
+"dont go in the kitchen"
+"mama said"
+Spelling matters: T U O M A S, B A F R O O M. Do not correct the child's spelling or add punctuation. Letters should be hand-drawn and irregular but individually readable at close range. No repeated labels and no invented names, dates, numbers, rooms or other words. The full two-page story remains in the game's reader; do not add the rest of the story to this surface.
+Reverse RIGHT HALF: matching blank paper with only very subtle handling marks. No words, mirrored writing, show-through, map marks or illustrations. No logos, brands, watermark, normal map, bump shading or baked illumination anywhere. Opaque original albedo only.
