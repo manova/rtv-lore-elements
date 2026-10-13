@@ -3,8 +3,8 @@
   "version": "0.2.0",
   "file_count": 115,
   "archive_name": "rtv_lore_elements-0.2.0.vmz",
-  "archive_sha256": "49121927608f0498fb76008983a77e013c71709526bd33e991ce1a5a29492b7b",
-  "archive_size_bytes": 42690266,
+  "archive_sha256": "4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5",
+  "archive_size_bytes": 42693560,
   "zip": {
     "compression": "DEFLATE",
     "compresslevel": -1,
@@ -343,8 +343,8 @@
       ],
       "external_attr": 25165824,
       "source": "README.md",
-      "sha256": "42ab972122f6fdbc9b76c60af944511d42695fc5c5f9c7ad2faa234b5fa3588f",
-      "size_bytes": 4900
+      "sha256": "8684f4d16495242f8f9895d3b6c91f5afdbebe8212aed8b7692f4f1220287473",
+      "size_bytes": 5279
     },
     {
       "member": "rtv-lore-elements/CHANGELOG.md",
@@ -358,8 +358,8 @@
       ],
       "external_attr": 25165824,
       "source": "CHANGELOG.md",
-      "sha256": "3b33b4c27144b5f62301bbaa71f6de5f150cc8c78f798793dfa9cb7efa5b6d66",
-      "size_bytes": 5047
+      "sha256": "8429105e8c0c2243e17cf40ad710b05e8bea28a4ea70d964998c52367b9fcf7f",
+      "size_bytes": 5569
     },
     {
       "member": "rtv-lore-elements/LICENSE",
@@ -403,8 +403,8 @@
       ],
       "external_attr": 25165824,
       "source": "Main.gd",
-      "sha256": "8140dfb392aac9f87b9147e33b50c3d8c12071e2d61317db6852bc9306f4f911",
-      "size_bytes": 142778
+      "sha256": "b1f04f6bf45aa117d53bf5165ba160c3a2e2d0826c117735a8bad52b7bbfd8a5",
+      "size_bytes": 150161
     },
     {
       "member": "rtv-lore-elements/Items/",
@@ -1855,8 +1855,8 @@
       ],
       "external_attr": 25165824,
       "source": "RELEASE_NOTES.md",
-      "sha256": "010b41b98048ad3fe451013c9deaeee177142f09e4d825a03ecf177747c6275e",
-      "size_bytes": 3467
+      "sha256": "f79f3d420893282a55f85c376c2fe794b57e597d2e73bfa70262481cb6e996e7",
+      "size_bytes": 4721
     },
     {
       "member": "rtv-lore-elements/SAVE_SAFETY.md",
@@ -1870,8 +1870,8 @@
       ],
       "external_attr": 25165824,
       "source": "SAVE_SAFETY.md",
-      "sha256": "18d48ee590388caaea3215c853545f70a1f26b3217ccfa01a42e975099bd7a1b",
-      "size_bytes": 3260
+      "sha256": "30b8901af74a330956ac8d49131984f4fa9d7625705ddb32af081bef716ad432",
+      "size_bytes": 3886
     },
     {
       "member": "rtv-lore-elements/ASSET_CREDITS.md",

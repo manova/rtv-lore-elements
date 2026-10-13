@@ -6,9 +6,11 @@ While the project is below 1.0.0, the public API is unstable and minor versions 
 
 ## [0.2.0] - Unreleased
 
-Final package prepared on 2026-10-11 from the accepted `0.2.0-rc.1`.
-Runtime, artwork and content are unchanged from that candidate; only release
-metadata and documentation differ. Installation and publication are separate.
+Corrected package prepared after genuine older-save testing and updated during
+PR review on 2026-10-13. Restore-only safeguards retain processed/retained notes
+as obstacles, roll back final conflicts and unsupported stack dependents, and
+cover intermediate stack gaps. Artwork, readers and story content are unchanged.
+Installation and publication are separate.
 
 ### Added
 
@@ -32,13 +34,18 @@ metadata and documentation differ. Installation and publication are separate.
   by the focused asset-pass tests, without changing native item behavior.
 - Inventory discovery accepts Metro 3.4.2's trailing post-hook result argument
   without replacing the native return value; older four-argument calls remain valid.
+- Eligible older shelter notes that intersect their support after the change
+  from the native patient-report mesh to custom paper are reoriented once on
+  load. Ambiguous poses are retained; modern displays and ordinary drops keep
+  their existing behavior. Native checkpoints retain the repaired positions.
 
 ### Compatibility
 
-- Target: Steam build 25837777, Metro 3.4.2; MCM 2.9.3 and the separately tested
+- Target: RTV 0.2.1.0/build 25837777, Metro 3.4.2; MCM 2.9.3 and the separately tested
   private MSS build are optional, not dependencies.
-- Isolated fresh-New and pre-asset-upgrade gameplay and full-relaunch checks pass.
-  Retains documented cold-bootstrap and couch-support limitations.
+- Isolated fresh-New, synthetic public-era upgrade and three genuine older-save
+  gameplay/full-relaunch checks pass. Retains documented cold-bootstrap,
+  conservative legacy-pose, rare jitter and couch-support limitations.
 - No new lore stories, player-created map pins or public lore-registration API
   are included in this bounded asset release.
 
@@ -54,7 +61,7 @@ First public release.
 
 ### Added
 
-- **17 hand-authored lore notes** scattered across the zone via existing loot tables. Notes span S-tier narrative pieces (radio transcript, rail manifest) down to incidental flavor (kitchen crayon map, schoolroom list).
+- **17 authored lore notes** scattered across the zone via existing loot tables. Notes span S-tier narrative pieces (radio transcript, rail manifest) down to incidental flavor (kitchen crayon map, schoolroom list).
 - **In-world note reader** - open notes from inventory, multi-page support, ESC/close button to dismiss. Reader is fully modal: mouse and scroll input is consumed by the reader, not passed through to the inventory or world underneath.
 - **Map pin renderer** - notes with an authored `pinned_location` render markers on the map. v0.1 ships with a curated pin trail of 5 high-value notes anchored to recognizable landmarks (radio relay, rail depot, etc.). Pins survive save/load.
 - **Journal** - opens on a configurable hotkey, lists notes the player has discovered, persists across sessions.

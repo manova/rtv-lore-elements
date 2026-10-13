@@ -1,6 +1,6 @@
-# Building the frozen 0.2.0 package
+# Building the corrected 0.2.0 package
 
-This checkout contains all 115 source files in the accepted 0.2.0 VMZ, plus
+This checkout contains all 115 source files in the corrected 0.2.0 VMZ, plus
 selected documentation, provenance and gallery options. It is not the private
 authoring/QA archive. No game installation, saves, Blender, Godot import cache,
 network access or optional mod is needed to verify or package these files.
@@ -18,10 +18,10 @@ The first command checks source hashes without writing anything. The builder
 reads only [the explicit package manifest](release/0.2.0/package-manifest.json),
 preserves archive order and metadata, verifies the result, and refuses an
 existing output. Files elsewhere in the checkout never enter the package.
-The expected archive is 42,690,266 bytes, SHA256:
+The expected archive is 42,693,560 bytes, SHA256:
 
 ```text
-49121927608f0498fb76008983a77e013c71709526bd33e991ce1a5a29492b7b
+4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5
 ```
 
 Different zlib implementations may produce different DEFLATE bytes. In that
@@ -37,10 +37,15 @@ manifest and fresh compatibility tests; do not overwrite the accepted record.
 Gameplay still requires a separately owned Road to Vostok installation and the
 tested Metro loader. Packaging tests do not replace native or in-game QA.
 
-The bundled README/changelog/release notes preserve their preparation-time
-wording because they are part of the exact accepted download. Later local
-adoption and source preparation are summarized in
-[the source-release index](release/0.2.0/README.md). None authorizes publication.
+The corrected recipe supersedes the unpublished pre-legacy package. Its
+[previous manifest](release/0.2.0/history/pre-legacy-package-manifest.json) and
+earlier source remain recoverable; do not confuse the two checksums. All runtime
+scripts preserve the accepted correction except for the bounded restore
+safeguards added during PR review. The recipe retains separate historical
+pre-legacy and [pre-review](release/0.2.0/history/pre-review-package-manifest.json)
+manifests. This does not
+authorize installation or publication; see the
+[source-release index](release/0.2.0/README.md).
 
 Raw Blender checkpoints, intermediary images, native game extracts, private logs,
 userdata, local automation and MCP configuration are deliberately excluded.

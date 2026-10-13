@@ -4,8 +4,9 @@
 
 ## Current release checkpoint — 0.2.0
 
-The asset pass is accepted and the final package is frozen. This public plan
-retains the original design below as historical context; discovery examples and
+The asset pass and subsequent genuine-save legacy-placement correction are
+accepted. A corrected final package is prepared locally, with publication still
+on hold. This public plan retains the original design below as historical context; discovery examples and
 open questions there are not the current runtime API. The original detailed
 authoring/QA plan remains in the private working checkout, not this source subset.
 
@@ -22,23 +23,36 @@ authoring/QA plan remains in the private working checkout, not this source subse
   normal Load 5 and shared-journal access without claiming a new acquisition test.
 - [x] Prepare a curated isolated source candidate, public provenance/QA summaries,
   exact offline packaging recipe and five gallery options.
-- [ ] Review the source commit and select the final cover/gallery.
-- [x] Obtain GitHub branch-push/PR approval on 2026-10-12 and verify remote state;
-  base the PR on upstream main without the unrelated local tooling commit.
-- [ ] Complete GitHub review and obtain merge/tag/release approval; publish only
-  the approved artifact, then verify its served checksum and listing. Vostok Mods
-  and ModWorkshop publication remain a separate handoff.
+- [x] Review and merge the original source PR #21; preserve that package as an
+  earlier checkpoint, not the corrected release target.
+- [x] Accept the bounded legacy-placement correction across three genuine older
+  playthroughs, including inventory/storage, slot switching and full relaunch.
+- [x] Carry the exact tested runtime into a separate local correction branch and
+  prepare a new allowlisted package with updated safety and acceptance notes.
+- [x] Push correction PR 22 with approval and reproduce both published findings:
+  retained/repaired collision exclusions and intermediate stack gaps. Add bounded
+  restore safeguards and regression cases; preserve all artwork and native saves.
+- [ ] Complete GitHub review/merge of the correction and select the cover/gallery.
+- [ ] Obtain separate merge, tag/release and publication approvals. Vostok Mods
+  is the intended new listing; ModWorkshop is held following the AI-art policy
+  preflight. Record the canonical upload hash and verify any platform-added
+  update-source metadata in the served file separately.
 
 Current entry points: [source release](release/0.2.0/README.md),
 [building](BUILDING.md), [release notes](RELEASE_NOTES.md),
 [save safety](SAVE_SAFETY.md) and [public QA summary](qa/release_0_2_0/README.md).
-No new asset or gameplay test is requested for byte-identical source preparation.
+The review follow-up changes restore logic only and has targeted offline/native
+coverage. Earlier Windows gameplay is the accepted baseline, not an exact-runtime
+claim for the review fix. Native and packaging checks verify the new archive.
 
 ### Deferred scope and decisions
 
 - Couch/reclined support and unsuitable outdoor backings are not guaranteed;
   retain firm-base/near-vertical-support behavior rather than pinning papers.
-- Watch for recurring post-reload jitter; request a short clip if it returns.
+- Watch for rare resting jitter; one Crayon Map stool occurrence stopped after
+  reload. Request a short clip if it returns.
+- Conservative legacy-pose repair can retain an older note upright; do not
+  rotate every unmarked item and risk valid modern displays.
 - Native direct-flashlight washout and face-down loot settling remain known limits.
 - Further reader/physical-page matching, a standalone placement quality-of-life
   mod and the public lore API are future work, not release blockers.

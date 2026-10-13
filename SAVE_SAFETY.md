@@ -4,6 +4,12 @@ Back up the complete userdata directory and the exact enabled mod archives befor
 upgrading. A rollback means restoring that matching set, not putting an older
 Lore archive over a save written by a newer one.
 
+Fresh-game, synthetic upgrade and three genuine older-playthrough checks passed
+on isolated copies, including full relaunch. The genuine-save pass used the
+private MSS safety build; it does not certify every public MSS version or make
+mod removal safe. Most users only need the backup, one enabled Lore archive and
+a clean modded restart described below.
+
 ## Before testing or upgrading
 
 1. Close the game. Keep the original userdata and mod setup untouched.
@@ -13,9 +19,14 @@ Lore archive over a save written by a newer one.
    original archives alongside the backup. Keep each checkpoint separately named.
 4. Use an independent setup/userdata copy for the upgrade. Enable only one Lore archive.
 
-Do not copy only Character or Cabin between unrelated checkpoints. MSS tracks
-five native save files together; its slots and root saves also need a coherent
-checkpoint. The Lore journal is outside MSS's per-slot save set.
+Do not copy only Character or Cabin between unrelated checkpoints. Keep the
+complete native save set, including every visited shelter, together with MSS
+slots/state if used. The Lore journal is shared within userdata, outside MSS's
+per-slot save set.
+
+Older placed notes use different mesh coordinates. This version repairs eligible
+embedded poses when the shelter loads; the normal checkpoint retains the result.
+Ambiguous poses may remain upright rather than risk changing a valid display.
 
 ## Cold startup and interrupted startup
 
