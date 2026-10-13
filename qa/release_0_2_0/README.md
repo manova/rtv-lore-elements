@@ -1,6 +1,29 @@
 # Final 0.2.0 verification — public summary
 
-## Corrected package and genuine older saves
+## PR review follow-up
+
+PR 22 review on 2026-10-13 identified collision exclusions that outlived pending
+reconstruction and a gap band skipped by the legacy-stack logic. Targeted native
+tests reproduce both findings on the earlier runtime. The bounded fix includes
+final-world rollback, dependent-stack rollback, padded stack separation and a
+settled-modern-contact guard. No ordinary drop retune or artwork change is made.
+
+Eight targeted cases pass 32 assertions: retained bodies processed earlier or
+later, incompatible overlapping targets, a connected stack, negative/positive
+intermediate gaps, a supported modern neighbor and a lost-support rollback
+cascade. The original runtime fails the negative control. The exact new archive
+also passes the same 9,670 native assertions listed below, for 9,702 total.
+The genuine geometry probe still repairs all five reported Tent notes and
+converts 28/36 poses while retaining eight ambiguous cases.
+
+Reviewed VMZ: 115 files, 42,693,560 bytes, SHA256
+`4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`.
+The source builder reproduces it exactly and all eleven guard tests pass.
+The prior Windows gameplay remains the accepted baseline, not a claim of new
+Windows testing or byte-identical runtime after review. Earlier packages remain
+historical evidence; normal adoption, merge and publication are separate.
+
+## Pre-review package and genuine older saves
 
 The 2026-10-12 corrected package includes the bounded legacy-placement repair,
 with all runtime scripts byte-identical to accepted `0.2.0-legacy-placement.2`.
@@ -88,7 +111,6 @@ The existing missing-input-action repair warning is not suppressed or treated
 as a save failure. See [release limits](../../RELEASE_NOTES.md) and
 [save safety/rollback](../../SAVE_SAFETY.md).
 
-The corrected distribution and source are prepared locally. A new GitHub PR,
-merge, normal adoption, tagging, publication and gallery choice remain separate
-approval gates. The earlier package remains historical evidence, not the new
-upload target.
+The corrected source is under review in PR 22. Merge, normal adoption, tagging,
+publication and gallery choice remain separate approval gates. The earlier
+packages remain historical evidence, not the reviewed upload target.

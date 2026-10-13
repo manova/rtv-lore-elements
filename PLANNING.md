@@ -29,8 +29,11 @@ authoring/QA plan remains in the private working checkout, not this source subse
   playthroughs, including inventory/storage, slot switching and full relaunch.
 - [x] Carry the exact tested runtime into a separate local correction branch and
   prepare a new allowlisted package with updated safety and acceptance notes.
+- [x] Push correction PR 22 with approval and reproduce both published findings:
+  retained/repaired collision exclusions and intermediate stack gaps. Add bounded
+  restore safeguards and regression cases; preserve all artwork and native saves.
 - [ ] Complete GitHub review/merge of the correction and select the cover/gallery.
-- [ ] Obtain separate push/PR, tag/release and publication approvals. Vostok Mods
+- [ ] Obtain separate merge, tag/release and publication approvals. Vostok Mods
   is the intended new listing; ModWorkshop is held following the AI-art policy
   preflight. Record the canonical upload hash and verify any platform-added
   update-source metadata in the served file separately.
@@ -38,8 +41,9 @@ authoring/QA plan remains in the private working checkout, not this source subse
 Current entry points: [source release](release/0.2.0/README.md),
 [building](BUILDING.md), [release notes](RELEASE_NOTES.md),
 [save safety](SAVE_SAFETY.md) and [public QA summary](qa/release_0_2_0/README.md).
-No new manual art or gameplay repeat is requested for this exact-runtime
-promotion. Native and packaging checks still verify the corrected final archive.
+The review follow-up changes restore logic only and has targeted offline/native
+coverage. Earlier Windows gameplay is the accepted baseline, not an exact-runtime
+claim for the review fix. Native and packaging checks verify the new archive.
 
 ### Deferred scope and decisions
 

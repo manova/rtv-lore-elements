@@ -1,8 +1,10 @@
 # Lore Elements 0.2.0 release notes
 
 Version `0.2.0` is prepared for release with the legacy-placement correction
-accepted on 2026-10-12. Its runtime matches the tested correction candidate;
-artwork, readers and story content remain unchanged from the asset-pass release.
+accepted on 2026-10-12 and bounded restore safeguards added during PR review.
+Retained/repaired notes remain collision obstacles, final conflicts roll back,
+and connected stacks handle intermediate gaps without changing settled displays.
+Artwork, readers and story content remain unchanged from the asset-pass release.
 This corrected package has not been installed in normal play or published.
 
 ## Included
@@ -44,6 +46,10 @@ fixture was synthetic. A subsequent focused pass exercised three genuine older
 playthroughs with the correction candidate and private MSS: existing notes,
 inventory/storage, readers, placement, slot isolation and full-relaunch
 persistence passed. This is bounded evidence, not a guarantee for every save.
+
+The subsequent review safeguards have targeted offline reproduction and native
+regression coverage, not a new Windows gameplay pass. The prior gameplay remains
+the baseline, not a claim that its runtime is byte-identical to the reviewed fix.
 
 Compatibility checks cover resource loading, all 18 item identities, inventory
 migration, repeated save/reload, interrupted startup and matching-backup rollback.

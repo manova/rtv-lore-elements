@@ -12,6 +12,18 @@ are required. The converted pose preserves the old face center, then passes
 static-support and whole-envelope collision checks. Connected nearly flat old
 stacks are handled bottom-up. Valid modern papers remain obstacles.
 
+PR review found two edge cases in that first correction. Temporary exclusions
+now cover only pending invalid candidates; retained and completed candidates
+remain obstacles. Final validation uses no pending exclusions, and rolls back
+conflicting repairs until stable. Upper layers also roll back if their repaired
+support is reverted. Transform updates are flushed before later spatial queries.
+
+Connected stack layers now admit intermediate penetration or floating gaps while
+preserving the settled contact band (including the intended 1 mm clearance).
+Stack spacing accounts for the unchanged padded collision boxes, not just visual
+thickness. These rules remain restore-only; collider dimensions and ordinary
+drop/placement behavior are not changed.
+
 Saved data has no mesh-version marker, so a blanket rotation is unsafe. Keep
 ambiguous poses, unsupported guesses, active/held/moved bodies and native reused
 assets unchanged. Existing shallow-contact repair remains separate. Only the

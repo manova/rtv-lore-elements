@@ -883,12 +883,19 @@ func _correct_world_pickup_restored_contacts(candidates: Array) -> void:
 		if !restored.global_transform.is_finite() || !restored.global_transform.is_equal_approx(candidate.pose):
 			continue
 		var variant := _get_world_pickup_variant_for_body(restored)
-		if !variant.is_empty() && absf(restored.global_basis.z.y) >= 0.55 && _world_pickup_legacy_support_gap(restored, restored.global_transform, variant.rest_offsets) < -0.015:
-			# Only deeply invalid legacy-like bodies may be ignored while their
-			# poses are rebuilt. Keep valid/moved/held modern papers as obstacles.
+		if variant.is_empty() || absf(restored.global_basis.z.y) < 0.55:
+			continue
+		var gap := _world_pickup_legacy_support_gap(restored, restored.global_transform, variant.rest_offsets)
+		if is_finite(gap) && (gap < -WORLD_PICKUP_REST_TOLERANCE || gap > 0.002):
+			# Pending invalid poses include mid-gap stack layers, not just deep
+			# penetration. Preserve settled contact (including 1 mm clearance).
+			# A final all-body validation rejects conflicts with retained notes.
 			restored_rids.append(restored.get_rid())
 	for candidate in candidates:
 		var body = candidate.body.get_ref()
+		if is_instance_valid(body):
+			# Only not-yet-processed legacy bodies may be temporarily ignored.
+			restored_rids.erase(body.get_rid())
 		if !is_instance_valid(body) || !body.is_inside_tree() || !body.freeze || body.gravity_scale <= 0.0:
 			continue
 		if !body.global_transform.is_finite() || !body.global_transform.is_equal_approx(candidate.pose):
@@ -899,6 +906,9 @@ func _correct_world_pickup_restored_contacts(candidates: Array) -> void:
 		var legacy := _world_pickup_legacy_restored_pose(body, variant, legacy_repairs, restored_rids)
 		if !legacy.is_empty():
 			body.global_transform = legacy.pose
+			body.force_update_transform()
+			legacy["body"] = weakref(body)
+			legacy["points"] = variant.rest_offsets
 			legacy_repairs.append(legacy)
 			continue
 		var lift := _world_pickup_contact_lift(body, variant)
@@ -906,6 +916,29 @@ func _correct_world_pickup_restored_contacts(candidates: Array) -> void:
 		# frozen save, flatten folds, relocate lost items or change release spin.
 		if is_finite(lift) && lift > WORLD_PICKUP_REST_TOLERANCE && lift <= 0.01:
 			body.global_position.y += lift
+			body.force_update_transform()
+	# A later candidate can fail reconstruction and remain in an earlier
+	# proposal's way. Validate the final world without pending exclusions.
+	# Rollbacks can expose another conflict, so repeat until stable; each
+	# rollback removes one repair and bounds this to at most N + 1 passes.
+	for _pass in range(legacy_repairs.size() + 1):
+		var reverted := false
+		for repair in legacy_repairs.duplicate():
+			var body = repair.body.get_ref()
+			if !is_instance_valid(body) || !body.is_inside_tree() || !body.freeze || body.gravity_scale <= 0.0 || !body.global_transform.is_equal_approx(repair.pose):
+				legacy_repairs.erase(repair)
+				continue
+			var support_lost := false
+			if !repair.support.is_empty():
+				var support_body = repair.support.body.get_ref()
+				support_lost = !is_instance_valid(support_body) || !support_body.is_inside_tree() || !support_body.global_transform.is_equal_approx(repair.support.pose)
+			if support_lost || !_world_pickup_legacy_pose_clear(body, repair.pose, repair.points, []):
+				body.global_transform = repair.old
+				body.force_update_transform()
+				legacy_repairs.erase(repair)
+				reverted = true
+		if !reverted:
+			break
 	if !legacy_repairs.is_empty():
 		print("[rtv_lore_elements] repaired ", legacy_repairs.size(), " legacy placed-note poses; native checkpoint will retain them.")
 
@@ -946,6 +979,7 @@ func _world_pickup_legacy_restored_pose(body: RigidBody3D, variant: Dictionary, 
 		bottom = minf(bottom, height)
 		top = maxf(top, height)
 	var stack := false
+	var support := {}
 	var support_height := bottom - target_gap
 	for repair in repairs:
 		# Old 50 mm proxies can leave a stack floating after its base changes.
@@ -957,13 +991,28 @@ func _world_pickup_legacy_restored_pose(body: RigidBody3D, variant: Dictionary, 
 		var under: AABB = repair.bounds
 		if absf(old.basis.z.y) >= 0.95 && absf(repair.old.basis.z.y) >= 0.95 && separation >= 0.015 && separation <= 0.065 && absf(local.x) < 0.1 && local.y > 0.0 && local.y < 0.3 && absf(new_local.x) < under.size.x * 0.5 && absf(new_local.z) < under.size.z * 0.5:
 			stack = true
-			support_height = maxf(support_height, repair.top)
-	if current_gap >= -0.015 && !(stack && current_gap > 0.015):
+			if repair.top > support_height:
+				support_height = repair.top
+				support = {"body":repair.body, "pose":repair.pose}
+	var invalid_stack_gap := current_gap < -WORLD_PICKUP_REST_TOLERANCE || current_gap > 0.002
+	if current_gap >= -0.015 && !(stack && invalid_stack_gap):
 		return {}
+	# Connected stacks must also clear the accepted padded collision boxes.
+	# Their visual-only tops can put an upper sheet inside a repaired proxy.
+	for point in _build_world_pickup_support_offsets(variant):
+		var height: float = (pose * (point as Vector3)).y
+		top = maxf(top, height)
+		if stack:
+			bottom = minf(bottom, height)
 	var adjustment := support_height - bottom + 0.001
 	if absf(adjustment) > 0.125:
 		return {}
 	pose.origin.y += adjustment
+	if !_world_pickup_legacy_pose_clear(body, pose, points, excluded):
+		return {}
+	return {"pose":pose, "old":old, "legacy_center":legacy_center, "bounds":bounds, "top":top + adjustment, "support":support}
+
+func _world_pickup_legacy_pose_clear(body: RigidBody3D, pose: Transform3D, points: PackedVector3Array, excluded: Array[RID]) -> bool:
 	# Validate the whole convex visual envelope against furniture and walls,
 	# not just downward rays. Valid newer papers remain collision obstacles.
 	var shape := ConvexPolygonShape3D.new()
@@ -978,9 +1027,7 @@ func _world_pickup_legacy_restored_pose(body: RigidBody3D, variant: Dictionary, 
 		obstacles_excluded.append(body.get_rid())
 	query.exclude = obstacles_excluded
 	query.margin = 0.0
-	if !body.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
-		return {}
-	return {"pose":pose, "old":old, "legacy_center":legacy_center, "bounds":bounds, "top":top + adjustment}
+	return body.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()
 
 func _on_notebook_load_grid_pre(slot_data, _target_grid, _grid_position) -> void:
 	_upgrade_notebook_slot(slot_data, true)

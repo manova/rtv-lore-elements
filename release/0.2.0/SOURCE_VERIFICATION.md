@@ -1,6 +1,28 @@
 # Curated source verification
 
-## Corrected package checkpoint
+## PR review correction
+
+The 2026-10-13 review follow-up keeps temporary collision exclusions limited to
+pending invalid candidates, validates the final world and rolls back conflicts
+and dependent stack layers. It also handles intermediate stack gaps while
+preserving settled modern displays. No artwork, collider dimensions or ordinary
+drop behavior changes. Only Main.gd, changelog and release notes differ from the
+pre-review package below.
+
+The reviewed archive has 115 files in 130 ZIP entries and is 42,693,560 bytes:
+
+```text
+4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5
+```
+
+The clean source export reproduces it exactly and passes all eleven packaging
+guard tests. There are now 184 source files; the added file preserves the
+[pre-review package recipe](history/pre-review-package-manifest.json).
+[QA](../../qa/release_0_2_0/README.md) distinguishes the prior Windows gameplay
+from the new offline/native review regressions. Merge and publication remain
+separate approvals.
+
+## Pre-review package checkpoint
 
 Prepared on 2026-10-12 from merged PR #21 plus the exact accepted
 `0.2.0-legacy-placement.2` runtime. No additional physics changes are included.

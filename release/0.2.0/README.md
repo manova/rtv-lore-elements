@@ -1,14 +1,15 @@
 # Lore Elements 0.2.0 corrected source preparation
 
 This local correction follows merged PR #21 and the accepted genuine-save
-legacy-placement pass. It is based on merged commit `e0026b7`. The new correction
-has not been pushed or reviewed on GitHub; those steps, normal installation,
+legacy-placement pass. It is based on merged commit `e0026b7` and is under review
+in [PR 22](https://github.com/manova/rtv-lore-elements/pull/22), opened with approval
+on 2026-10-13. Normal installation, merge,
 tagging and publication remain separately approved actions. No publication date
 is set. Vostok Mods is the intended new listing; ModWorkshop remains on hold.
 
-The corrected package retains 115 files. All three GDScripts match accepted
-`0.2.0-legacy-placement.2`; the stable version manifest and four packaged
-documents differ. All 99 art/resource/data files remain unchanged. Compared with
+The corrected package retains 115 files. PR review adds bounded restore-only
+collision/stack safeguards beyond accepted `0.2.0-legacy-placement.2`; the other
+scripts are unchanged. All 99 art/resource/data files remain unchanged. Compared with
 the earlier final package, only `Main.gd` and those four documents change.
 The earlier package, recipe and normal installation remain untouched.
 
@@ -39,7 +40,7 @@ The correction branch starts from the merged public source, excluding the
 local-only tooling commit and configuration. Previous preparation and PR
 branches remain unchanged.
 
-Before publication, obtain push/PR approval, finish GitHub review, obtain merge/tag/release approval and
+Before publication, finish GitHub review, obtain merge/tag/release approval and
 select the final gallery/cover. Only the approved final source should receive
 a release tag, and only the verified VMZ should become a release download.
 Source-branch publication is not a mod-release announcement. Neither the old

@@ -6,9 +6,11 @@ While the project is below 1.0.0, the public API is unstable and minor versions 
 
 ## [0.2.0] - Unreleased
 
-Corrected package prepared on 2026-10-12 after genuine older-save testing.
-Includes the accepted restore-only legacy-placement fix; artwork, readers and
-story content are unchanged. Installation and publication are separate.
+Corrected package prepared after genuine older-save testing and updated during
+PR review on 2026-10-13. Restore-only safeguards retain processed/retained notes
+as obstacles, roll back final conflicts and unsupported stack dependents, and
+cover intermediate stack gaps. Artwork, readers and story content are unchanged.
+Installation and publication are separate.
 
 ### Added
 
