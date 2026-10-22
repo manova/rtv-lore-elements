@@ -6,7 +6,8 @@ Lore Elements adds discoverable notes, letters, reports, lists, and map fragment
 
 Version `0.2.0` adds original document families, inventory art, reader handwriting
 and supported upright placement, including a bounded repair for older saved
-document poses. The corrected package is prepared but not yet published. See [release notes](RELEASE_NOTES.md) and
+document poses. The corrected package was [published on GitHub](https://github.com/manova/rtv-lore-elements/releases/tag/v0.2.0) on
+2026-10-14 (UTC). See [release notes](RELEASE_NOTES.md) and
 [save safety and rollback](SAVE_SAFETY.md) before upgrading.
 
 ## Requirements
@@ -22,8 +23,9 @@ document poses. The corrected package is prepared but not yet published. See [re
 
 1. Close the game and back up the complete userdata directory and exact enabled
    mod archives. Test upgrades on a separate setup and userdata copy first.
-2. Obtain the intended `.vmz` package. The prepared package is named
-   `rtv_lore_elements-0.2.0.vmz`; published downloads will be linked under Releases.
+2. Download `rtv_lore_elements-0.2.0.vmz` from the
+   [v0.2.0 GitHub release](https://github.com/manova/rtv-lore-elements/releases/tag/v0.2.0).
+   GitHub's generated Source code archives are not the installable mod.
 3. Keep older Lore archives in the backup, outside the active `mods` folder.
    Put the new `.vmz` into the Road to Vostok `mods` folder.
 4. Confirm only this Lore version is enabled in Metro and launch through the
@@ -31,8 +33,10 @@ document poses. The corrected package is prepared but not yet published. See [re
 
 The public mod ID remains `rtv_lore_elements`; the Metro profile key for this
 version is `rtv_lore_elements@0.2.0`. Test archives can have different IDs or
-version keys; disable them explicitly. Preparing this package does not change
-any installation.
+version keys; disable them explicitly. The exact published package passed a
+focused isolated Windows slot 2 check and full relaunch; see
+[the final QA record](qa/release_0_2_0/README.md) for scope and provenance.
+The current ModWorkshop version has not been independently verified.
 
 Fresh-game and upgrade checks passed, including three genuine older playthroughs
 on isolated copies. Back up before updating, keep one Lore archive enabled and
