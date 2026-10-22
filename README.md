@@ -33,9 +33,10 @@ document poses. The corrected package was [published on GitHub](https://github.c
 
 The public mod ID remains `rtv_lore_elements`; the Metro profile key for this
 version is `rtv_lore_elements@0.2.0`. Test archives can have different IDs or
-version keys; disable them explicitly. GitHub publication does not establish the
-current ModWorkshop version or additional normal-game testing of the exact
-reviewed package. See [the final QA record](qa/release_0_2_0/README.md).
+version keys; disable them explicitly. The exact published package passed a
+focused isolated Windows slot 2 check and full relaunch; see
+[the final QA record](qa/release_0_2_0/README.md) for scope and provenance.
+The current ModWorkshop version has not been independently verified.
 
 Fresh-game and upgrade checks passed, including three genuine older playthroughs
 on isolated copies. Back up before updating, keep one Lore archive enabled and

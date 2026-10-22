@@ -6,22 +6,22 @@
 on 2026-10-14 at 00:33:12 UTC, from merged commit `3cf6672` (PR #22).
 The published `rtv_lore_elements-0.2.0.vmz` asset reports 42,693,560 bytes and
 SHA-256 `4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`,
-matching the final reviewed 115-file artifact below. Publication is confirmed;
-additional normal-game testing of that exact package and the current ModWorkshop
-version have not been independently verified. The release description mentions
-a focused original-seed slot 2 check/full relaunch, but this summary has no
-supporting record for that claim and does not add it to verified coverage.
+matching the final reviewed 115-file artifact below. That exact package passed
+focused isolated Windows slot 2 testing and full relaunch on 2026-10-13; see the
+[acceptance and provenance record](../../qa/release_0_2_0/final-package-windows.md).
+This is narrow final-package coverage, not broad normal-play testing. The current
+ModWorkshop version has not been independently verified.
 
 The sections below retain historical package-specific evidence. Earlier Windows
 acceptance and normal adoption must not be attributed to the later review fix.
 Bundled and attached release documents retain preparation-time wording; the VMZ,
 its checksum and historical package manifests are unchanged.
 
-
 The corrected package retains 115 files. PR review adds bounded restore-only
 collision/stack safeguards beyond accepted `0.2.0-legacy-placement.2`; the other
 scripts are unchanged. All 99 art/resource/data files remain unchanged. Compared with
-the earlier final package, only `Main.gd` and those four documents change.
+the earlier final package, only `Main.gd` and four packaged documents change
+(`README.md`, `CHANGELOG.md`, `RELEASE_NOTES.md` and `SAVE_SAFETY.md`).
 The earlier package and recipe remain historical evidence; earlier normal
 installation is not evidence of adoption of the later reviewed package.
 

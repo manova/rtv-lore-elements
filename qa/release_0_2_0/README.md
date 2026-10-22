@@ -6,11 +6,11 @@
 on 2026-10-14 at 00:33:12 UTC, from merged commit `3cf6672` (PR #22).
 The published `rtv_lore_elements-0.2.0.vmz` asset reports 42,693,560 bytes and
 SHA-256 `4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`,
-matching the final reviewed 115-file artifact below. Publication is confirmed;
-additional normal-game testing of that exact package and the current ModWorkshop
-version have not been independently verified. The release description mentions
-a focused original-seed slot 2 check/full relaunch, but this summary has no
-supporting record for that claim and does not add it to verified coverage.
+matching the final reviewed 115-file artifact below. That exact package passed
+focused isolated Windows slot 2 testing and full relaunch on 2026-10-13.
+[The acceptance and provenance record](final-package-windows.md) reconciles the
+local QA audit and October 14 final review, which were absent from this public
+summary. The current ModWorkshop version has not been independently verified.
 
 The sections below retain historical package-specific evidence. Earlier Windows
 acceptance and normal adoption must not be attributed to the later review fix.
@@ -36,10 +36,19 @@ converts 28/36 poses while retaining eight ambiguous cases.
 Reviewed VMZ: 115 files, 42,693,560 bytes, SHA256
 `4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`.
 The source builder reproduces it exactly and all eleven guard tests pass.
-The prior Windows gameplay remains the accepted baseline, not a claim of new
-Windows testing or byte-identical runtime after review. Earlier packages remain
-historical evidence. At review time, normal adoption, merge and publication
-were separate gates; merge and GitHub publication subsequently completed.
+The offline review verification did not itself run new Windows gameplay.
+Later on 2026-10-13, the exact archive passed the focused original-seed slot 2
+Windows check and full relaunch: five restored Tent notes, interaction and
+repositioning, nine committed private-MSS transactions and three exact Loads.
+Lore counts were unchanged, gameplay logs had zero errors, and the restarted
+gameplay session performed no repeat legacy repair. The separate cold pre-mount
+process recorded 42 known missing-resource errors before Metro's clean restart.
+See [the scoped results and source hashes](final-package-windows.md).
+
+Earlier packages remain historical evidence; their broader gameplay and normal
+adoption are not transferred to this archive. Merge and GitHub publication
+subsequently completed. No broad normal-play or public-MSS certification follows
+from the final focused check.
 
 ## Pre-review package and genuine older saves
 
@@ -131,5 +140,6 @@ as a save failure. See [release limits](../../RELEASE_NOTES.md) and
 
 PR #22 was subsequently merged as `3cf6672`, and GitHub v0.2.0 was published
 on 2026-10-14 (UTC). The earlier packages remain historical evidence, not the
-published artifact. These status corrections do not add gameplay evidence or
+published artifact. This reconciliation adds previously recorded final-package
+acceptance to the public summary; it runs no new gameplay tests and does not
 confirm another distribution platform's current version.

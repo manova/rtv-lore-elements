@@ -8,8 +8,9 @@ and connected stacks handle intermediate gaps without changing settled displays.
 Artwork, readers and story content remain unchanged from the asset-pass release.
 The published VMZ matches the final reviewed 115-file artifact (42,693,560 bytes),
 SHA-256 `4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`.
-Additional normal-game testing of this exact reviewed package and the current
-ModWorkshop version have not been independently verified.
+The exact package passed focused isolated Windows slot 2 testing and full
+relaunch on 2026-10-13. This does not establish broad normal-play coverage.
+The current ModWorkshop version has not been independently verified.
 
 ## Included
 
@@ -51,9 +52,15 @@ playthroughs with the correction candidate and private MSS: existing notes,
 inventory/storage, readers, placement, slot isolation and full-relaunch
 persistence passed. This is bounded evidence, not a guarantee for every save.
 
-The subsequent review safeguards have targeted offline reproduction and native
-regression coverage, not a new Windows gameplay pass. The prior gameplay remains
-the baseline, not a claim that its runtime is byte-identical to the reviewed fix.
+The subsequent review safeguards passed targeted offline/native regressions.
+The exact reviewed package then passed a focused Windows check from an isolated
+original slot 2 seed: five restored Tent notes, interaction/repositioning,
+checkpoint persistence and full relaunch. The closed-game audit records nine
+committed private-MSS transactions and three exact Loads, with unchanged Lore
+counts and no repeat legacy repair after relaunch. See the
+[final-package acceptance and provenance](qa/release_0_2_0/final-package-windows.md).
+These narrow checks supplement the earlier gameplay baseline; they do not rerun
+the full fresh-game/three-save matrix on the final package or certify public MSS.
 
 Compatibility checks cover resource loading, all 18 item identities, inventory
 migration, repeated save/reload, interrupted startup and matching-backup rollback.

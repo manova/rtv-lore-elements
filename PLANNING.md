@@ -6,10 +6,11 @@
 
 The asset pass and subsequent genuine-save legacy-placement correction are
 accepted. PR #22 was merged as `3cf6672`, and the corrected final package was
-published on GitHub on 2026-10-14 (UTC). The current ModWorkshop version and
-additional normal-game testing of the exact reviewed package are not independently
-verified. This public plan retains the original design below as historical context; discovery examples and
-open questions there are not the current runtime API. The original detailed
+published on GitHub on 2026-10-14 (UTC), after focused isolated Windows slot 2
+testing and full relaunch on the exact package. The current ModWorkshop version
+has not been independently verified. This public plan retains the original design
+below as historical context; discovery examples and open questions there are not
+the current runtime API. The original detailed
 authoring/QA plan remains in the private working checkout, not this source subset.
 
 - [x] Deliver original folded, notebook, card, sheet and crayon-map families for
@@ -34,6 +35,9 @@ authoring/QA plan remains in the private working checkout, not this source subse
 - [x] Push correction PR 22 with approval and reproduce both published findings:
   retained/repaired collision exclusions and intermediate stack gaps. Add bounded
   restore safeguards and regression cases; preserve all artwork and native saves.
+- [x] Accept the exact reviewed package's focused original-seed slot 2 Windows
+  check and full relaunch on 2026-10-13; reconcile its private acceptance records
+  into the [public provenance summary](qa/release_0_2_0/final-package-windows.md).
 - [x] Complete GitHub review/merge of PR #22 and publish GitHub v0.2.0 on
   2026-10-14 (UTC); published VMZ digest matches the final QA record.
 - [ ] Verify other distribution platforms' current versions and any platform-added
@@ -43,9 +47,10 @@ authoring/QA plan remains in the private working checkout, not this source subse
 Current entry points: [source release](release/0.2.0/README.md),
 [building](BUILDING.md), [release notes](RELEASE_NOTES.md),
 [save safety](SAVE_SAFETY.md) and [public QA summary](qa/release_0_2_0/README.md).
-The review follow-up changes restore logic only and has targeted offline/native
-coverage. Earlier Windows gameplay is the accepted baseline, not an exact-runtime
-claim for the review fix. Native and packaging checks verify the new archive.
+The review follow-up changes restore logic only. Targeted offline/native
+regressions and the subsequent focused Windows slot 2/relaunch check cover the
+exact reviewed archive. Earlier Windows gameplay remains package-specific;
+the narrow final check does not establish broad normal-play coverage.
 
 ### Deferred scope and decisions
 
@@ -58,7 +63,8 @@ claim for the review fix. Native and packaging checks verify the new archive.
 - Native direct-flashlight washout and face-down loot settling remain known limits.
 - Further reader/physical-page matching, a standalone placement quality-of-life
   mod and the public lore API are future work, not release blockers.
-- Final cover and readable-story spoiler selection remain open publication choices.
+- Other-platform cover/gallery decisions are separate from the completed GitHub
+  release; earlier selection plans do not establish current listing status.
 
 ## Original design and roadmap
 
