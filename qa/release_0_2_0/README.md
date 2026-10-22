@@ -1,5 +1,22 @@
 # Final 0.2.0 verification — public summary
 
+## GitHub publication status
+
+[GitHub v0.2.0](https://github.com/manova/rtv-lore-elements/releases/tag/v0.2.0) was published as a non-draft release
+on 2026-10-14 at 00:33:12 UTC, from merged commit `3cf6672` (PR #22).
+The published `rtv_lore_elements-0.2.0.vmz` asset reports 42,693,560 bytes and
+SHA-256 `4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`,
+matching the final reviewed 115-file artifact below. Publication is confirmed;
+additional normal-game testing of that exact package and the current ModWorkshop
+version have not been independently verified. The release description mentions
+a focused original-seed slot 2 check/full relaunch, but this summary has no
+supporting record for that claim and does not add it to verified coverage.
+
+The sections below retain historical package-specific evidence. Earlier Windows
+acceptance and normal adoption must not be attributed to the later review fix.
+Bundled and attached release documents retain preparation-time wording; the VMZ,
+its checksum and historical package manifests are unchanged.
+
 ## PR review follow-up
 
 PR 22 review on 2026-10-13 identified collision exclusions that outlived pending
@@ -21,7 +38,8 @@ Reviewed VMZ: 115 files, 42,693,560 bytes, SHA256
 The source builder reproduces it exactly and all eleven guard tests pass.
 The prior Windows gameplay remains the accepted baseline, not a claim of new
 Windows testing or byte-identical runtime after review. Earlier packages remain
-historical evidence; normal adoption, merge and publication are separate.
+historical evidence. At review time, normal adoption, merge and publication
+were separate gates; merge and GitHub publication subsequently completed.
 
 ## Pre-review package and genuine older saves
 
@@ -111,6 +129,7 @@ The existing missing-input-action repair warning is not suppressed or treated
 as a save failure. See [release limits](../../RELEASE_NOTES.md) and
 [save safety/rollback](../../SAVE_SAFETY.md).
 
-The corrected source is under review in PR 22. Merge, normal adoption, tagging,
-publication and gallery choice remain separate approval gates. The earlier
-packages remain historical evidence, not the reviewed upload target.
+PR #22 was subsequently merged as `3cf6672`, and GitHub v0.2.0 was published
+on 2026-10-14 (UTC). The earlier packages remain historical evidence, not the
+published artifact. These status corrections do not add gameplay evidence or
+confirm another distribution platform's current version.

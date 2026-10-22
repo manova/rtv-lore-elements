@@ -1,21 +1,33 @@
-# Lore Elements 0.2.0 corrected source preparation
+# Lore Elements 0.2.0 source and publication record
 
-This local correction follows merged PR #21 and the accepted genuine-save
-legacy-placement pass. It is based on merged commit `e0026b7` and is under review
-in [PR 22](https://github.com/manova/rtv-lore-elements/pull/22), opened with approval
-on 2026-10-13. Normal installation, merge,
-tagging and publication remain separately approved actions. No publication date
-is set. Vostok Mods is the intended new listing; ModWorkshop remains on hold.
+## GitHub publication status
+
+[GitHub v0.2.0](https://github.com/manova/rtv-lore-elements/releases/tag/v0.2.0) was published as a non-draft release
+on 2026-10-14 at 00:33:12 UTC, from merged commit `3cf6672` (PR #22).
+The published `rtv_lore_elements-0.2.0.vmz` asset reports 42,693,560 bytes and
+SHA-256 `4e77629bcbb5f3556a42bb44b2a39d77fa4b4d18294bae1bda00896ad3d5ded5`,
+matching the final reviewed 115-file artifact below. Publication is confirmed;
+additional normal-game testing of that exact package and the current ModWorkshop
+version have not been independently verified. The release description mentions
+a focused original-seed slot 2 check/full relaunch, but this summary has no
+supporting record for that claim and does not add it to verified coverage.
+
+The sections below retain historical package-specific evidence. Earlier Windows
+acceptance and normal adoption must not be attributed to the later review fix.
+Bundled and attached release documents retain preparation-time wording; the VMZ,
+its checksum and historical package manifests are unchanged.
+
 
 The corrected package retains 115 files. PR review adds bounded restore-only
 collision/stack safeguards beyond accepted `0.2.0-legacy-placement.2`; the other
 scripts are unchanged. All 99 art/resource/data files remain unchanged. Compared with
 the earlier final package, only `Main.gd` and those four documents change.
-The earlier package, recipe and normal installation remain untouched.
+The earlier package and recipe remain historical evidence; earlier normal
+installation is not evidence of adoption of the later reviewed package.
 
 Version remains `0.2.0` because no 0.2.0 tag or public release existed when this
 correction was prepared. The new checksum identifies the corrected archive;
-do not overwrite or upload the earlier package by mistake.
+the published asset matches the final reviewed checksum, not an earlier package.
 
 ## Review entry points
 
@@ -40,8 +52,6 @@ The correction branch starts from the merged public source, excluding the
 local-only tooling commit and configuration. Previous preparation and PR
 branches remain unchanged.
 
-Before publication, finish GitHub review, obtain merge/tag/release approval and
-select the final gallery/cover. Only the approved final source should receive
-a release tag, and only the verified VMZ should become a release download.
-Source-branch publication is not a mod-release announcement. Neither the old
-pre-asset commit nor merged PR #21 alone includes this compatibility correction.
+The preparation-time review/publication gates above are historical. PR #22's
+merged source is the release source; merged PR #21 alone lacks the compatibility
+correction. No new platform publication or gallery change is established here.

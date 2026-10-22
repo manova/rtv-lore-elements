@@ -5,7 +5,17 @@ selected documentation, provenance and gallery options. It is not the private
 authoring/QA archive. No game installation, saves, Blender, Godot import cache,
 network access or optional mod is needed to verify or package these files.
 
-From the repository root, with Python 3.10 or newer:
+The current branch includes post-publication documentation corrections. The
+manifest intentionally hashes the original bundled prose, so verify/rebuild in a
+separate checkout of the frozen release source, not this updated working tree.
+With Git and Python 3.10 or newer:
+
+```sh
+git worktree add --detach ../lore-elements-v0.2.0 3cf6672d6526927d599e41a85f9e8b1dd8898105
+cd ../lore-elements-v0.2.0
+```
+
+Then run from that checkout:
 
 ```sh
 python3 tools/package_release.py
@@ -43,8 +53,8 @@ earlier source remain recoverable; do not confuse the two checksums. All runtime
 scripts preserve the accepted correction except for the bounded restore
 safeguards added during PR review. The recipe retains separate historical
 pre-legacy and [pre-review](release/0.2.0/history/pre-review-package-manifest.json)
-manifests. This does not
-authorize installation or publication; see the
+manifests. GitHub publication completed on 2026-10-14 (UTC); this recipe does
+not establish additional gameplay testing or other platform publication. See the
 [source-release index](release/0.2.0/README.md).
 
 Raw Blender checkpoints, intermediary images, native game extracts, private logs,

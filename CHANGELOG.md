@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 While the project is below 1.0.0, the public API is unstable and minor versions may introduce breaking changes.
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2026-10-14
 
 Corrected package prepared after genuine older-save testing and updated during
 PR review on 2026-10-13. Restore-only safeguards retain processed/retained notes
 as obstacles, roll back final conflicts and unsupported stack dependents, and
 cover intermediate stack gaps. Artwork, readers and story content are unchanged.
-Installation and publication are separate.
+Published on GitHub on 2026-10-14 (UTC). This records availability, not additional
+gameplay testing or confirmation of the current ModWorkshop version.
 
 ### Added
 
@@ -90,3 +91,5 @@ First public release.
 
 [0.1.1]: https://github.com/manova/rtv-lore-elements/releases/tag/v0.1.1
 [0.1.0]: https://github.com/manova/rtv-lore-elements/releases/tag/v0.1.0
+
+[0.2.0]: https://github.com/manova/rtv-lore-elements/releases/tag/v0.2.0

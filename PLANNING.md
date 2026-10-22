@@ -5,8 +5,10 @@
 ## Current release checkpoint — 0.2.0
 
 The asset pass and subsequent genuine-save legacy-placement correction are
-accepted. A corrected final package is prepared locally, with publication still
-on hold. This public plan retains the original design below as historical context; discovery examples and
+accepted. PR #22 was merged as `3cf6672`, and the corrected final package was
+published on GitHub on 2026-10-14 (UTC). The current ModWorkshop version and
+additional normal-game testing of the exact reviewed package are not independently
+verified. This public plan retains the original design below as historical context; discovery examples and
 open questions there are not the current runtime API. The original detailed
 authoring/QA plan remains in the private working checkout, not this source subset.
 
@@ -32,11 +34,11 @@ authoring/QA plan remains in the private working checkout, not this source subse
 - [x] Push correction PR 22 with approval and reproduce both published findings:
   retained/repaired collision exclusions and intermediate stack gaps. Add bounded
   restore safeguards and regression cases; preserve all artwork and native saves.
-- [ ] Complete GitHub review/merge of the correction and select the cover/gallery.
-- [ ] Obtain separate merge, tag/release and publication approvals. Vostok Mods
-  is the intended new listing; ModWorkshop is held following the AI-art policy
-  preflight. Record the canonical upload hash and verify any platform-added
-  update-source metadata in the served file separately.
+- [x] Complete GitHub review/merge of PR #22 and publish GitHub v0.2.0 on
+  2026-10-14 (UTC); published VMZ digest matches the final QA record.
+- [ ] Verify other distribution platforms' current versions and any platform-added
+  update-source metadata separately. Earlier listing/gallery plans are historical,
+  not confirmation of current platform status.
 
 Current entry points: [source release](release/0.2.0/README.md),
 [building](BUILDING.md), [release notes](RELEASE_NOTES.md),
